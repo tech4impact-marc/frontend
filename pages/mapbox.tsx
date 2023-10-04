@@ -66,7 +66,7 @@ const Map: NextPage = () => {
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v10',
+      style: 'mapbox://styles/hhkang/clna9zzp8009j01pydu7133n2',
       center: [lng, lat],
       zoom: zoom,
     });
