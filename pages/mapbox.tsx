@@ -1,5 +1,6 @@
 import 'mapbox-gl/dist/mapbox-gl.css'; 
 
+import { Box, Button } from '@mui/material';
 import mapboxgl, { MapLayerMouseEvent } from 'mapbox-gl';
 import type { NextPage } from 'next';
 import { useEffect, useRef, useState } from 'react';
@@ -33,6 +34,12 @@ const markers: Marker[] = [
     longCoord: 126.5821,
     latCoord: 33.3351,
   },
+  {
+    title: 'Jeju4',
+    description: 'Dolgorae',
+    longCoord: 126.6600,
+    latCoord: 33.1527,
+  },
 ]
 
 const Map: NextPage = () => {
@@ -40,8 +47,8 @@ const Map: NextPage = () => {
   const map = useRef<mapboxgl.Map | null>(null);
 
   const [lng, setLng] = useState(126.5311884);
-  const [lat, setLat] = useState(33.4996213);
-  const [zoom, setZoom] = useState(9);
+  const [lat, setLat] = useState(33.4);
+  const [zoom, setZoom] = useState(8);
 
   // define dummy datas to plot
   const geojson: any = {
@@ -59,7 +66,7 @@ const Map: NextPage = () => {
     }))
   };
 
-  // initialize map on mount or lat/long/zoom change
+  // initialize map on mount
   useEffect(() => {
     if (map.current) return;
     mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY ?? '';
@@ -184,9 +191,12 @@ const Map: NextPage = () => {
 
 
   return (
-    <main>
+    <div>
       <div className={`map-container ${styles.mapbox}`} ref={mapContainer}></div>
-    </main>
+      <Box sx={{display: 'flex', justifyContent: 'flex-end', padding: 3}}>
+        <Button variant='contained' color='primary' size='large'>제보하기</Button>
+      </Box>
+    </div>
   );
 };
 

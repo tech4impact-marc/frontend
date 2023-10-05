@@ -8,11 +8,11 @@ export default function Navbar() {
   return (
     <Box sx={{ flexGrow: 1, display: 'flex' }}>
       <AppBar position='static'>
-        <Toolbar sx={ { justifyContent: 'space-between'} }>
-          <Link href="/" component={NextLink} color='secondary'>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Link href="/" component={NextLink} color='primary.light'>
             홈
           </Link>
-          <Link href="/mapbox" component={NextLink} color='secondary'>
+          <Link href="/mapbox" component={NextLink} color='primary.light'>
             지도
           </Link>
         </Toolbar>

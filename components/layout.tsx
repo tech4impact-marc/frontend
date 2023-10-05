@@ -8,7 +8,7 @@ export default function Layout({ children }: AppLayoutProps) {
   return (
     <>
       <Navbar />
-      <main>{children}</main>
+      <div>{children}</div>
     </>
   )
 }
