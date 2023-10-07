@@ -1,15 +1,12 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "prettier"
-  ],
-  "plugins": [
-    "eslint-plugin-simple-import-sort",
-    "unused-imports"
-  ],
+  "extends": ["next/core-web-vitals", "prettier"],
+  "plugins": ["eslint-plugin-simple-import-sort", "unused-imports", "prettier"],
   "rules": {
+    "prettier/prettier": "error",
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
-    "unused-imports/no-unused-imports-ts": ["error"]
+    "unused-imports/no-unused-imports-ts": ["error"],
+    "arrow-body-style": "off",
+    "prefer-arrow-callback": "off"
   }
 }
