@@ -1,6 +1,5 @@
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
-import { KAKAO_AUTH_URL } from './auth/OAuth'
 
 import styles from '@/styles/Home.module.css'
 
@@ -18,8 +17,10 @@ export default function Home() {
         </div>
 
         <div>
-          <button type="button">
-            <a href={KAKAO_AUTH_URL}>KAKAO LOGIN</a>
+          <button>
+            <a href="http://localhost:3000/auth/kakao">
+              Start with Kakao account
+            </a>
           </button>
         </div>
 

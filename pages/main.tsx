@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function MapPage(){
+export default function MainPage(){
     return(
         <>
-            Map page.
+            Main page.
         </>
     )
 }
