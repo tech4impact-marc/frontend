@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useRouter } from 'next/router';
 
 
@@ -25,25 +26,21 @@ function SignUpPage() {
         alert('사용자 이름을 입력해 주세요.');
         return; // 회원가입 요청 중단
     } 
-    fetch('http://localhost:3000/auth/kakao/signup', {
-      method: 'POST',
+    axios.post('http://localhost:3000/auth/kakao/signup', userData, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(userData),
+      withCredentials: true,
     })
       .then((response) => {
-        if (!response.ok) {
+        if (response.status !== 200) {
           throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
+      }
         // 회원가입 성공 시 처리
-        console.log('회원가입이 완료되었습니다.', data);
+        console.log('회원가입이 완료되었습니다.', response);
 
         setIsSignedUp(true);
-        router.push('/login/kakao/redirect')
+        router.push('/')
       })
       .catch((error) => {
         // 오류 처리

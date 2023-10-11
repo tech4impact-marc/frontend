@@ -25,7 +25,7 @@ export default function Home() {
         </div>
 
         <div>
-          <img src="./images/kakao_login_medium_wide.jpg"></img>
+          <img src="/images/kakao_login_medium_wide.jpg"></img>
         </div>
 
       </main>
