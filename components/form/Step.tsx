@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShortAnswer, DateAnswer, ImageAnswer, SelectAnswer, CheckboxAnswer, RadioAnswer } from './FormAnswer';
+import { ShortAnswer, DateAnswer, ImageAnswer, SelectAnswer, CheckboxAnswer, RadioAnswer, LocationAnswer } from './FormAnswer';
 
 interface AnswerTypeProps {
     type: string;
@@ -18,6 +18,13 @@ const AnswerType: React.FC<AnswerTypeProps> = ({ type, answer, setAnswer, choice
                     setShortAnswer={setAnswer}
                 />
             )
+        case "LocationAnswer":
+                return (
+                    <LocationAnswer
+                        shortAnswer={answer}
+                        setShortAnswer={setAnswer}
+                    />
+                )
         case "SelectAnswer":
             return (
                 <SelectAnswer

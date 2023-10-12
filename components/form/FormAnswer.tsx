@@ -4,7 +4,7 @@ import EXIF from 'exif-js';
 import { DatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { FormControl, Select, MenuItem, FormGroup, FormControlLabel, Checkbox, Radio, RadioGroup, OutlinedInput, InputAdornment } from '@mui/material';
+import { FormControl, Select, MenuItem, FormGroup, FormControlLabel, Checkbox, Radio, RadioGroup, OutlinedInput, Button } from '@mui/material';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 
@@ -28,6 +28,52 @@ const ShortAnswer: React.FC<ShortAnswerProps> = ({ shortAnswer, setShortAnswer }
                     'aria-label': 'weight',
                 }}
             />
+        </FormControl>
+    );
+};
+
+const LocationAnswer: React.FC<ShortAnswerProps> = ({ shortAnswer, setShortAnswer }) => {
+    const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setShortAnswer(e?.target?.value);
+    };
+
+    const containerStyle = {
+        display: 'flex',
+        columnGap: "1rem",
+        alignItems: 'center',
+        width: '100%',
+    };
+
+    const gatherLocation = () => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    setShortAnswer(`(${latitude}, ${longitude})`);
+                    console.log(latitude, longitude)
+                },
+                function (error) {
+                    // Handle errors
+                    console.error(error);
+                })
+        }
+    }
+
+    return (
+        <FormControl fullWidth>
+            <div style={containerStyle}>
+                <OutlinedInput
+                    placeholder='답변을 입력하세요'
+                    value={shortAnswer}
+                    onChange={handleTextChange}
+                    inputProps={{
+                        'aria-label': 'weight',
+                    }}
+                    style={{ flex: "1" }}
+                />
+                <Button variant="contained" onClick={gatherLocation} disableElevation>현재 위치 사용하기</Button>
+            </div>
         </FormControl>
     );
 };
@@ -106,14 +152,24 @@ const CheckboxAnswer: React.FC<SelectAnswerProps> = ({ answer, setAnswer, choice
 };
 
 const RadioAnswer: React.FC<SelectAnswerProps> = ({ answer, setAnswer, choices }) => {
+    const [other, setOther] = useState('')
+
     const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setAnswer(e?.target?.value);
+        if (e?.target?.value !== "기타") {
+            setOther('');
+        }
+    };
+
+    const handleOtherTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setOther(e?.target?.value);
+        setAnswer("기타: " + e?.target?.value);
     };
 
     return (
         <FormControl fullWidth>
             <RadioGroup
-                value={answer}
+                value={answer.includes("기타") ? "기타" : answer}
                 onChange={handleTextChange}
             >
                 {choices.map((choice, index) => (
@@ -125,7 +181,20 @@ const RadioAnswer: React.FC<SelectAnswerProps> = ({ answer, setAnswer, choices }
                                 onChange={handleTextChange}
                             />
                         }
-                        label={choice}
+                        label={choice == "기타" && answer.includes("기타") ?
+                            <FormControl fullWidth>
+                                <OutlinedInput
+                                    placeholder='답변을 입력하세요'
+                                    value={other}
+                                    onChange={handleOtherTextChange}
+                                    inputProps={{
+                                        'aria-label': 'weight',
+                                    }}
+                                />
+                            </FormControl>
+                            :
+                            choice
+                        }
                     />
                 ))}
             </RadioGroup>
@@ -144,8 +213,9 @@ const DateAnswer: React.FC<DateAnswerProps> = ({ dateAnswer, setDateAnswer }) =>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
                 <DatePicker
                     label="날짜를 입력하세요"
-                    value={dayjs(dateAnswer)} //ignore the error, this works...
+                    value={dateAnswer ? dayjs(dateAnswer) : null} //ignore the error, this works...
                     onChange={(newValue: string) => setDateAnswer(newValue)}
+                    slotProps={{ field: { clearable: true } }}
                 />
             </LocalizationProvider>
         </FormControl>
@@ -222,4 +292,4 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ selectedImage, setSelectedIma
     );
 };
 
-export { ShortAnswer, SelectAnswer, DateAnswer, ImageAnswer, CheckboxAnswer, RadioAnswer }
+export { ShortAnswer, LocationAnswer, SelectAnswer, DateAnswer, ImageAnswer, CheckboxAnswer, RadioAnswer }
