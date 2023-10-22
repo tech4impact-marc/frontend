@@ -107,6 +107,21 @@
 .logo {
   position: relative;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.centered_image {
+  max-width: 100%;
+  height: auto;
+  margin: 100px;
+}
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
@@ -199,6 +214,20 @@
       rgb(var(--background-end-rgb)) 40%
     );
     z-index: 1;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .centered_image {
+    max-width: 100%;
+    height: auto;
+    margin: 100px;
   }
 }
 

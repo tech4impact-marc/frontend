@@ -1,9 +1,5 @@
-import React from 'react';
+import React from 'react'
 
-export default function MapPage(){
-    return(
-        <>
-            Map page.
-        </>
-    )
+export default function MapPage() {
+  return <>Map page.</>
 }

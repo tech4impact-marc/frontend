@@ -1,37 +1,35 @@
-import React, { useState , useEffect } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/router';
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import React from 'react'
 
-export default function KakaoLoginRedirectPage(){
-    const postData = {};
-    const router = useRouter();
+export default function KakaoLoginRedirectPage() {
+  const postData = {}
+  const router = useRouter()
 
-    axios.post('http://localhost:3000/auth/kakao/login/done', postData, {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        withCredentials: true,
+  axios
+    .post('http://localhost:3000/auth/kakao/login/done', postData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true,
     })
-        .then((response) => {
-            if (response.status !== 200) {
-                throw new Error('Network response was not ok');
-            }
-            const receivedToken = response.data.token;
-            console.log('Server Response:', receivedToken);
+    .then((response) => {
+      if (response.status !== 200) {
+        throw new Error('Network response was not ok')
+      }
+      const receivedToken = response.data.token
+      console.log('Server Response:', receivedToken)
 
-            sessionStorage.setItem('jwtToken', receivedToken);
-            router.push('/main');
-        })
-        .catch((error) => {
-            console.error('Error occured:', error);
-        });
+      sessionStorage.setItem('jwtToken', receivedToken)
+      router.push('/main')
+    })
+    .catch((error) => {
+      console.error('Error occured:', error)
+    })
 
-
-
-    return(
-        <>
-            Redirecting..
-            You will move to <b>main page</b> soon.
-        </>
-    )
+  return (
+    <>
+      Redirecting.. You will move to <b>main page</b> soon.
+    </>
+  )
 }
