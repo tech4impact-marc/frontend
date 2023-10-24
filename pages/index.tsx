@@ -16,7 +16,12 @@ export default function Home() {
             className={styles.centered_image}
           />
           <a href="http://localhost:3000/auth/kakao">
-            <img src="kakao_login_medium_wide.png" width="300" height="45" />
+            <img
+              src="kakao_login_medium_wide.png"
+              width="300"
+              height="45"
+              alt="kakaologin_button"
+            />
           </a>
         </div>
       </main>

@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 export default function KakaoSignUpPage() {
   // 회원가입 정보를 관리할 상태 변수들을 초기화합니다.
   const [userData, setUserData] = useState({
-    username: '',
+    nickname: '',
   })
   const [isSignedUp, setIsSignedUp] = useState(false)
   const router = useRouter()
@@ -21,10 +21,11 @@ export default function KakaoSignUpPage() {
 
   // 회원가입 버튼 클릭 시 서버로 POST 요청을 보냅니다.
   const handleSignUp = () => {
-    if (userData.username.trim() === '') {
+    if (userData.nickname.trim() === '') {
       alert('사용자 이름을 입력해 주세요.')
       return // 회원가입 요청 중단
     }
+    console.log(userData)
     axios
       .post('http://localhost:3000/auth/kakao/signup', userData, {
         headers: {
@@ -57,12 +58,12 @@ export default function KakaoSignUpPage() {
       <h1>회원가입 페이지</h1>
       <form>
         <div>
-          사용자 이름:
+          닉네임 입력:
           <input
             type="text"
-            id="username"
-            name="username"
-            value={userData.username}
+            id="nickname"
+            name="nickname"
+            value={userData.nickname}
             onChange={handleInputChange}
           />
         </div>
