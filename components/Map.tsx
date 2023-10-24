@@ -2,7 +2,6 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 
 import mapboxgl, { LngLatBoundsLike, MapLayerMouseEvent } from 'mapbox-gl'
 import { useEffect, useRef, useState } from 'react'
-import styles from 'styles/Map.module.css'
 
 // 추후 데이터 따라서 설정 필요
 interface MapProps {
@@ -32,7 +31,7 @@ const Map = ({ data }: MapProps) => {
     // 맵 생성 및 지정
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/hhkang/clna9zzp8009j01pydu7133n2',
+      style: 'mapbox://styles/hhkang/clna9zzp8009j01pydu7133n2?optimize=true',
       center: [lng, lat],
       zoom: zoom,
       maxBounds: bounds,
@@ -57,8 +56,8 @@ const Map = ({ data }: MapProps) => {
         source: 'reports',
         filter: ['has', 'point_count'],
         paint: {
-          'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 5, '#f1f075', 10, '#f28cb1'],
-          'circle-radius': ['step', ['get', 'point_count'], 15, 5, 20, 10, 25],
+          'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 3, '#f1f075'],
+          'circle-radius': ['step', ['get', 'point_count'], 15, 3, 25],
         },
       })
 
@@ -93,20 +92,11 @@ const Map = ({ data }: MapProps) => {
       currentMap.on('click', 'unclustered-point', (e: MapLayerMouseEvent) => {
         if (!e.features) return
         const geo = e.features[0].geometry
-
         if (geo.type !== 'Point') return
         const coordinates = geo.coordinates.slice()
-
         const description = e.features[0].properties?.description ?? ''
         const title = e.features[0].properties?.title ?? ''
         const imageUrl = e.features[0].properties?.image_url ?? ''
-
-        const popup = new mapboxgl.Popup()
-          .setLngLat(coordinates as [number, number])
-          .setHTML(`<div><h3>${title}</h3><p>${description}</p><img src='${imageUrl}'/></div>`)
-          .addTo(map.current as mapboxgl.Map)
-
-        popup.addClassName(styles.popup)
       })
 
       // 클러스터 클릭시 줌 이벤트 추가
@@ -135,7 +125,13 @@ const Map = ({ data }: MapProps) => {
     })
   }, [])
 
-  return <div className={`map-container ${styles.mapbox}`} ref={mapContainer}></div>
+  return (
+    <div
+      style={{ width: '100vw', height: '100vh' }}
+      className={`map-container`}
+      ref={mapContainer}
+    ></div>
+  )
 }
 
 export default Map
