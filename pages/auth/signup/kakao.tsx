@@ -44,8 +44,10 @@ export default function KakaoSignUpPage() {
         router.push('/')
       })
       .catch((error) => {
+        const errorMessage = error.response.data.message
+        if (errorMessage === 'nickname already exists') alert('이미 존재하는 닉네임입니다.')
         // 오류 처리
-        console.error('회원가입 중 오류가 발생했습니다.', error)
+        else console.error('회원가입 중 오류가 발생했습니다.', error)
       })
   }
 
