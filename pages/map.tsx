@@ -1,4 +1,6 @@
-import { Container } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Container from '@mui/material/Container'
 import axios from 'axios'
 
 import Map from '@/components/Map'
@@ -20,6 +22,20 @@ export interface Marker {
 export default function MapPage({ data }: MapPageProps) {
   return (
     <Container disableGutters maxWidth={false}>
+      <Box
+        sx={{
+          position: 'absolute',
+          width: '100%',
+          display: 'flex',
+        }}
+      >
+        <Button variant="contained" sx={{ zIndex: 1 }}>
+          돌고래
+        </Button>
+        <Button variant="contained" sx={{ zIndex: 1 }}>
+          바다거북
+        </Button>
+      </Box>
       <Map data={data} />
     </Container>
   )
