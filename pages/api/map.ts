@@ -42,6 +42,20 @@ const markers: Marker[] = [
     latCoord: 33.1527,
     imageUrl: '/test.jpeg',
   },
+  {
+    title: 'hi1',
+    description: 'Dolgorae',
+    longCoord: 126.68,
+    latCoord: 33.1527,
+    imageUrl: '/test.jpeg',
+  },
+  {
+    title: 'hi2',
+    description: 'Dolgorae',
+    longCoord: 126.67,
+    latCoord: 33.152,
+    imageUrl: '/test.jpeg',
+  },
 ]
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<MapResponseData>) {

@@ -1,7 +1,11 @@
 import 'mapbox-gl/dist/mapbox-gl.css'
 
-import mapboxgl, { LngLatBoundsLike, MapLayerMouseEvent } from 'mapbox-gl'
+import mapboxgl, { LngLatBoundsLike } from 'mapbox-gl'
+import { MapLayerMouseEvent } from 'mapbox-gl'
+import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
+
+import PostList from './post/PostList'
 
 // 추후 데이터 따라서 설정 필요
 interface MapProps {
@@ -11,17 +15,24 @@ interface MapProps {
 const Map = ({ data }: MapProps) => {
   const mapContainer = useRef<any>(null)
   const map = useRef<mapboxgl.Map | null>(null)
+  const router = useRouter()
 
   // 위도, 경도, 줌 초깃값 설정
   const [lng, setLng] = useState(126.5311884)
   const [lat, setLat] = useState(33.4)
   const [zoom, setZoom] = useState(8)
+  const [posts, setPosts] = useState<any[]>([]) // 추후 데이터 따라서 타입 설정 필요
 
   // 지도 범위 제한 좌표 설정 (제주도)
   const bounds = [
     [125.1724309, 32.1769553], // 남서쪽 끝 좌표
     [127.889946, 34.6230447], // 북동쪽 끝 좌표
   ] as LngLatBoundsLike
+
+  // 포스트에서 지도로 돌아올 때 사용할 함수
+  const handleBack = () => {
+    setPosts([])
+  }
 
   // Mount시 지도 초기화
   useEffect(() => {
@@ -31,7 +42,7 @@ const Map = ({ data }: MapProps) => {
     // 맵 생성 및 지정
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/hhkang/clna9zzp8009j01pydu7133n2?optimize=true',
+      style: 'mapbox://styles/hhkang/clna9zzp8009j01pydu7133n2',
       center: [lng, lat],
       zoom: zoom,
       maxBounds: bounds,
@@ -99,7 +110,7 @@ const Map = ({ data }: MapProps) => {
         const imageUrl = e.features[0].properties?.image_url ?? ''
       })
 
-      // 클러스터 클릭시 줌 이벤트 추가
+      // 클러스터 클릭시 포스트 리스트 보여주기
       currentMap.on('click', 'clusters', (e: MapLayerMouseEvent) => {
         const features = currentMap.queryRenderedFeatures(e.point, {
           layers: ['clusters'],
@@ -108,29 +119,35 @@ const Map = ({ data }: MapProps) => {
 
         const clusterId = features[0].properties?.cluster_id
         const geo = features[0].geometry
+        const pointCount = features[0].properties?.point_count
         if (!clusterId || geo.type !== 'Point') return
 
         const clusterSource = currentMap.getSource('reports')
         if (clusterSource?.type !== 'geojson') return
 
-        clusterSource.getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
-          if (err) return
+        // 추후 데이터 따라서 타입 설정 필요
+        clusterSource.getClusterLeaves(clusterId, pointCount, 0, (err, aFeatures: any) => {
+          if (err) {
+            console.error(err)
+            return
+          }
 
-          currentMap.easeTo({
-            center: geo.coordinates as [number, number],
-            zoom: zoom,
-          })
+          const newPosts: any[] = aFeatures.slice()
+          setPosts(newPosts)
         })
       })
     })
   }, [])
 
   return (
-    <div
-      style={{ width: '100vw', height: '100vh' }}
-      className={`map-container`}
-      ref={mapContainer}
-    ></div>
+    <div>
+      {posts.length > 0 ? <PostList data={posts} onClickBack={handleBack} /> : null}
+      <div
+        style={{ width: '100vw', height: '100vh', position: 'absolute' }}
+        className={`map-container`}
+        ref={mapContainer}
+      ></div>
+    </div>
   )
 }
 
