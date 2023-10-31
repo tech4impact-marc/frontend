@@ -42,7 +42,7 @@ export default function MapPage({ data }: MapPageProps) {
 }
 
 // 일단 정적 렌더링 사용. 변화가 생길 때마다 빌드 필요
-export async function getStaticProps() {
+export async function getServerSideProps() {
   try {
     // 임시 api 호출
     const jsonData = await axios('http://localhost:3000/api/map')
@@ -53,5 +53,10 @@ export async function getStaticProps() {
     }
   } catch (err) {
     console.log(err)
+    return {
+      props: {
+        data: {},
+      },
+    }
   }
 }

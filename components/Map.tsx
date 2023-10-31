@@ -51,6 +51,7 @@ const Map = ({ data }: MapProps) => {
     map.current.on('load', () => {
       if (!map.current) return
       const currentMap = map.current
+      currentMap.resize()
       // 받은 데이터를 지도의 source로 추가.
       currentMap.addSource('reports', {
         type: 'geojson',
