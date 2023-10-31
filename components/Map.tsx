@@ -31,7 +31,7 @@ const Map = ({ data }: MapProps) => {
     // 맵 생성 및 지정
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/hhkang/clna9zzp8009j01pydu7133n2?optimize=true',
+      style: 'mapbox://styles/hhkang/clna9zzp8009j01pydu7133n2',
       center: [lng, lat],
       zoom: zoom,
       maxBounds: bounds,
@@ -40,6 +40,7 @@ const Map = ({ data }: MapProps) => {
     map.current.on('load', () => {
       if (!map.current) return
       const currentMap = map.current
+      currentMap.resize()
       // 받은 데이터를 지도의 source로 추가.
       currentMap.addSource('reports', {
         type: 'geojson',

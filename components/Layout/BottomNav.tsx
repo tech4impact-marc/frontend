@@ -24,7 +24,7 @@ export default function BottomNav() {
     { name: '마이페이지', icon: <Person />, path: '/' },
   ]
 
-  const [value, setValue] = useState(0)
+  const [value, setValue] = useState(1)
 
   return (
     <CustomPaper elevation={3}>
@@ -35,11 +35,11 @@ export default function BottomNav() {
           setValue(newValue)
         }}
       >
-        {navLinks.map((link) => (
+        {navLinks.map((link, index) => (
           <CustomBottomNavAction
             component={NextLink}
             href={link.path}
-            key={link.path}
+            key={index}
             label={link.name}
             icon={link.icon}
           />
