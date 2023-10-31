@@ -10,10 +10,7 @@ export default function Home() {
     <>
       <main>
         <div>
-          <img
-            src="https://i0.wp.com/marckorea718.org/wp-content/uploads/2021/09/eb8f8ceab3a0eb9e98ed8c80-eba19ceab3a01.jpg?resize=750%2C281&ssl=1"
-            className={styles.centered_image}
-          />
+          <img src="https://i0.wp.com/marckorea718.org/wp-content/uploads/2021/09/eb8f8ceab3a0eb9e98ed8c80-eba19ceab3a01.jpg?resize=750%2C281&ssl=1" />
           <a href="http://localhost:3000/auth/kakao">
             <img
               src="kakao_login_medium_wide.png"
