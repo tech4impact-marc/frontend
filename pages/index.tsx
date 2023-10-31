@@ -1,16 +1,15 @@
-import Head from 'next/head'
+import { Inter } from 'next/font/google'
+import { ReactElement } from 'react'
 
-import styles from '@/styles/Home.module.css'
+import HeaderLayout from '@/components/Layout/HeaderLayout'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
     <>
-      <Head>
-        <title>Login please</title>
-      </Head>
-
-      <main className={styles.main}>
-        <div className={styles.container}>
+      <main>
+        <div>
           <img
             src="https://i0.wp.com/marckorea718.org/wp-content/uploads/2021/09/eb8f8ceab3a0eb9e98ed8c80-eba19ceab3a01.jpg?resize=750%2C281&ssl=1"
             className={styles.centered_image}
@@ -28,3 +27,5 @@ export default function Home() {
     </>
   )
 }
+
+Home.getLayout = (page: ReactElement) => <HeaderLayout>{page}</HeaderLayout>
