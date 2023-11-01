@@ -20,7 +20,7 @@ const CustomPaper = styled(Paper)`
 export default function BottomNav() {
   const navLinks = [
     { name: 'Map', icon: <LocationOn />, path: '/' },
-    { name: '제보하기', icon: <FmdBad />, path: '/' },
+    { name: '제보하기', icon: <FmdBad />, path: '/reportshare' },
     { name: '마이페이지', icon: <Person />, path: '/' },
   ]
 
