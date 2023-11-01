@@ -18,11 +18,11 @@
     "@types/node": "20.6.2",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
-    "axios": "^1.6.0",
-    "dotenv": "^16.3.1",
+    "axios": "^1.5.1",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
     "eslint-plugin-prettier": "^5.0.0",
+    "mapbox-gl": "^2.15.0",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-device-detect": "^2.2.3",
@@ -30,6 +30,7 @@
     "typescript": "5.2.2"
   },
   "devDependencies": {
+    "@types/mapbox-gl": "^2.7.15",
     "@types/next": "^9.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
