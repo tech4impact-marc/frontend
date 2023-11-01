@@ -46,7 +46,7 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
       context.drawImage(img, 0, 0)
 
       canvas.toBlob((blob) => {
-        const item = new ClipboardItem({ 'image/png': blob })
+        const item = new ClipboardItem({ 'image/png': blob as Blob })
 
         navigator.clipboard
           .write([item])
