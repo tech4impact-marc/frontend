@@ -122,7 +122,7 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
           <IconButton sx={{ position: 'absolute', top: 0, right: 0 }} onClick={onClose}>
             <CloseIcon />
           </IconButton>
-          <img src={imageUrl} alt="Photo to be Shared" />
+          <img src={imageUrl} alt="Photo to be Shared" width="350" />
           <Button
             variant="contained"
             color="primary"
