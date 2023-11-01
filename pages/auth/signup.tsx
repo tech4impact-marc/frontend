@@ -41,7 +41,7 @@ export default function KakaoSignUpPage() {
         console.log('회원가입이 완료되었습니다.', response)
 
         setIsSignedUp(true)
-        router.push('/')
+        router.push('/auth/login')
       })
       .catch((error) => {
         const errorMessage = error.response.data.message

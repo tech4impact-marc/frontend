@@ -51,6 +51,7 @@ export default function MainPage() {
               throw new Error('Network response was not ok')
             }
             // 회원가입 성공 시 처리
+            sessionStorage.removeItem('jwtToken')
             console.log('회원탈퇴 성공', response)
             alert('회원 탈퇴 되었습니다.')
             router.push('/')
@@ -69,7 +70,7 @@ export default function MainPage() {
 
   return (
     <div>
-      <h1>Main Page</h1>
+      <h1>My Page</h1>
       <h2>Login completed.</h2>
       <button type="button" onClick={handleLogOut}>
         로그아웃

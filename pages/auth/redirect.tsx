@@ -21,7 +21,7 @@ export default function KakaoLoginRedirectPage() {
         //json을 stringify해서 세션스토리지에 저장
 
         sessionStorage.setItem('jwtToken', receivedToken)
-        router.push('/main')
+        router.push('/')
       })
       .catch((error) => {
         console.error('Error occured:', error)

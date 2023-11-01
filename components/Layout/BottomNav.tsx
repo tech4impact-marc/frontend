@@ -21,7 +21,7 @@ export default function BottomNav() {
   const navLinks = [
     { name: 'Map', icon: <LocationOn />, path: '/map' },
     { name: '제보하기', icon: <FmdBad />, path: '/' },
-    { name: '마이페이지', icon: <Person />, path: '/' },
+    { name: '마이페이지', icon: <Person />, path: '/mypage/redirect' },
   ]
 
   const [value, setValue] = useState(1)
