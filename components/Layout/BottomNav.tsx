@@ -27,7 +27,7 @@ export default function BottomNav() {
   const [value, setValue] = useState(1)
 
   return (
-    <CustomPaper elevation={3}>
+    <CustomPaper elevation={3} sx={{ zIndex: 101 }}>
       <BottomNavigation
         showLabels
         value={value}

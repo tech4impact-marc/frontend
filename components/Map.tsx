@@ -1,5 +1,7 @@
 import 'mapbox-gl/dist/mapbox-gl.css'
 
+import Button from '@mui/material/Button'
+import { styled } from '@mui/material/styles'
 import mapboxgl, { LngLatBoundsLike } from 'mapbox-gl'
 import { MapLayerMouseEvent } from 'mapbox-gl'
 import { useRouter } from 'next/router'
@@ -12,6 +14,11 @@ interface MapProps {
   data: any
 }
 
+const TypeButton = styled(Button)`
+  background-color: white;
+  z-index: 1;
+`
+
 const Map = ({ data }: MapProps) => {
   const mapContainer = useRef<any>(null)
   const map = useRef<mapboxgl.Map | null>(null)
@@ -22,6 +29,7 @@ const Map = ({ data }: MapProps) => {
   const [lat, setLat] = useState(33.4)
   const [zoom, setZoom] = useState(8)
   const [posts, setPosts] = useState<any[]>([]) // 추후 데이터 따라서 타입 설정 필요
+  const [dataType, setDataType] = useState<number>(1) // 추후 데이터 따라서 타입 설정 필요
 
   // 지도 범위 제한 좌표 설정 (제주도)
   const bounds = [
@@ -29,9 +37,93 @@ const Map = ({ data }: MapProps) => {
     [127.889946, 34.6230447], // 북동쪽 끝 좌표
   ] as LngLatBoundsLike
 
+  const class1 = ['==', ['get', 'report_type'], 1]
+  const class2 = ['==', ['get', 'report_type'], 2]
+  const class3 = ['==', ['get', 'report_type'], 3]
+
   // 포스트에서 지도로 돌아올 때 사용할 함수
   const handleBack = () => {
     setPosts([])
+  }
+
+  const handleTypeClick = (index: number) => {
+    console.log(index)
+    setDataType(index)
+  }
+
+  const renderClusterOfType = (currentMap: any, data: any, dataType: number) => {
+    // 단일 포인트 레이어 생성
+    currentMap.addLayer({
+      id: `point${dataType}`,
+      type: 'circle',
+      source: 'reports',
+      filter: ['==', ['get', 'report_type'], dataType],
+      paint: {
+        'circle-color': '#51bbd6',
+        'circle-radius': 15,
+      },
+    })
+
+    // 단일 포인트 클릭시 포스트 보여주기
+    currentMap.on('click', `point${dataType}`, (e: MapLayerMouseEvent) => {
+      if (!e?.features) return
+      const feature = e.features[0]
+      setPosts([feature])
+    })
+
+    // 클러스터를 나타낼 레이어 생성
+    currentMap.addLayer({
+      id: `cluster${dataType}`,
+      type: 'circle',
+      source: 'reports',
+      filter: ['all', ['has', 'point_count'], ['get', `is_class${dataType}`]],
+      paint: {
+        'circle-color': '#51bbd6',
+        'circle-radius': 25,
+      },
+    })
+
+    // 클러스터의 숫자를 나타낼 레이어 생성
+    currentMap.addLayer({
+      id: `cluster-count${dataType}`,
+      type: 'symbol',
+      source: 'reports',
+      filter: ['all', ['has', 'point_count'], ['get', `is_class${dataType}`]],
+      layout: {
+        'text-field': ['get', 'point_count_abbreviated'],
+        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+        'text-size': 12,
+      },
+    })
+
+    // 클러스터 클릭시 포스트 리스트 보여주기
+    currentMap.on('click', `cluster${dataType}`, (e: MapLayerMouseEvent) => {
+      const features = currentMap.queryRenderedFeatures(e.point, {
+        layers: [`cluster${dataType}`],
+      })
+      if (!features) return
+
+      const clusterId = features[0].properties?.cluster_id
+      const pointCount = features[0].properties?.point_count
+
+      if (!clusterId || !pointCount) {
+        return
+      }
+
+      const clusterSource = currentMap.getSource('reports')
+      if (clusterSource?.type !== 'geojson') return
+
+      // 추후 데이터 따라서 타입 설정 필요
+      clusterSource.getClusterLeaves(clusterId, pointCount, 0, (err: any, aFeatures: any) => {
+        if (err) {
+          console.error(err)
+          return
+        }
+
+        const newPosts: any[] = aFeatures.slice()
+        setPosts(newPosts)
+      })
+    })
   }
 
   // Mount시 지도 초기화
@@ -52,96 +144,31 @@ const Map = ({ data }: MapProps) => {
       if (!map.current) return
       const currentMap = map.current
       currentMap.resize()
-      // 받은 데이터를 지도의 source로 추가.
+      // 받은 데이터를 지도의 source로 추가
       currentMap.addSource('reports', {
         type: 'geojson',
         data: data,
         cluster: true, // cluster를 사용하겠다
         clusterMaxZoom: 14, // 클러스터를 사용할 최대 줌 레벨
         clusterRadius: 50,
-      })
-
-      // 클러스터를 나타낼 레이어 생성
-      currentMap.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'reports',
-        filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 3, '#f1f075'],
-          'circle-radius': ['step', ['get', 'point_count'], 15, 3, 25],
+        clusterProperties: {
+          is_class1: ['all', class1, 'false'],
+          is_class2: ['all', class2, 'false'],
+          is_class3: ['all', class3, 'false'],
         },
       })
 
-      // 클러스터의 숫자를 나타낼 레이어 생성
-      currentMap.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'reports',
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': ['get', 'point_count_abbreviated'],
-          'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-          'text-size': 12,
-        },
-      })
-
-      // 클러스터링 되지 않은 지점을 나타낼 레이어 생성
-      currentMap.addLayer({
-        id: 'unclustered-point',
-        type: 'circle',
-        source: 'reports',
-        filter: ['!', ['has', 'point_count']],
-        paint: {
-          'circle-color': '#11b4da',
-          'circle-radius': 10,
-          'circle-stroke-width': 1,
-          'circle-stroke-color': '#fff',
-        },
-      })
-
-      // 클릭 시 팝업 띄우는 이벤트 추가
-      currentMap.on('click', 'unclustered-point', (e: MapLayerMouseEvent) => {
-        if (!e.features) return
-        const geo = e.features[0].geometry
-        if (geo.type !== 'Point') return
-        const coordinates = geo.coordinates.slice()
-        const description = e.features[0].properties?.description ?? ''
-        const title = e.features[0].properties?.title ?? ''
-        const imageUrl = e.features[0].properties?.image_url ?? ''
-      })
-
-      // 클러스터 클릭시 포스트 리스트 보여주기
-      currentMap.on('click', 'clusters', (e: MapLayerMouseEvent) => {
-        const features = currentMap.queryRenderedFeatures(e.point, {
-          layers: ['clusters'],
-        })
-        if (!features) return
-
-        const clusterId = features[0].properties?.cluster_id
-        const geo = features[0].geometry
-        const pointCount = features[0].properties?.point_count
-        if (!clusterId || geo.type !== 'Point') return
-
-        const clusterSource = currentMap.getSource('reports')
-        if (clusterSource?.type !== 'geojson') return
-
-        // 추후 데이터 따라서 타입 설정 필요
-        clusterSource.getClusterLeaves(clusterId, pointCount, 0, (err, aFeatures: any) => {
-          if (err) {
-            console.error(err)
-            return
-          }
-
-          const newPosts: any[] = aFeatures.slice()
-          setPosts(newPosts)
-        })
-      })
+      renderClusterOfType(map.current, data, dataType)
     })
   }, [])
 
   return (
     <div>
+      <div style={{ position: 'absolute', width: '100%', display: 'flex' }}>
+        <TypeButton onClick={() => handleTypeClick(1)}>돌고래</TypeButton>
+        <TypeButton onClick={() => handleTypeClick(2)}>바다거북</TypeButton>
+        <TypeButton onClick={() => handleTypeClick(3)}>상괭이</TypeButton>
+      </div>
       {posts.length > 0 ? <PostList data={posts} onClickBack={handleBack} /> : null}
       <div
         style={{ width: '100vw', height: '100vh', position: 'absolute' }}

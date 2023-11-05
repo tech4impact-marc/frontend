@@ -1,6 +1,7 @@
+import ArrowBackIos from '@mui/icons-material/ArrowBackIos'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
+import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 
 import PostCard from './PostCard'
@@ -25,7 +26,9 @@ export default function Post(props: PostProps) {
 
   return (
     <CustomBox>
-      <Button onClick={props.onClickBack}>돌아가기</Button>
+      <IconButton onClick={props.onClickBack} sx={{ zIndex: 1, mb: 1, color: 'primary.dark' }}>
+        <ArrowBackIos />
+      </IconButton>
       <Grid
         container
         spacing={2}

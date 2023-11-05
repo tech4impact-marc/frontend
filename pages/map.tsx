@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import axios from 'axios'
 
@@ -28,27 +27,48 @@ export default function MapPage({ data }: MapPageProps) {
           width: '100%',
           display: 'flex',
         }}
-      >
-        <Button variant="contained" sx={{ zIndex: 1 }}>
-          돌고래
-        </Button>
-        <Button variant="contained" sx={{ zIndex: 1 }}>
-          바다거북
-        </Button>
-      </Box>
+      ></Box>
       <Map data={data} />
     </Container>
   )
 }
 
-// 일단 정적 렌더링 사용. 변화가 생길 때마다 빌드 필요
+function convertDataToGeoJson(content: any) {
+  // 받아온 데이터를 geojson 형식으로 변환
+  console.log('Content', content)
+
+  const data: any = {
+    type: 'FeatureCollection',
+    features: content.map((element: any) => ({
+      type: 'Feature',
+      properties: {
+        id: element.id,
+        title: 'Title',
+        description: 'Description',
+        image_url: '/test.jpeg',
+        report_type: 1, // dynamic하게 바꾸기
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [element.location.longitude, element.location.latitude],
+      },
+    })),
+  }
+
+  return data
+}
+
+// 일단 서버사이드 렌더링 사용. 추후 최적화
 export async function getServerSideProps() {
   try {
     // 임시 api 호출
-    const jsonData = await axios('http://localhost:3000/api/map')
+    // const jsonData = await axios('http://localhost:3000/api/map')
+    const jsonData = await axios(process.env.SERVER_URL + '/reports/map')
+    const data = jsonData.data
     return {
       props: {
-        data: jsonData.data,
+        // data: jsonData.data,
+        data: convertDataToGeoJson(data.content),
       },
     }
   } catch (err) {
