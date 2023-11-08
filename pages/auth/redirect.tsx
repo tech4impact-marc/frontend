@@ -19,8 +19,12 @@ export default function KakaoLoginRedirectPage() {
         }
         const receivedToken = JSON.stringify(response.data)
         //json을 stringify해서 세션스토리지에 저장
+        const accessTokenExpiresAt = Date.now() + response.data.expiresIn * 1000
+        const refreshTokenExpiresAt = Date.now() + response.data.refreshTokenExpiresIn * 1000
 
         sessionStorage.setItem('jwtToken', receivedToken)
+        sessionStorage.setItem('accessTokenExpiresAt', accessTokenExpiresAt.toString())
+        sessionStorage.setItem('refreshTokenExpiresAt', refreshTokenExpiresAt.toString())
         router.push('/')
       })
       .catch((error) => {

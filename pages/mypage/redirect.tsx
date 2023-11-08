@@ -7,9 +7,19 @@ export default function MyPageRedirectPage() {
     if (sessionStorage.getItem('jwtToken') != null) {
       //sessionStorage에 jwtToken 존재 (로그인 상태)
       //jwtToken의 accessToken으로 서버에 GET요청을 보내 유저의 정보를 받아오고, 해당 유저 닉네임orID로 /mypage/{user}로 보낼 예정 (아직 API 없다고 해서 만들어두진 않았음)
-      router.push('/mypage/user')
+      const userInformationToken = {
+        //예시로 받아온 유저 정보
+        id: 1,
+        nickname: 'dolgoraerae',
+        achievements: ['achiv1', 'achiv2'],
+        reports: ['rpt1', 'rpt2', 'rpt3'],
+        profile: '/profile.jpg',
+      }
+      sessionStorage.setItem('userInformationToken', JSON.stringify(userInformationToken))
+      const userInfo = JSON.parse(sessionStorage.getItem('userInformationToken') as string)
+      router.push('/mypage/user/' + userInfo.nickname)
     } else {
-      console.log('No jwtToken')
+      console.log('jwtToken is not available.')
       router.push('/auth/login')
     }
   } else {
