@@ -29,10 +29,6 @@ async function refreshAccessToken() {
       'accessTokenExpiresAt',
       (Date.now() + response.data.expiresIn * 1000).toString()
     )
-    sessionStorage.setItem(
-      'refreshTokenExpiresAt',
-      (Date.now() + response.data.refreshTokenExpiresIn * 1000).toString()
-    )
 
     console.log('AccessToken has been refreshed')
 
