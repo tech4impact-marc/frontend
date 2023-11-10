@@ -1,45 +1,90 @@
-import ArrowBackIos from '@mui/icons-material/ArrowBackIos'
 import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
+import SwipeableDrawer from '@mui/material/SwipeableDrawer'
+import { useState } from 'react'
 
 import PostCard from './PostCard'
+
+const drawerBleeding = 240
 
 interface PostProps {
   data: any
   onClickBack: () => void
 }
 
-const CustomBox = styled(Box)`
-  flex-grow: 1;
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  padding: 15px;
-  background-color: white;
-  z-index: 100;
-`
+const ListContainer = styled('div')(() => ({
+  overflow: 'auto',
+  maxHeight: '100vh',
+  marginTop: 8,
+}))
+
+const CustomSwipeableDrawer = styled(SwipeableDrawer)({
+  '& .MuiDrawer-paper': {
+    overflowY: 'visible',
+    height: `calc(100% - ${drawerBleeding - 14}px)`,
+  },
+  '& .MuiBackdrop-root': {
+    background: 'white',
+  },
+})
 
 export default function Post(props: PostProps) {
-  console.log(props.data)
+  const [open, setOpen] = useState(false)
+
+  const handleClose = () => {
+    setOpen(false)
+    props.onClickBack()
+  }
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
 
   return (
-    <CustomBox>
-      <IconButton onClick={props.onClickBack} sx={{ zIndex: 1, mb: 1, color: 'primary.dark' }}>
-        <ArrowBackIos />
-      </IconButton>
-      <Grid
-        container
-        spacing={2}
-        direction="row"
-        justifyContent="flex-start"
-        alignItems="flex-start"
+    <CustomSwipeableDrawer
+      anchor="bottom"
+      open={open}
+      onClose={handleClose}
+      onOpen={handleOpen}
+      disableSwipeToOpen={false}
+      swipeAreaWidth={drawerBleeding + 14}
+      ModalProps={{
+        keepMounted: true,
+      }}
+    >
+      <Box
+        sx={{
+          position: 'relative',
+          marginTop: `${-drawerBleeding}px`,
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+          visibility: 'visible',
+          right: 0,
+          left: 0,
+          backgroundColor: 'white',
+        }}
       >
-        {props.data.map((post: any, index: number) => (
-          <PostCard data={post} index={index} key={index} />
-        ))}
-      </Grid>
-    </CustomBox>
+        <Box
+          sx={{
+            height: 6,
+            width: 40,
+            backgroundColor: 'gray',
+            borderRadius: 2,
+            position: 'absolute',
+            top: 8,
+            left: 'calc(50% - 20px)',
+          }}
+        ></Box>
+
+        <ListContainer>
+          <Stack spacing={2}>
+            {props.data.map((post: any, index: number) => (
+              <PostCard data={post} index={index} key={index} />
+            ))}
+          </Stack>
+        </ListContainer>
+      </Box>
+    </CustomSwipeableDrawer>
   )
 }

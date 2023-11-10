@@ -6,7 +6,7 @@ import HeaderLayout from '@/components/Layout/HeaderLayout'
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  return <>Main Page</>
+  return <>Home</>
 }
 
 Home.getLayout = (page: ReactElement) => <HeaderLayout>{page}</HeaderLayout>

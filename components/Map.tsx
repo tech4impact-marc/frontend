@@ -134,7 +134,7 @@ const Map = ({ data }: MapProps) => {
     // 맵 생성 및 지정
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/hhkang/clna9zzp8009j01pydu7133n2',
+      style: 'mapbox://styles/hhkang/cloliiuhi002p01r779iv0a78',
       center: [lng, lat],
       zoom: zoom,
       maxBounds: bounds,

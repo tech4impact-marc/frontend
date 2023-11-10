@@ -1,10 +1,11 @@
-import { CardActionArea, CardContent, CardMedia } from '@mui/material'
-import Avatar from '@mui/material/Avatar'
+import FavoriteIcon from '@mui/icons-material/FavoriteBorder'
+import { IconButton } from '@mui/material'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
+import Image from 'next/image'
 import { useState } from 'react'
+import { Carousel } from 'react-responsive-carousel'
 
 import PostDialog from './PostDialog'
 
@@ -24,34 +25,54 @@ export default function PostCard({ index, data }: PostCardProps) {
     setShowDialog(false)
   }
 
+  const handleCardImageClick = () => {
+    setShowDialog(true)
+  }
+
   return (
     <>
-      <Grid item xs={6} sm={6} md={6} key={data.properties?.title}>
-        <Card
-          elevation={3}
-          sx={{
-            textAlign: 'center',
-            typography: 'h6',
-          }}
+      <Card elevation={0}>
+        <Box
+          width={'Calc(100vw - 40px)'}
+          mb={'12px'}
+          mt={'12px'}
+          ml={'20px'}
+          mr={'20px'}
+          display={'flex'}
+          justifyContent={'space-between'}
         >
-          <CardActionArea onClick={handleCardClick}>
-            <CardMedia
-              component="img"
-              image={data.properties?.image_url ?? ''}
-              alt={`post ${index} image`}
-            />
-            <CardContent>
-              <Typography>{data.properties?.title}</Typography>
-              <Box display="flex" alignItems="center">
-                <Avatar alt="User name" sx={{ width: 30, height: 30 }}></Avatar>
-                <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                  user name
-                </Typography>
-              </Box>
-            </CardContent>
-          </CardActionArea>
-        </Card>
-      </Grid>
+          <Box width={'80%'} onClick={handleCardClick}>
+            <Typography
+              fontSize={'18px'}
+              fontWeight={700}
+              gutterBottom
+            >{`${data.properties?.address} 앞바다`}</Typography>
+            <Typography
+              fontSize={'12px'}
+              fontWeight={400}
+            >{`${data.properties?.year}년 ${data.properties?.month}월 ${data.properties?.day}일`}</Typography>
+          </Box>
+          <IconButton>
+            <FavoriteIcon />
+          </IconButton>
+        </Box>
+
+        <Carousel
+          centerMode={true}
+          centerSlidePercentage={40}
+          showThumbs={false}
+          showStatus={false}
+          showIndicators={false}
+          infiniteLoop={true}
+          onClickItem={handleCardImageClick}
+        >
+          {data.properties?.image_url_list.map((image: string, index: number) => (
+            <Box key={index} mr={'4px'}>
+              <Image src={image} width={156} height={222} alt="post-image"></Image>
+            </Box>
+          ))}
+        </Carousel>
+      </Card>
       <PostDialog data={data} open={showDialog} onClose={handleDialogClose}></PostDialog>
     </>
   )
