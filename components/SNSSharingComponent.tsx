@@ -1,8 +1,9 @@
 import CloseIcon from '@mui/icons-material/Close'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import GetAppIcon from '@mui/icons-material/GetApp'
+import InstagramIcon from '@mui/icons-material/Instagram'
 import ShareIcon from '@mui/icons-material/Share'
-import { Box, Button, IconButton, Modal } from '@mui/material'
+import { Box, Button, Divider, IconButton, Modal, Typography } from '@mui/material'
 import React, { useState } from 'react'
 
 declare global {
@@ -26,6 +27,7 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
   const [isKakaoInitialized, setKakaoInitialized] = useState(false)
 
   const handleDownload = () => {
+    alert('다운로드된 이미지는 브라우저의 다운로드 폴더에서 확인해주세요.')
     const link = document.createElement('a')
     link.href = imageUrl
     link.download = 'marc-downloaded-image.jpg' // 다운로드될 파일 이름 설정
@@ -67,14 +69,26 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
       setKakaoInitialized(true)
     }
     const staticWebUrl = process.env.NEXT_PUBLIC_WEBURL // 본인 URL
-    const imgUrl = staticWebUrl + '/' + imageUrl // 공유화면에서 보여줄 이미지 주소(현재 X)
 
-    window.Kakao.Link.sendDefault({
+    // let imgUrl
+    // window.Kakao.Share.uploadImage({
+    //   file: imageUrl,
+    // })
+    //   .then(function (response) {
+    //     console.log(response.infos.original.url)
+    //     imgUrl = response.infos.original.url
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error)
+    //   })
+
+    window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
-        title: '이거 보세요!', // 제목
-        description: '헤헤 찾았당', // 설명
-        imageUrl: imgUrl, // 공유할 이미지 URL
+        title: '제가 찾은 해양 생물이에요!', // 제목
+        description: '저희와 함께 해양 생물을 찾아보아요!', // 설명
+        // imageUrl: imgUrl, // 공유할 이미지 URL
+        imageUrl: 'https://ifh.cc/g/xBq9oj.webp',
         link: {
           mobileWebUrl: staticWebUrl, // 이동시킬 페이지
           webUrl: staticWebUrl,
@@ -93,8 +107,7 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
   }
 
   const handleInstagramShare = () => {
-    // 인스타그램 앱 열기 시도
-    window.location.href = `instagram://`
+    alert('이미지를 다운로드 후, 인스타그램 앱을 켜 공유해주세요.')
   }
 
   if (isMobile) {
@@ -112,40 +125,80 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400,
+            width: 300,
             bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
+            borderRadius: 3,
+            boxShadow: 10,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginBottom: '16px',
+            padding: '10px',
           }}
         >
-          <IconButton sx={{ position: 'absolute', top: 0, right: 0 }} onClick={onClose}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 'bold', fontSize: '20px', marginTop: '16px', marginBottom: '16px' }}
+          >
+            공유하기
+          </Typography>
+          <Divider sx={{ width: '100%', margin: '0' }} />
+          <IconButton
+            sx={{ position: 'absolute', top: 5, right: 5 }}
+            onClick={onClose}
+            color="inherit"
+          >
             <CloseIcon />
           </IconButton>
-          <img src={imageUrl} alt="Photo to be Shared" width="350" />
+          <img src={imageUrl} alt="Photo to be Shared" style={{ maxWidth: '300px' }} />
+          <Divider sx={{ width: '100%', margin: '0', marginBottom: '12px' }} />
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             startIcon={<GetAppIcon />}
             onClick={handleDownload}
+            sx={{
+              borderRadius: 0,
+              width: '100%',
+              height: '48px',
+              justifyContent: 'flex-start',
+              fontSize: '15px',
+              boxShadow: 'none',
+            }}
           >
-            DOWNLOAD IMAGE
+            이미지 다운로드
           </Button>
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             startIcon={<ShareIcon />}
             onClick={handleKakaoShare}
+            sx={{
+              borderRadius: 0,
+              width: '100%',
+              height: '48px',
+              justifyContent: 'flex-start',
+              fontSize: '15px',
+              boxShadow: 'none',
+            }}
           >
-            KakaoTalk으로 바로 공유하기
+            카카오톡으로 공유
           </Button>
           <Button
             variant="contained"
-            color="primary"
-            startIcon={<ShareIcon />}
+            color="secondary"
+            startIcon={<InstagramIcon />}
             onClick={handleInstagramShare}
+            sx={{
+              borderRadius: 0,
+              width: '100%',
+              height: '48px',
+              justifyContent: 'flex-start',
+              fontSize: '15px',
+              boxShadow: 'none',
+            }}
           >
-            Instagram 열기
+            인스타그램에 공유
           </Button>
         </Box>
       </Modal>
@@ -165,30 +218,60 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400,
             bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
+            borderRadius: 3,
+            boxShadow: 10,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginBottom: '16px',
           }}
         >
-          <IconButton sx={{ position: 'absolute', top: 0, right: 0 }} onClick={onClose}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 'bold', fontSize: '20px', marginTop: '16px', marginBottom: '16px' }}
+          >
+            공유하기
+          </Typography>
+          <Divider sx={{ width: '100%', margin: '0' }} />
+          <IconButton
+            sx={{ position: 'absolute', top: 5, right: 5 }}
+            onClick={onClose}
+            color="inherit"
+          >
             <CloseIcon />
           </IconButton>
           <img src={imageUrl} alt="Photo to be Shared" />
+          <Divider sx={{ width: '100%', margin: '0', marginBottom: '12px' }} />
           <Button
             variant="contained"
             color="primary"
             startIcon={<GetAppIcon />}
             onClick={handleDownload}
+            sx={{
+              borderRadius: 0,
+              width: '100%',
+              height: '48px',
+              justifyContent: 'flex-start',
+              fontSize: '15px',
+              boxShadow: 'none',
+            }}
           >
-            DOWNLOAD IMAGE
+            이미지 다운로드
           </Button>
           <Button
             variant="contained"
             color="primary"
             startIcon={<ContentCopyIcon />}
             onClick={handleCopyToClipboard}
+            sx={{
+              borderRadius: 0,
+              width: '100%',
+              height: '48px',
+              justifyContent: 'flex-start',
+              fontSize: '15px',
+              boxShadow: 'none',
+            }}
           >
             이미지를 클립보드에 복사
           </Button>
