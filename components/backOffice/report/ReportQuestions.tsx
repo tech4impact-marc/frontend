@@ -2,7 +2,7 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import { MenuItem, Select, Switch, TextField, Typography } from '@mui/material'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Option } from '@/components/form/AnswerChoice'
 import { Question } from '@/components/form/FormOverlay'
@@ -29,15 +29,13 @@ const questionOptions = [
 const ReportQuestion = ({
   selectedAnimal,
   question,
-  updateQuestion,
+  setUpdates,
 }: {
   selectedAnimal: number
   question: Question
-  updateQuestion: (question: Question, add: boolean) => void
+  setUpdates: () => void
 }) => {
-  const { id, ...rest } = useMemo(() => question, [selectedAnimal, question])
-
-  const [localQuestion, setLocalQuestion] = useState<ReportQuestion>(rest)
+  const [localQuestion, setLocalQuestion] = useState<Question>(question)
 
   console.log(localQuestion)
 
@@ -59,6 +57,7 @@ const ReportQuestion = ({
       .then((response) => {
         if (response.status == 200) {
           console.log(response)
+          setUpdates()
           alert('변경사항이 저장되었습니다')
         } else {
           console.log(response)
@@ -81,7 +80,7 @@ const ReportQuestion = ({
       .then((response) => {
         if (response.status == 200) {
           console.log(response)
-          updateQuestion(question, false)
+          setUpdates()
           alert('질문이 삭제되었습니다')
         } else {
           console.log(response)
@@ -159,10 +158,34 @@ const ReportQuestion = ({
       {localQuestion.type.includes('MULTIPLE_CHOICE') && (
         <ReportQuestionsOptions
           selectedAnimal={selectedAnimal}
-          options={question.options}
-          question={question}
-          updateQuestion={updateQuestion}
-          setLocalQuestion={setLocalQuestion}
+          options={localQuestion.options}
+          question={localQuestion}
+          setUpdates={setUpdates}
+          updateOptions={(id: number, value?: string | Option, action?: string) => {
+            if (!action) {
+              setLocalQuestion((prevLocalQuestion) => {
+                const updatedOptions = prevLocalQuestion.options.map((prevOption, i) => {
+                  if (prevOption.id === id) {
+                    return { ...prevOption, value: value as string }
+                  }
+                  return prevOption
+                })
+                return { ...prevLocalQuestion, options: updatedOptions }
+              })
+            } else if (action == 'DELETE') {
+              setLocalQuestion((prevLocalQuestion) => {
+                const updatedOptions = prevLocalQuestion.options.filter(
+                  (prevOption) => prevOption.id !== id
+                )
+                return { ...prevLocalQuestion, options: updatedOptions }
+              })
+            } else if (action == 'CREATE' && value) {
+              setLocalQuestion((prevLocalQuestion) => {
+                const updatedOptions = [...prevLocalQuestion.options, value as Option]
+                return { ...prevLocalQuestion, options: updatedOptions }
+              })
+            }
+          }}
         />
       )}
       <div style={{ marginLeft: 'auto', display: 'flex', columnGap: '1rem' }}>
@@ -180,14 +203,10 @@ const ReportQuestion = ({
 interface ReportTypeProps {
   selectedAnimal: number
   questions: Question[]
-  updateQuestion: (question: Question, add: boolean) => void
+  setUpdates: () => void
 }
 
-const ReportQuestions: React.FC<ReportTypeProps> = ({
-  selectedAnimal,
-  questions,
-  updateQuestion,
-}) => {
+const ReportQuestions: React.FC<ReportTypeProps> = ({ selectedAnimal, questions, setUpdates }) => {
   const handleNew = () => {
     const initData = {
       questionNumber: questions.length + 1,
@@ -205,7 +224,7 @@ const ReportQuestions: React.FC<ReportTypeProps> = ({
       .then((response) => {
         if (response.status == 200) {
           console.log(response)
-          updateQuestion({ ...initData, id: response.data.id }, true)
+          setUpdates()
           alert('질문이 추가되었습니다')
         } else {
           console.log(response)
@@ -224,7 +243,7 @@ const ReportQuestions: React.FC<ReportTypeProps> = ({
           key={index}
           selectedAnimal={selectedAnimal}
           question={question}
-          updateQuestion={updateQuestion}
+          setUpdates={setUpdates}
         />
       ))}
       <StyledContainerOne

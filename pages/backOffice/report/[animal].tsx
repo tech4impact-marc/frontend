@@ -27,6 +27,7 @@ const BackOfficeForm = () => {
   const [questions, setQuestions] = useState<Question[]>([])
   const [responseType, setResponseType] = useState<ReportTypeSimpleResponseDto | null>(null)
   const [tab, setTab] = useState<number>(1)
+  const [updates, setUpdates] = useState<number>(0)
 
   useEffect(() => {
     if (!selectedAnimal) {
@@ -51,7 +52,7 @@ const BackOfficeForm = () => {
       .catch((err) => {
         console.log(err.message)
       })
-  }, [selectedAnimal])
+  }, [selectedAnimal, updates])
 
   return (
     <React.Fragment>
@@ -94,23 +95,7 @@ const BackOfficeForm = () => {
         <ReportQuestions
           selectedAnimal={selectedAnimal}
           questions={questions}
-          updateQuestion={(question: Question, add: boolean) => {
-            if (add) {
-              setQuestions((prevQuestions) => {
-                const updatedQuestions = prevQuestions.filter(
-                  (currQuestion) => currQuestion.id !== question.id
-                )
-                return [...updatedQuestions, question]
-              })
-            } else {
-              setQuestions((prevQuestions) => {
-                const updatedQuestions = prevQuestions.filter(
-                  (currQuestion) => currQuestion.id !== question.id
-                )
-                return updatedQuestions
-              })
-            }
-          }}
+          setUpdates={() => setUpdates((prevUpdates) => prevUpdates + 1)}
         />
       )}
     </React.Fragment>

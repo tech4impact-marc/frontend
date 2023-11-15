@@ -24,22 +24,16 @@ const ReportQuestionsOptions = ({
   selectedAnimal,
   options,
   question,
-  updateQuestion,
-  setLocalQuestion,
+  setUpdates,
+  updateOptions,
 }: {
   selectedAnimal: number
   options: Option[]
   question: Question
-  updateQuestion: (question: Question, add: boolean) => void
-  setLocalQuestion: React.Dispatch<React.SetStateAction<ReportQuestion>>
+  setUpdates: () => void
+  updateOptions: (id: number, value?: string | Option, action?: string) => void
 }) => {
-  const handleDeleteOption = ({
-    e,
-    id,
-  }: {
-    e: React.MouseEvent<HTMLAnchorElement>
-    id: number
-  }) => {
+  function handleDeleteOption(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) {
     axios
       .delete(
         `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${selectedAnimal}/questions/${question.id}/options/${id}`
@@ -47,11 +41,32 @@ const ReportQuestionsOptions = ({
       .then((response) => {
         if (response.status == 200) {
           console.log(response)
-          setLocalQuestion((prevLocalQuestion) => {
-            const updatedOptions = prevLocalQuestion.options.filter((option, i) => option.id !== id)
-            return { ...prevLocalQuestion, options: updatedOptions }
-          })
+          setUpdates()
+          updateOptions(id, undefined, 'DELETE')
           alert('옵션이 삭제되었습니다')
+        } else {
+          console.log(response)
+          alert('오류가 있었습니다')
+        }
+      })
+      .catch((err) => {
+        console.log(err.message)
+        alert('오류가 있었습니다')
+      })
+  }
+
+  function handleSubmit(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) {
+    const currentOption = options.find((option) => option.id == id)
+    axios
+      .patch(
+        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${selectedAnimal}/questions/${question.id}/options/${id}`,
+        currentOption
+      )
+      .then((response) => {
+        if (response.status == 200) {
+          console.log(response)
+          setUpdates()
+          alert('변경사항이 저장되었습니다')
         } else {
           console.log(response)
           alert('오류가 있었습니다')
@@ -76,15 +91,7 @@ const ReportQuestionsOptions = ({
       .then((response) => {
         if (response.status == 200) {
           console.log(response)
-          setLocalQuestion((prevLocalQuestion) => ({
-            //do we need to also update questions??
-            ...prevLocalQuestion,
-            options: [
-              ...question.options,
-              { answerNumber: question.options.length + 1, value: '', id: response.data.id },
-            ],
-          }))
-          //   updateQuestion(localQuestion)
+          updateOptions(response.data.id, response.data, 'CREATE')
           alert('옵션이 추가되었습니다')
         } else {
           console.log(response)
@@ -105,23 +112,12 @@ const ReportQuestionsOptions = ({
           <TextField
             value={option.value}
             style={{ flex: '9' }}
-            onChange={(e) => {
-              setLocalQuestion((prevLocalQuestion) => {
-                const updatedOptions = prevLocalQuestion.options.map((prevOption, i) => {
-                  if (i === index) {
-                    return { ...prevOption, value: e.target.value }
-                  }
-                  return prevOption
-                })
-
-                return { ...prevLocalQuestion, options: updatedOptions }
-              })
-            }}
+            onChange={(e) => updateOptions(option.id, e.target.value)}
           />
           <StyledButton
             variant="contained"
             color="secondary"
-            onClick={handleNewOption}
+            onClick={(e) => handleSubmit(e, option.id)}
             disableElevation
           >
             저장하기
