@@ -6,16 +6,21 @@ import Script from 'next/script'
 import React, { useState } from 'react'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 
-import { LocationAnswerType, UpdateAnswersType } from '../AnswerChoice'
-
 require('dotenv').config()
 
-interface LocationAnswerProps {
-  currentAnswer: LocationAnswerType
-  updateAnswers: UpdateAnswersType
+interface Location {
+  latitude: number
+  longitude: number
+  address: string
+  addressDetail: string
 }
 
-export const LocationAnswer: React.FC<LocationAnswerProps> = ({ currentAnswer, updateAnswers }) => {
+interface LocationAnswerProps {
+  location: Location
+  setAnswer: (value: Location) => void
+}
+
+export const LocationAnswer: React.FC<LocationAnswerProps> = ({ location, setAnswer }) => {
   const { kakao } = window
   const [showMap, setShowMap] = useState(
     Array.from(document.scripts).some(
@@ -25,15 +30,11 @@ export const LocationAnswer: React.FC<LocationAnswerProps> = ({ currentAnswer, u
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    const updatedLocation: LocationAnswerType = {
-      ...currentAnswer,
-      value: {
-        ...(currentAnswer.value as LocationAnswerType['value']),
-        [name]: value,
-      },
+    const updatedLocation = {
+      ...location,
+      [name]: value,
     }
-    updateAnswers(true, updatedLocation)
-    console.log(updatedLocation)
+    setAnswer(updatedLocation)
   }
 
   const gatherLocation = () => {
@@ -41,18 +42,15 @@ export const LocationAnswer: React.FC<LocationAnswerProps> = ({ currentAnswer, u
       // const geocoder = kakao && kakao.maps && kakao.maps.services && new kakao.maps.services.Geocoder()
       const geocoder = new kakao.maps.services.Geocoder() //아마도 이미 로딩 완료 상태?? 아니면 미안합니다
       const callback = function (longitude: number, latitude: number, result: any, status: string) {
+        //any type..
         if (status === kakao.maps.services.Status.OK) {
-          const updatedLocation: LocationAnswerType = {
-            ...currentAnswer,
-            value: {
-              ...(currentAnswer.value as LocationAnswerType['value']),
-              latitude: latitude,
-              longitude: longitude,
-              address: result[0]?.road_address?.address_name || '', //도로명주소입니다!!!!
-            },
+          const updatedLocation = {
+            ...location,
+            latitude: latitude,
+            longitude: longitude,
+            address: result[0]?.road_address?.address_name || '', //도로명주소입니다!!!!
           }
-          updateAnswers(true, updatedLocation)
-          console.log(updatedLocation)
+          setAnswer(updatedLocation)
         }
       }
 
@@ -72,8 +70,8 @@ export const LocationAnswer: React.FC<LocationAnswerProps> = ({ currentAnswer, u
       )
     }
   }
-  const latitude = currentAnswer.value.latitude
-  const longitude = currentAnswer.value.longitude
+  const latitude = location.latitude ? location.latitude : 33.3846
+  const longitude = location.longitude ? location.longitude : 126.5535
 
   return (
     <FormControl fullWidth>
@@ -88,7 +86,7 @@ export const LocationAnswer: React.FC<LocationAnswerProps> = ({ currentAnswer, u
         <TextField
           variant="standard"
           label="위치"
-          value={currentAnswer.value.address}
+          value={location.address}
           name="address"
           onChange={handleTextChange}
           fullWidth
@@ -97,7 +95,7 @@ export const LocationAnswer: React.FC<LocationAnswerProps> = ({ currentAnswer, u
         <TextField
           variant="standard"
           label="상세 위치"
-          value={currentAnswer.value.addressDetail}
+          value={location.addressDetail}
           name="addressDetail"
           onChange={handleTextChange}
           fullWidth
@@ -117,6 +115,32 @@ export const LocationAnswer: React.FC<LocationAnswerProps> = ({ currentAnswer, u
             <MapMarker position={{ lat: latitude, lng: longitude }} />
           </Map>
         )}
+
+        {/* <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            columnGap: '1rem',
+            width: '100%',
+          }}
+        >
+          <TextField
+            variant="standard"
+            label="위도"
+            value={location.latitude ? location.latitude : ''}
+            name="latitude"
+            onChange={handleTextChange}
+            fullWidth
+          />{' '}
+          <TextField
+            variant="standard"
+            label="경도"
+            value={location.longitude ? location.longitude : ''}
+            name="longitude"
+            onChange={handleTextChange}
+            fullWidth
+          />
+        </div> */}
 
         <Button
           variant="contained"

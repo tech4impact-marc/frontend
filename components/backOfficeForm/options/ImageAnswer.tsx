@@ -5,8 +5,6 @@ import Script from 'next/script'
 import React, { useState } from 'react'
 import { Map } from 'react-kakao-maps-sdk'
 
-import { UpdateImageAnswersType } from '../AnswerChoice'
-
 require('dotenv').config()
 
 function formatDate(inputDate: string) {
@@ -31,23 +29,33 @@ function formatDate(inputDate: string) {
   return ''
 }
 
-interface ImageAnswerProps {
-  currentImageAnswers: File[]
-  updateImageAnswers: UpdateImageAnswersType
+interface Location {
+  latitude: number
+  longitude: number
+  address: string
+  addressDetail: string
 }
 
-const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateImageAnswers }) => {
+interface ImageAnswerProps {
+  selectedImages: string[]
+  setSelectedImages: (newValue: string[], newDate: string, newLocation: Location | boolean) => void
+}
+
+const ImageAnswer: React.FC<ImageAnswerProps> = ({ selectedImages, setSelectedImages }) => {
   const { kakao } = window
   const [showMap, setShowMap] = useState(
     Array.from(document.scripts).some(
       (script) => script.src.includes('kakao') && script.src.includes('maps')
     )
   )
+
   const handleImageChange = (e: React.ChangeEvent<any>) => {
     const file = e.target.files[0]
 
     if (file && file.type.startsWith('image/')) {
       EXIF.getData(file, function () {
+        const currentImages = [URL.createObjectURL(file), ...selectedImages]
+
         const EXIF_info = EXIF.getAllTags(this)
         const date = formatDate(EXIF_info.DateTime ? EXIF_info.DateTime : file.lastModifiedDate)
         const GPSLatitude = EXIF_info.GPSLatitude
@@ -74,16 +82,16 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
                 address: result[0]?.road_address?.address_name || '', //도로명주소입니다!!!!
                 addressDetail: '',
               }
-              updateImageAnswers(file, date, updatedLocation) // 날짜는 가장 최근에 업로드한 이미지의 날짜, GPS는 가장 최근에 업로드한 이미지 중 GPS가 있는 사진의 날짜
+              setSelectedImages(currentImages, date, updatedLocation) // 날짜는 가장 최근에 업로드한 이미지의 날짜, GPS는 가장 최근에 업로드한 이미지 중 GPS가 있는 사진의 날짜
             } else {
-              updateImageAnswers(file, date, false)
+              setSelectedImages(currentImages, date, false)
             }
           }
           geocoder.coord2Address(longitude, latitude, (result, status) =>
             callback(longitude, latitude, result, status)
           )
         } else {
-          updateImageAnswers(file, date, false)
+          setSelectedImages(currentImages, date, false)
         }
       })
     }
@@ -113,11 +121,7 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
           <label
             htmlFor="imageUpload"
             className="custom-file-upload"
-            style={{
-              ...containerStyle,
-              border: '1px dashed rgba(34, 48, 71, 0.50)',
-              cursor: 'pointer',
-            }}
+            style={{ ...containerStyle, border: '1px dashed rgba(34, 48, 71, 0.50)' }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -137,9 +141,8 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
             accept="image/*"
             onChange={handleImageChange}
             style={{ display: 'none' }}
-            // enctype="multipart/form-data"
           />
-          {currentImageAnswers && (
+          {selectedImages && (
             <div
               style={{
                 display: 'flex',
@@ -149,10 +152,11 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
                 width: '100%',
               }}
             >
-              {currentImageAnswers.map((image, index) => (
-                <ImageListItem key={index}>
+              {selectedImages.map((image) => (
+                <ImageListItem key={image}>
+                  hihi
                   <Image
-                    src={URL.createObjectURL(image)}
+                    src={image}
                     alt="Selected Image"
                     width={parseInt(containerStyle.width)}
                     height={parseInt(containerStyle.height)}

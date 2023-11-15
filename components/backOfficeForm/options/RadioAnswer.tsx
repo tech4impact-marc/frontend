@@ -1,3 +1,5 @@
+import 'dayjs/locale/ko'
+
 import {
   FormControl,
   FormControlLabel,
@@ -8,31 +10,31 @@ import {
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
-import { Option, TextAnswerType, UpdateAnswersType } from '../AnswerChoice'
-
-interface MultipleAnswerProps {
-  currentAnswer: TextAnswerType
-  updateAnswers: UpdateAnswersType
-  options: Option[]
+interface Option {
+  id: string
+  answerNumber: number
+  value: string
 }
 
-export const RadioAnswer: React.FC<MultipleAnswerProps> = ({
-  currentAnswer,
-  updateAnswers,
-  options,
-}) => {
+interface SelectAnswerProps {
+  answer: string
+  options: Option[]
+  setAnswer: (value: string) => void
+}
+
+export const RadioAnswer: React.FC<SelectAnswerProps> = ({ answer, setAnswer, options }) => {
   const [other, setOther] = useState('')
 
   useEffect(() => {
-    if (currentAnswer.value.includes('기타:')) {
-      setOther(currentAnswer.value.split(': ')[1])
+    if (answer.includes('기타:')) {
+      setOther(answer.split(': ')[1])
     } else {
       setOther('')
     }
-  }, [currentAnswer.value])
+  }, [answer])
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateAnswers(true, { ...currentAnswer, value: e?.target?.value })
+    setAnswer(e?.target?.value)
     if (e?.target?.value !== '기타') {
       setOther('')
     }
@@ -40,13 +42,13 @@ export const RadioAnswer: React.FC<MultipleAnswerProps> = ({
 
   const handleOtherTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOther(e?.target?.value)
-    updateAnswers(true, { ...currentAnswer, value: '기타: ' + e?.target?.value })
+    setAnswer('기타: ' + e?.target?.value)
   }
 
   return (
     <FormControl fullWidth>
       <RadioGroup
-        value={currentAnswer.value.includes('기타') ? '기타' : currentAnswer.value}
+        value={answer.includes('기타') ? '기타' : answer}
         onChange={handleTextChange}
         style={{ position: 'relative' }}
       >
@@ -64,6 +66,7 @@ export const RadioAnswer: React.FC<MultipleAnswerProps> = ({
                   <div style={{ marginRight: '10px', flexShrink: '0' }}>기타:</div>
                   <TextField
                     variant="standard"
+                    // placeholder="답변을 입력하세요"
                     value={other}
                     onChange={handleOtherTextChange}
                     fullWidth

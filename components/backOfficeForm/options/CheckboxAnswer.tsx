@@ -3,23 +3,21 @@ import 'dayjs/locale/ko'
 import { Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material'
 import React, { useState } from 'react'
 
-import { Option, TextAnswerType, UpdateAnswersType } from '../AnswerChoice'
-
-interface MultipleAnswerProps {
-  currentAnswer: TextAnswerType[]
-  updateAnswers: UpdateAnswersType
-  options: Option[]
+interface Option {
+  id: string
+  answerNumber: number
+  value: string
 }
 
-export const CheckboxAnswer: React.FC<MultipleAnswerProps> = ({
-  currentAnswer,
-  updateAnswers,
-  options,
-}) => {
+interface SelectAnswerProps {
+  answer: string
+  options: Option[]
+  setAnswer: (value: string) => void
+}
+
+export const CheckboxAnswer: React.FC<SelectAnswerProps> = ({ answer, setAnswer, options }) => {
   const [selectedOptions, setSelectedOptions] = useState<boolean[]>(
-    options.map((option) =>
-      currentAnswer.some((currentAnswer) => currentAnswer.value === option.value)
-    )
+    options.map((option) => answer.includes(option.value))
   )
 
   const handleTextChange = (index: number) => {
@@ -29,13 +27,11 @@ export const CheckboxAnswer: React.FC<MultipleAnswerProps> = ({
       newSelectedOptions[index] = !newSelectedOptions[index]
       return newSelectedOptions
     })
-
-    updateAnswers(newSelectedOptions[index], {
-      // add if newSelectedOptions[index] is true, else remove
-      type: currentAnswer[0].type,
-      questionId: currentAnswer[0].questionId,
-      value: options[index].value,
-    })
+    const selectedOptionsText = options
+      .filter((option, index) => newSelectedOptions[index])
+      .map((option) => option.value)
+      .join(', ')
+    setAnswer(selectedOptionsText)
   }
 
   return (

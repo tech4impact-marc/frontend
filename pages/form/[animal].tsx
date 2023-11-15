@@ -2,10 +2,18 @@ import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutl
 import { Button } from '@mui/material'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 
-import AnswerChoice from '@/components/form/AnswerChoice'
+import AnswerChoice, {
+  AnswerType,
+  currentAnswerType,
+  DateTimeAnswerType,
+  ImageAnswerType,
+  LocationAnswerType,
+  Option,
+  TextAnswerType,
+} from '@/components/form/AnswerChoice'
 
 type Animals = { dolphin: number; porpoise: number; turtle: number }
 
@@ -13,12 +21,6 @@ const animals: Animals = {
   dolphin: 1,
   porpoise: 2,
   turtle: 3,
-}
-
-interface Option {
-  id: string
-  answerNumber: number
-  value: string
 }
 
 interface Question {
@@ -31,21 +33,12 @@ interface Question {
 }
 
 interface Answer {
-  value: string | string[]
-  latitude: number
-  longitude: number
-  address: string
-  addressDetail: string
+  data: {
+    reportTypeId: keyof Animals
+    answers: AnswerType[]
+  }
+  [key: string]: string | any // binary format..??
 }
-
-interface Location {
-  latitude: number
-  longitude: number
-  address: string
-  addressDetail: string
-}
-
-// animals[selectedAnimal as keyof Animals], answers: []
 
 const Form = () => {
   const router = useRouter()
@@ -53,19 +46,73 @@ const Form = () => {
   const [title, setTitle] = useState()
   const [questions, setQuestions] = useState<Question[]>([])
   const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState<Answer[]>([])
+  const [answers, setAnswers] = useState<AnswerType[]>([])
+  const formData = useMemo(() => new FormData(), [])
+  const [images, setImages] = useState<File[]>([])
   const [dateIndex, setDateIndex] = useState(0)
   const [locationIndex, setLocationIndex] = useState(0)
-  const lastStep = answers?.length - 1
-  console.log()
-  const disableSkip =
-    questions[step] && answers[step] && (!!answers[step].value || !!answers[step].address) //only array for image, which is required??
-  const disableNext =
-    questions[step] &&
-    answers[step] &&
-    (!answers[step].value ||
-      (Array.isArray(answers[step].value) && answers[step].value.length === 0)) &&
-    !answers[step].address
+  const lastStep = questions?.length - 1
+
+  const returnCurrentAnswer = useCallback(() => {
+    const question = questions[step]
+    if (!questions[step]) {
+      return
+    }
+    const targetObjects = answers.filter((answer) => answer.questionId === questions[step].id)
+    if (targetObjects.length !== 0) {
+      // console.log(targetObjects)
+      return targetObjects
+    }
+
+    switch (question.type) {
+      case 'LOCATION':
+        return [
+          {
+            value: { latitude: 33.3846, longitude: 126.5535, address: '', addressDetail: '' },
+            type: question.type,
+            questionId: question.id,
+          } as LocationAnswerType,
+        ]
+      case 'MULTIPLE_CHOICE(MULTI)':
+      case 'MULTIPLE_CHOICE(SINGLE)':
+        return [
+          {
+            value: '',
+            type: question.type,
+            questionId: question.id,
+          } as TextAnswerType,
+        ]
+      case 'DATETIME':
+        return [
+          {
+            value: null,
+            type: question.type,
+            questionId: question.id,
+          } as DateTimeAnswerType,
+        ]
+      case 'FILE':
+        return [
+          {
+            value: { fileType: 'IMAGE', fileKey: '' },
+            type: question.type,
+            questionId: question.id,
+          } as ImageAnswerType,
+        ]
+    }
+  }, [questions, answers, step])
+  const currentAnswer: currentAnswerType = returnCurrentAnswer() as currentAnswerType
+
+  const currentAnswerAnswered =
+    currentAnswer &&
+    currentAnswer.length !== 0 &&
+    ((currentAnswer[0].type !== 'FILE' &&
+      currentAnswer[0].type !== 'LOCATION' &&
+      currentAnswer[0].value) ||
+      (currentAnswer[0].type == 'FILE' && (currentAnswer[0] as ImageAnswerType).value?.fileKey) ||
+      (currentAnswer[0].type == 'LOCATION' &&
+        (currentAnswer[0] as LocationAnswerType).value?.address))
+  const disableSkip = questions[step] && currentAnswer.length !== 0 && !!currentAnswerAnswered //only array for image, which is required??
+  const disableNext = questions[step] && currentAnswer.length !== 0 && !currentAnswerAnswered //todo
 
   useEffect(() => {
     if (!selectedAnimal) {
@@ -83,122 +130,111 @@ const Form = () => {
         const sortedQuestions = response.data.questions.sort(
           (a: Question, b: Question) => a.questionNumber - b.questionNumber
         )
-        console.log(sortedQuestions)
         setQuestions(sortedQuestions)
-        const initialResponses: Answer[] = sortedQuestions.map((question: Question) => {
-          if (question.type === 'LOCATION') {
-            setLocationIndex(question.questionNumber - 1) //고쳐
-            return {
-              latitude: null,
-              longitude: null,
-              isMain: question.required,
-              address: '',
-              addressDetail: '',
-              type: question.type,
-              questionId: question.id,
-            }
-          } else if (question.type === 'FILE') {
-            return {
-              value: [],
-              isMain: question.required,
-              type: question.type,
-              questionId: question.id,
-            }
-          } else if (question.type === 'DATETIME') {
-            setDateIndex(question.questionNumber - 1)
-            return {
-              value: '',
-              isMain: question.required,
-              type: question.type,
-              questionId: question.id,
-            }
-          }
-          return {
-            value: '',
-            isMain: question.required,
-            type: question.type,
-            questionId: question.id,
-          }
-        })
+        console.log(sortedQuestions)
 
-        setAnswers(initialResponses) //initialize answers again
+        for (const question of sortedQuestions) {
+          if (question.type === 'LOCATION') {
+            setLocationIndex(question.id)
+          } else if (question.type === 'DATETIME') {
+            setDateIndex(question.id)
+          }
+        }
       })
       .catch((err) => {
         console.log(err.message)
       })
   }, [selectedAnimal])
 
-  // useEffect(() => {
-  //   console.log(questions)
-  //   console.log(answers)
-  // }, [answers, questions])
+  const updateAnswers = useCallback(
+    (changeType: Boolean, newAnswer: AnswerType | undefined) => {
+      if (!currentAnswer) {
+        // console.log('CURRENT NULL ERROR', currentAnswer)
+        return
+      }
 
-  const updateAnswers = useCallback((i: number, type: string, newValue: string | Location) => {
-    setAnswers((prevAnswers: Answer[]) => {
-      const updatedAnswers = prevAnswers.map((answer, index) => {
-        if (index === i) {
-          if (type == 'LOCATION') {
-            const { latitude, longitude, address, addressDetail } = newValue as Location
-            return {
-              ...answer,
-              latitude: latitude,
-              longitude: longitude,
-              address: address,
-              addressDetail: addressDetail,
-            }
-          } else {
-            return {
-              ...answer,
-              value: newValue as string,
-            }
-          }
-        }
-        return answer
-      })
-      return updatedAnswers
-    })
-  }, [])
-
-  const imageUpdateAnswers = useCallback(
-    (i: number, newValue: string[], newDate: string, newLocation: Location | boolean) => {
-      setAnswers((prevAnswers: Answer[]) => {
-        const updatedAnswers = prevAnswers.map((answer, index) => {
-          if (index === i) {
-            return {
-              ...answer,
-              value: newValue,
-            }
-          } else if (index === dateIndex) {
-            return {
-              ...answer,
-              value: newDate,
-            }
-          } else if (index === locationIndex && newLocation) {
-            //only if newLocation is not set as false
-            const { latitude, longitude, address, addressDetail } = newLocation as Location
-            return {
-              ...answer,
-              latitude: latitude,
-              longitude: longitude,
-              address: address,
-              addressDetail: addressDetail,
-            }
-          }
-          return answer
+      if (changeType == false) {
+        // for checkbox only, remove
+        setAnswers((prevAnswers: AnswerType[]) => {
+          const updatedAnswers = answers.filter(
+            (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
+          )
+          updatedAnswers.push(newAnswer as AnswerType)
+          // console.log(newAnswer, updatedAnswers, currentAnswer)
+          return updatedAnswers as AnswerType[]
         })
+      } else {
+        setAnswers((prevAnswers: AnswerType[]) => {
+          const updatedAnswers =
+            currentAnswer[0]?.type === 'MULTIPLE_CHOICE(MULTI)'
+              ? [...answers] // if checkbox don't erase
+              : answers.filter(
+                  (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
+                )
+          updatedAnswers.push(newAnswer as AnswerType)
+          // console.log(newAnswer, updatedAnswers, currentAnswer)
+          return updatedAnswers as AnswerType[]
+        })
+      }
+    },
+    [currentAnswer, answers]
+  )
+
+  const updateImageAnswers = useCallback(
+    (file: File, newDate: Date, newLocation: LocationAnswerType['value'] | boolean) => {
+      const currentImages = [file, ...images]
+      setImages(currentImages)
+
+      setAnswers((prevAnswers: AnswerType[]) => {
+        let updatedAnswers = answers.filter(
+          (prevAnswers) =>
+            prevAnswers.questionId !== currentAnswer[0]?.questionId ||
+            prevAnswers.questionId !== dateIndex ||
+            (newLocation && prevAnswers.questionId !== locationIndex)
+        )
+        updatedAnswers.push({
+          ...currentAnswer[0],
+          value: { fileType: 'IMAGE', fileKey: `image_${images.length}` },
+        } as ImageAnswerType)
+        updatedAnswers.push({
+          questionId: dateIndex,
+          type: 'DATETIME',
+          value: newDate,
+        } as DateTimeAnswerType)
+        if (newLocation) {
+          updatedAnswers.push({
+            questionId: locationIndex,
+            type: 'LOCATION',
+            value: newLocation as LocationAnswerType['value'],
+          } as LocationAnswerType)
+        }
+
         return updatedAnswers
       })
     },
-    [dateIndex, locationIndex]
+    [answers, dateIndex, locationIndex]
   )
 
   const handleNextButtonClick = () => {
+    console.log(answers)
     if (step == lastStep) {
-      console.log(answers)
-      axios
-        .post(`http://${process.env.NEXT_PUBLIC_IP_ADDRESS}:3000/reports`, {
+      formData.append(
+        'data',
+        JSON.stringify({
           reportTypeId: animals[selectedAnimal as keyof Animals],
-          answers: answers.slice(1), //FILE 없어용
+          answers: answers,
+        })
+      )
+      images.forEach((image, index) => {
+        formData.append(`image_${index}`, image) //data 먼저 추가하는거 짱 중요합니다...
+      })
+      for (const [key, value] of formData.entries()) {
+        console.log(key + ', ' + value)
+      }
+      axios
+        .post(`http://${process.env.NEXT_PUBLIC_IP_ADDRESS}:3000/reports`, formData, {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          transformRequest: (formData) => formData,
         })
         .then(function (response) {
           console.log(response)
@@ -257,7 +293,7 @@ const Form = () => {
           marginTop: '2rem',
         }}
       >
-        {questions[step] && answers[step] && (
+        {questions[step] && currentAnswer && (
           <>
             <div style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
               {questions[step].title}
@@ -266,25 +302,17 @@ const Form = () => {
               질문 추가설명!
             </div>
             <AnswerChoice
-              type={questions[step].type}
-              answer={answers[step].value}
-              setAnswer={(newValue) => updateAnswers(step, questions[step].type, newValue)}
-              setImageAnswer={(newValue: string[], newDate: string, newLocation: Location) =>
-                imageUpdateAnswers(step, newValue, newDate, newLocation)
-              }
-              location={{
-                longitude: answers[step].longitude,
-                latitude: answers[step].latitude,
-                address: answers[step].address,
-                addressDetail: answers[step].addressDetail,
-              }}
               options={questions[step].options.sort((a, b) => a.answerNumber - b.answerNumber)}
+              currentAnswer={currentAnswer}
+              updateAnswers={updateAnswers}
+              currentImageAnswers={images}
+              updateImageAnswers={updateImageAnswers}
             />
           </>
         )}
       </div>
 
-      {questions[step] && answers[step] && !questions[step].required && (
+      {questions[step] && !questions[step].required && (
         <Button
           variant="text"
           onClick={handleNextButtonClick}

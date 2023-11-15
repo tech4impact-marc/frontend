@@ -5,54 +5,111 @@ import { DateAnswer } from './options/DateAnswer'
 import { ImageAnswer } from './options/ImageAnswer'
 import { LocationAnswer } from './options/LocationAnswer'
 import { RadioAnswer } from './options/RadioAnswer'
-import { SelectAnswer } from './options/SelectAnswer'
-import { ShortAnswer } from './options/ShortAnswer'
 
-interface Option {
+export type AnswerType = TextAnswerType | ImageAnswerType | LocationAnswerType | DateTimeAnswerType
+
+export interface Option {
   id: string
   answerNumber: number
   value: string
 }
 
-interface Location {
-  latitude: number
-  longitude: number
-  address: string
-  addressDetail: string
+interface CommonAnswerType {
+  type: string
+  questionId: number
+}
+
+export interface TextAnswerType extends CommonAnswerType {
+  value: string
+}
+
+export interface ImageAnswerType extends CommonAnswerType {
+  value: {
+    fileType: string //example: "IMAGE"
+    fileKey: string //example: "image1"
+  }
+  file?: File
+}
+
+export interface LocationAnswerType extends CommonAnswerType {
+  value: {
+    latitude: number
+    longitude: number
+    address: string
+    addressDetail: string
+  }
+}
+
+export interface DateTimeAnswerType extends CommonAnswerType {
+  value: Date | string | null //fix later :(
+}
+
+export type UpdateAnswersType = (changeType: Boolean, newAnswer: AnswerType | undefined) => void
+export type UpdateImageAnswersType = (
+  file: File,
+  newDate: DateTimeAnswerType['value'],
+  newLocation: LocationAnswerType['value'] | boolean
+) => void
+export type currentAnswerType = AnswerType[]
+
+export interface SingleAnswerProps {
+  currentAnswer: AnswerType
+  updateAnswers: UpdateAnswersType
 }
 
 interface AnswerTypeProps {
-  type: string
-  answer: string | string[]
-  setAnswer: (value: string | Location) => void
-  setImageAnswer: (newValue: string[], newDate: string, newLocation: Location | boolean) => void
-  location: Location
+  currentAnswer: currentAnswerType
+  updateAnswers: UpdateAnswersType
+  currentImageAnswers: File[]
+  updateImageAnswers: UpdateImageAnswersType
   options: Option[]
 }
 
 const AnswerChoice: React.FC<AnswerTypeProps> = ({
-  type,
-  answer,
-  setAnswer,
-  setImageAnswer,
-  location,
+  currentAnswer,
+  updateAnswers,
+  currentImageAnswers,
+  updateImageAnswers,
   options,
 }) => {
-  switch (type) {
-    case 'ShortAnswer':
-      return <ShortAnswer shortAnswer={answer as string} setShortAnswer={setAnswer} />
+  switch (currentAnswer[0].type) {
     case 'LOCATION':
-      return <LocationAnswer location={location} setAnswer={setAnswer} />
-    case 'SelectAnswer': //이거는 안 쓰는건감...
-      return <SelectAnswer answer={answer as string} setAnswer={setAnswer} options={options} />
+      return (
+        <LocationAnswer
+          currentAnswer={currentAnswer[0] as LocationAnswerType}
+          updateAnswers={updateAnswers}
+        />
+      )
     case 'MULTIPLE_CHOICE(MULTI)':
-      return <CheckboxAnswer answer={answer as string} setAnswer={setAnswer} options={options} />
+      return (
+        <CheckboxAnswer
+          currentAnswer={currentAnswer as TextAnswerType[]}
+          updateAnswers={updateAnswers}
+          options={options}
+        />
+      )
     case 'MULTIPLE_CHOICE(SINGLE)':
-      return <RadioAnswer answer={answer as string} setAnswer={setAnswer} options={options} />
+      return (
+        <RadioAnswer
+          currentAnswer={currentAnswer[0] as TextAnswerType}
+          updateAnswers={updateAnswers}
+          options={options}
+        />
+      )
     case 'DATETIME':
-      return <DateAnswer dateAnswer={answer as string} setDateAnswer={setAnswer} />
+      return (
+        <DateAnswer
+          currentAnswer={currentAnswer[0] as DateTimeAnswerType}
+          updateAnswers={updateAnswers}
+        />
+      )
     case 'FILE':
-      return <ImageAnswer selectedImages={answer as string[]} setSelectedImages={setImageAnswer} />
+      return (
+        <ImageAnswer
+          currentImageAnswers={currentImageAnswers}
+          updateImageAnswers={updateImageAnswers}
+        />
+      )
     default:
       return <></>
   }
