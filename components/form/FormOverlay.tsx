@@ -1,7 +1,6 @@
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined'
 import { Button } from '@mui/material'
 import axios from 'axios'
-import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 
@@ -15,14 +14,6 @@ import AnswerChoice, {
   TextAnswerType,
 } from '@/components/form/AnswerChoice'
 
-type Animals = { dolphin: number; porpoise: number; turtle: number }
-
-const animals: Animals = {
-  dolphin: 1,
-  porpoise: 2,
-  turtle: 3,
-}
-
 interface Question {
   id: number
   questionNumber: number
@@ -32,17 +23,7 @@ interface Question {
   options: Option[]
 }
 
-interface Answer {
-  data: {
-    reportTypeId: keyof Animals
-    answers: AnswerType[]
-  }
-  [key: string]: string | any // binary format..??
-}
-
-const Form = () => {
-  const router = useRouter()
-  const selectedAnimal = router.query.animal
+const FormOverlay = ({ selectedAnimal }: { selectedAnimal: number }) => {
   const [title, setTitle] = useState()
   const [questions, setQuestions] = useState<Question[]>([])
   const [step, setStep] = useState(0)
@@ -120,11 +101,7 @@ const Form = () => {
     }
 
     axios
-      .get(
-        `http://${process.env.NEXT_PUBLIC_IP_ADDRESS}:3000/reports/types/${
-          animals[selectedAnimal as keyof Animals]
-        }`
-      )
+      .get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${selectedAnimal}`)
       .then((response) => {
         setTitle(response.data.label) //change later if not using title
         const sortedQuestions = response.data.questions.sort(
@@ -221,7 +198,7 @@ const Form = () => {
       formData.append(
         'data',
         JSON.stringify({
-          reportTypeId: animals[selectedAnimal as keyof Animals],
+          reportTypeId: selectedAnimal,
           answers: answers,
         })
       )
@@ -232,7 +209,7 @@ const Form = () => {
         console.log(key + ', ' + value)
       }
       axios
-        .post(`http://${process.env.NEXT_PUBLIC_IP_ADDRESS}:3000/reports`, formData, {
+        .post(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports`, formData, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           transformRequest: (formData) => formData,
         })
@@ -259,6 +236,9 @@ const Form = () => {
         maxWidth: '400px',
         margin: 'auto',
         rowGap: '1rem',
+        zIndex: '10000',
+        position: 'absolute',
+        top: '0',
       }}
     >
       <div
@@ -335,4 +315,4 @@ const Form = () => {
   )
 }
 
-export default Form
+export default FormOverlay
