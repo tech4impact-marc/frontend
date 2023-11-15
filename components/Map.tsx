@@ -1,6 +1,8 @@
 import 'mapbox-gl/dist/mapbox-gl.css'
 
+import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined'
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 import mapboxgl, { LngLatBoundsLike } from 'mapbox-gl'
 import { MapLayerMouseEvent } from 'mapbox-gl'
@@ -59,8 +61,8 @@ const Map = ({ data }: MapProps) => {
       source: 'reports',
       filter: ['==', ['get', 'report_type'], dataType],
       paint: {
-        'circle-color': '#51bbd6',
-        'circle-radius': 15,
+        'circle-color': '#3478F5',
+        'circle-radius': 20,
       },
     })
 
@@ -78,8 +80,8 @@ const Map = ({ data }: MapProps) => {
       source: 'reports',
       filter: ['all', ['has', 'point_count'], ['get', `is_class${dataType}`]],
       paint: {
-        'circle-color': '#51bbd6',
-        'circle-radius': 25,
+        'circle-color': '#3478F5',
+        'circle-radius': 20,
       },
     })
 
@@ -92,7 +94,10 @@ const Map = ({ data }: MapProps) => {
       layout: {
         'text-field': ['get', 'point_count_abbreviated'],
         'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-        'text-size': 12,
+        'text-size': 15,
+      },
+      paint: {
+        'text-color': '#ffffff',
       },
     })
 
@@ -164,10 +169,23 @@ const Map = ({ data }: MapProps) => {
 
   return (
     <div>
-      <div style={{ position: 'absolute', width: '100%', display: 'flex' }}>
-        <TypeButton onClick={() => handleTypeClick(1)}>돌고래</TypeButton>
-        <TypeButton onClick={() => handleTypeClick(2)}>바다거북</TypeButton>
-        <TypeButton onClick={() => handleTypeClick(3)}>상괭이</TypeButton>
+      <div
+        style={{
+          position: 'absolute',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          padding: '16px',
+        }}
+      >
+        <div>
+          <TypeButton onClick={() => handleTypeClick(1)}>돌고래</TypeButton>
+          <TypeButton onClick={() => handleTypeClick(2)}>바다거북</TypeButton>
+          <TypeButton onClick={() => handleTypeClick(3)}>상괭이</TypeButton>
+        </div>
+        <IconButton sx={{ right: 0, zIndex: 1 }} size="large">
+          <NotificationsOutlinedIcon />
+        </IconButton>
       </div>
       {posts.length > 0 ? <PostList data={posts} onClickBack={handleBack} /> : null}
       <div

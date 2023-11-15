@@ -3,9 +3,9 @@ import { IconButton } from '@mui/material'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-import Image from 'next/image'
 import { useState } from 'react'
-import { Carousel } from 'react-responsive-carousel'
+
+import Carousel from '@/components/CardCarousel'
 
 import PostDialog from './PostDialog'
 
@@ -57,21 +57,7 @@ export default function PostCard({ index, data }: PostCardProps) {
           </IconButton>
         </Box>
 
-        <Carousel
-          centerMode={true}
-          centerSlidePercentage={40}
-          showThumbs={false}
-          showStatus={false}
-          showIndicators={false}
-          infiniteLoop={true}
-          onClickItem={handleCardImageClick}
-        >
-          {data.properties?.image_url_list.map((image: string, index: number) => (
-            <Box key={index} mr={'4px'}>
-              <Image src={image} width={156} height={222} alt="post-image"></Image>
-            </Box>
-          ))}
-        </Carousel>
+        <Carousel slides={data.properties?.image_url_list} onClick={handleCardImageClick} />
       </Card>
       <PostDialog data={data} open={showDialog} onClose={handleDialogClose}></PostDialog>
     </>

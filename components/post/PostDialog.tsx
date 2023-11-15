@@ -1,5 +1,8 @@
-import FavorIcon from '@mui/icons-material/Favorite'
+import Close from '@mui/icons-material/Close'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import IosShareIcon from '@mui/icons-material/IosShare'
 import { List, ListItem } from '@mui/material'
+import AppBar from '@mui/material/AppBar'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Dialog from '@mui/material/Dialog'
@@ -9,9 +12,9 @@ import Slide from '@mui/material/Slide'
 import { styled } from '@mui/material/styles'
 import { TransitionProps } from '@mui/material/transitions'
 import Typography from '@mui/material/Typography'
-import Image from 'next/image'
 import React from 'react'
-import { Carousel } from 'react-responsive-carousel'
+
+import Carousel from '@/components/PostCarousel'
 
 interface PostDialogProps {
   data: any
@@ -42,14 +45,14 @@ const Transition = React.forwardRef(function Transition(
 export default function PostDialog({ data, open, onClose }: PostDialogProps) {
   return (
     <Dialog fullScreen open={open} onClose={onClose} TransitionComponent={Transition}>
-      <Box position={'relative'} width={'390px'} height={'560px'}>
-        <IconButton onClick={onClose} sx={{ position: 'absolute', top: '20px', right: '20px' }}>
-          <FavorIcon />
+      <Box position={'relative'} height={'560px'}>
+        <Carousel slides={['/test.jpeg', '/test.jpeg', '/test.jpeg']}></Carousel>
+        <IconButton
+          onClick={onClose}
+          sx={{ position: 'absolute', top: '10px', left: '10px', color: '#ffffff' }}
+        >
+          <Close />
         </IconButton>
-        <Carousel showThumbs={false} showStatus={false} showIndicators={true} infiniteLoop={true}>
-          <Image src="/test.jpeg" alt="Post Image" width={390} height={560} />
-          <Image src="/test.jpeg" alt="Post Image" width={390} height={560} />
-        </Carousel>
       </Box>
       <Box>
         <Box display="flex" alignItems="center" ml={'20px'} mr={'20px'} mb={'16px'} mt={'24px'}>
@@ -90,6 +93,17 @@ export default function PostDialog({ data, open, onClose }: PostDialogProps) {
           </ParagraphBox>
         </List>
       </Box>
+      <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>
+        <IconButton>
+          <IosShareIcon />
+        </IconButton>
+        <Box display={'flex'} alignItems={'center'}>
+          <IconButton>
+            <FavoriteBorderIcon />
+          </IconButton>
+          <Typography fontSize={'15px'}>96</Typography>
+        </Box>
+      </AppBar>
     </Dialog>
   )
 }

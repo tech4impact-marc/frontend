@@ -1,4 +1,3 @@
-import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import '@/styles/globals.css'
 
 import { CssBaseline, ThemeProvider } from '@mui/material'
