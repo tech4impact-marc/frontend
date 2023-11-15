@@ -1,11 +1,28 @@
 import '@/styles/globals.css'
 
+import { CssBaseline, ThemeProvider } from '@mui/material'
+import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
+import type { ReactElement, ReactNode } from 'react'
 
-export default function App({ Component, pageProps }: AppProps) {
+import Layout from '@/components/layout/CommonLayout'
+import theme from '@/styles/theme'
+
+export type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page: ReactElement) => page)
+
   return (
-    <div style={{ backgroundColor: '#EEE' }}>
-      <Component {...pageProps} />
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
+    </ThemeProvider>
   )
 }

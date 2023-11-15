@@ -25,6 +25,7 @@
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
     "eslint-plugin-prettier": "^5.0.0",
+    "mapbox-gl": "^2.15.0",
     "exif-js": "^2.3.0",
     "mui": "^0.0.1",
     "next": "13.4.19",
@@ -36,6 +37,7 @@
     "typescript": "5.2.2"
   },
   "devDependencies": {
+    "@types/mapbox-gl": "^2.7.15",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",

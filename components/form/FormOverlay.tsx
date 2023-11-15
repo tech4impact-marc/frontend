@@ -1,5 +1,5 @@
-import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined'
-import { Button } from '@mui/material'
+import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded'
+import { Button, Typography } from '@mui/material'
 import axios from 'axios'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
@@ -14,6 +14,13 @@ import AnswerChoice, {
   TextAnswerType,
 } from '@/components/form/AnswerChoice'
 
+import {
+  StyledContainerHeader,
+  StyledContainerOne,
+  StyledContainerThree,
+  StyledContainerTwo,
+} from '../styledComponents/StyledContainer'
+
 interface Question {
   id: number
   questionNumber: number
@@ -23,12 +30,18 @@ interface Question {
   options: Option[]
 }
 
-const FormOverlay = ({ selectedAnimal }: { selectedAnimal: number }) => {
+const FormOverlay = ({
+  selectedAnimal,
+  setSelectedAnimal,
+}: {
+  selectedAnimal: number
+  setSelectedAnimal: (selectedAnimal: number) => void
+}) => {
   const [title, setTitle] = useState()
   const [questions, setQuestions] = useState<Question[]>([])
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<AnswerType[]>([])
-  const formData = useMemo(() => new FormData(), [])
+  const formData = useMemo(() => new FormData(), [selectedAnimal])
   const [images, setImages] = useState<File[]>([])
   const [dateIndex, setDateIndex] = useState(0)
   const [locationIndex, setLocationIndex] = useState(0)
@@ -41,7 +54,6 @@ const FormOverlay = ({ selectedAnimal }: { selectedAnimal: number }) => {
     }
     const targetObjects = answers.filter((answer) => answer.questionId === questions[step].id)
     if (targetObjects.length !== 0) {
-      // console.log(targetObjects)
       return targetObjects
     }
 
@@ -96,7 +108,7 @@ const FormOverlay = ({ selectedAnimal }: { selectedAnimal: number }) => {
   const disableNext = questions[step] && currentAnswer.length !== 0 && !currentAnswerAnswered //todo
 
   useEffect(() => {
-    if (!selectedAnimal) {
+    if (selectedAnimal <= 0) {
       return
     }
 
@@ -126,7 +138,6 @@ const FormOverlay = ({ selectedAnimal }: { selectedAnimal: number }) => {
   const updateAnswers = useCallback(
     (changeType: Boolean, newAnswer: AnswerType | undefined) => {
       if (!currentAnswer) {
-        // console.log('CURRENT NULL ERROR', currentAnswer)
         return
       }
 
@@ -137,7 +148,6 @@ const FormOverlay = ({ selectedAnimal }: { selectedAnimal: number }) => {
             (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
           )
           updatedAnswers.push(newAnswer as AnswerType)
-          // console.log(newAnswer, updatedAnswers, currentAnswer)
           return updatedAnswers as AnswerType[]
         })
       } else {
@@ -149,7 +159,6 @@ const FormOverlay = ({ selectedAnimal }: { selectedAnimal: number }) => {
                   (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
                 )
           updatedAnswers.push(newAnswer as AnswerType)
-          // console.log(newAnswer, updatedAnswers, currentAnswer)
           return updatedAnswers as AnswerType[]
         })
       }
@@ -193,7 +202,6 @@ const FormOverlay = ({ selectedAnimal }: { selectedAnimal: number }) => {
   )
 
   const handleNextButtonClick = () => {
-    console.log(answers)
     if (step == lastStep) {
       formData.append(
         'data',
@@ -205,82 +213,67 @@ const FormOverlay = ({ selectedAnimal }: { selectedAnimal: number }) => {
       images.forEach((image, index) => {
         formData.append(`image_${index}`, image) //data 먼저 추가하는거 짱 중요합니다...
       })
-      for (const [key, value] of formData.entries()) {
-        console.log(key + ', ' + value)
-      }
+      // for (const [key, value] of formData.entries()) {
+      //   console.log(key + ', ' + value)
+      // }
       axios
         .post(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports`, formData, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           transformRequest: (formData) => formData,
         })
         .then(function (response) {
-          console.log(response)
+          if (response.status == 200) {
+            setStep(0)
+            setAnswers([])
+            setImages([])
+            setSelectedAnimal(-1)
+          } else {
+            console.log(response)
+          }
         })
         .catch(function (error) {
           console.log(error)
         })
+    } else {
+      setStep((prevStep) => {
+        return Math.min(prevStep + 1, lastStep)
+      })
     }
-    setStep((prevStep) => {
-      return Math.min(prevStep + 1, lastStep)
-    })
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '1rem',
-        height: '100vh',
-        width: '100vw',
-        maxWidth: '400px',
-        margin: 'auto',
-        rowGap: '1rem',
-        zIndex: '10000',
-        position: 'absolute',
-        top: '0',
-      }}
-    >
-      <div
-        style={{
-          height: '30px',
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        <ArrowBackIosNewOutlinedIcon
-          onClick={() => {
-            setStep((prevStep) => {
-              return Math.max(prevStep - 1, 0)
-            })
-          }}
-          style={{ position: 'absolute' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-          }}
-        >
-          {title} 제보하기
+    <React.Fragment>
+      {questions && (
+        <div style={{ position: 'fixed', top: '0', width: '100%', height: '4px' }}>
+          <div
+            style={{
+              backgroundColor: 'black',
+              width: `${(step / questions.length) * 100}%`,
+              height: '4px',
+            }}
+          ></div>
         </div>
-      </div>
+      )}
 
-      <div
-        style={{
-          flex: '1',
-          marginTop: '2rem',
-        }}
-      >
+      <StyledContainerOne>
+        <StyledContainerHeader>
+          <ArrowBackIosRoundedIcon
+            onClick={() => {
+              setSelectedAnimal(0)
+            }}
+            sx={{ cursor: 'pointer', fontSize: (theme) => theme.typography.h2.fontSize }}
+          />
+        </StyledContainerHeader>
+
         {questions[step] && currentAnswer && (
-          <>
-            <div style={{ marginBottom: '0.5rem', fontSize: '1.2rem' }}>
-              {questions[step].title}
-            </div>
-            <div style={{ marginBottom: '1.5rem', fontSize: '0.7rem', color: '#AAA' }}>
-              질문 추가설명!
-            </div>
+          <StyledContainerThree>
+            <Typography variant="h2">{questions[step].title}</Typography>
+            <Typography variant="subtitle1">질문 추가설명!</Typography>
+          </StyledContainerThree>
+        )}
+
+        <StyledContainerTwo style={{ flex: '1' }}>
+          {questions[step] && currentAnswer && (
             <AnswerChoice
               options={questions[step].options.sort((a, b) => a.answerNumber - b.answerNumber)}
               currentAnswer={currentAnswer}
@@ -288,31 +281,34 @@ const FormOverlay = ({ selectedAnimal }: { selectedAnimal: number }) => {
               currentImageAnswers={images}
               updateImageAnswers={updateImageAnswers}
             />
-          </>
-        )}
-      </div>
+          )}
+        </StyledContainerTwo>
 
-      {questions[step] && !questions[step].required && (
-        <Button
-          variant="text"
-          onClick={handleNextButtonClick}
-          disabled={disableSkip}
-          disableElevation
-        >
-          {step == lastStep ? '건너뛰고 제출하기' : '건너뛰기'}
-        </Button>
-      )}
+        <StyledContainerTwo>
+          {questions[step] && !questions[step].required && (
+            <Button
+              variant="text"
+              onClick={handleNextButtonClick}
+              disabled={disableSkip}
+              disableElevation
+            >
+              {step == lastStep ? '건너뛰고 제출하기' : '건너뛰기'}
+            </Button>
+          )}
 
-      <Button
-        variant="contained"
-        onClick={handleNextButtonClick}
-        disabled={disableNext}
-        disableElevation
-      >
-        {step == lastStep ? '제출' : '다음'}
-      </Button>
-    </div>
+          <Button
+            variant="contained"
+            onClick={handleNextButtonClick}
+            disabled={disableNext}
+            disableElevation
+          >
+            {step == lastStep ? '제출' : '다음'}
+          </Button>
+        </StyledContainerTwo>
+      </StyledContainerOne>
+    </React.Fragment>
   )
 }
 
 export default FormOverlay
+// need to add getstaticprops

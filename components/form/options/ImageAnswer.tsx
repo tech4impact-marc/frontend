@@ -1,3 +1,4 @@
+import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import { ImageListItem } from '@mui/material'
 import EXIF from 'exif-js'
 import Image from 'next/image'
@@ -119,15 +120,7 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
               cursor: 'pointer',
             }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-            >
-              <path d="M14 8H8V14H6V8H0V6H6V0H8V6H14V8Z" fill="#223047" />
-            </svg>
+            <AddRoundedIcon sx={{ color: 'rgba(34, 48, 71, 0.50)' }} />
           </label>
           <input
             id="imageUpload"
@@ -144,7 +137,6 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
               style={{
                 display: 'flex',
                 columnGap: '1rem',
-                marginTop: '1.5rem',
                 overflow: 'scroll',
                 width: '100%',
               }}
