@@ -8,6 +8,11 @@ let theme = createTheme({
       light: '#ffffff',
       dark: '#115293',
     },
+    secondary: {
+      main: '#F2F2F2',
+      light: '#ffffff',
+      dark: '#BDBDBD',
+    },
   },
   typography: {
     button: {
@@ -40,6 +45,21 @@ let theme = createTheme({
           display: 'flex',
           flexDirection: 'column',
           maxWidth: '400px',
+          padding: '0',
+        },
+      },
+    },
+    MuiSwitch: {
+      styleOverrides: {
+        root: {
+          padding: '0.2rem',
+        },
+
+        thumb: {
+          padding: '0.5rem',
+        },
+        track: {
+          borderRadius: '10rem',
         },
       },
     },

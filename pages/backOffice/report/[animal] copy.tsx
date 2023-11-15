@@ -1,8 +1,10 @@
 import { FormControl, MenuItem, OutlinedInput, Select, TextField } from '@mui/material'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useState } from 'react'
 import React from 'react'
+
+import BackOfficeLayout from '@/components/layout/BackOfficeLayout'
 
 type Animals = { dolphin: number; porpoise: number; turtle: number }
 
@@ -53,7 +55,7 @@ const options = {
 
 // animals[selectedAnimal as keyof Animals], answers: []
 
-const Form = () => {
+const BackOfficeForm = () => {
   const router = useRouter()
   const selectedAnimal = router.query.animal
   const [title, setTitle] = useState()
@@ -80,7 +82,7 @@ const Form = () => {
 
     axios
       .get(
-        `http://${process.env.NEXT_PUBLIC_IP_ADDRESS}:3000/reports/types/${
+        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${
           animals[selectedAnimal as keyof Animals]
         }`
       )
@@ -202,7 +204,7 @@ const Form = () => {
     if (step == lastStep) {
       console.log(answers)
       axios
-        .post(`http://${process.env.NEXT_PUBLIC_IP_ADDRESS}:3000/reports`, {
+        .post(`http://${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports`, {
           reportTypeId: animals[selectedAnimal as keyof Animals],
           answers: answers.slice(1), //FILE 없어용
         })
@@ -219,18 +221,7 @@ const Form = () => {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '1rem',
-        height: '100vh',
-        width: '100vw',
-        maxWidth: '800px',
-        margin: 'auto',
-        rowGap: '1rem',
-      }}
-    >
+    <React.Fragment>
       <div
         style={{
           height: '30px',
@@ -256,7 +247,7 @@ const Form = () => {
               alignItems: 'flex-start',
               rowGap: '2rem',
               borderRadius: '8px',
-              background: '#FCFCFC',
+              // background: '#FCFCFC',
               marginBottom: '3rem',
               // background: #FFF;
             }}
@@ -359,8 +350,10 @@ const Form = () => {
           </div>
         ))}
       </div>
-    </div>
+    </React.Fragment>
   )
 }
 
-export default Form
+export default BackOfficeForm
+
+BackOfficeForm.getLayout = (page: ReactElement) => <BackOfficeLayout>{page}</BackOfficeLayout>

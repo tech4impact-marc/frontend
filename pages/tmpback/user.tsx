@@ -1,6 +1,5 @@
 import { Button } from '@mui/material'
 import { useRouter } from 'next/router'
-import React from 'react'
 
 interface backOfficeLinksKeys {
   '/backOffice/user': string
@@ -14,11 +13,7 @@ const backOfficeLinks: backOfficeLinksKeys = {
   '/backOffice/post': '포스트 관리',
 }
 
-interface MainLayoutProps {
-  children?: React.ReactNode
-}
-
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const Form = () => {
   const router = useRouter()
 
   return (
@@ -83,10 +78,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           background: '#FCFCFC',
         }}
       >
-        {/* <h2>{backOfficeLinks[router.pathname as keyof backOfficeLinksKeys]}</h2> */}
-        {children}
+        <h2>{backOfficeLinks[router.pathname as keyof backOfficeLinksKeys]}</h2>
       </div>
     </div>
   )
 }
-export default MainLayout
+export default Form

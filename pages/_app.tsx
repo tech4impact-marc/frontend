@@ -5,7 +5,6 @@ import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import type { ReactElement, ReactNode } from 'react'
 
-import Layout from '@/components/layout/CommonLayout'
 import theme from '@/styles/theme'
 
 export type NextPageWithLayout = NextPage & {
@@ -22,7 +21,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
+      {getLayout(<Component {...pageProps} />)}
     </ThemeProvider>
   )
 }

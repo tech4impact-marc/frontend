@@ -21,12 +21,13 @@ import {
   StyledContainerTwo,
 } from '../styledComponents/StyledContainer'
 
-interface Question {
+export interface Question {
   id: number
   questionNumber: number
   title: string
   type: string
   required: boolean
+  isMain: boolean
   options: Option[]
 }
 
@@ -37,7 +38,6 @@ const FormOverlay = ({
   selectedAnimal: number
   setSelectedAnimal: (selectedAnimal: number) => void
 }) => {
-  const [title, setTitle] = useState()
   const [questions, setQuestions] = useState<Question[]>([])
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<AnswerType[]>([])
@@ -50,6 +50,7 @@ const FormOverlay = ({
   const returnCurrentAnswer = useCallback(() => {
     const question = questions[step]
     if (!questions[step]) {
+      console.log(questions[step], questions, step)
       return
     }
     const targetObjects = answers.filter((answer) => answer.questionId === questions[step].id)
@@ -115,7 +116,6 @@ const FormOverlay = ({
     axios
       .get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${selectedAnimal}`)
       .then((response) => {
-        setTitle(response.data.label) //change later if not using title
         const sortedQuestions = response.data.questions.sort(
           (a: Question, b: Question) => a.questionNumber - b.questionNumber
         )
@@ -168,6 +168,10 @@ const FormOverlay = ({
 
   const updateImageAnswers = useCallback(
     (file: File, newDate: Date, newLocation: LocationAnswerType['value'] | boolean) => {
+      if (!currentAnswer) {
+        return
+      }
+
       const currentImages = [file, ...images]
       setImages(currentImages)
 
@@ -198,8 +202,12 @@ const FormOverlay = ({
         return updatedAnswers
       })
     },
-    [answers, dateIndex, locationIndex]
+    [answers, dateIndex, locationIndex, currentAnswer, images, selectedAnimal]
   )
+
+  useEffect(() => {
+    console.log(answers)
+  }, [answers])
 
   const handleNextButtonClick = () => {
     if (step == lastStep) {
@@ -259,6 +267,9 @@ const FormOverlay = ({
         <StyledContainerHeader>
           <ArrowBackIosRoundedIcon
             onClick={() => {
+              setStep(0)
+              setAnswers([])
+              setImages([])
               setSelectedAnimal(0)
             }}
             sx={{ cursor: 'pointer', fontSize: (theme) => theme.typography.h2.fontSize }}

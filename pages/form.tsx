@@ -2,7 +2,12 @@ import { Backdrop, Typography } from '@mui/material'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
-import { IconFDolphin, IconFSpoutingWhale, IconFTurtle } from 'react-fluentui-emoji/lib/flat'
+import {
+  IconFDolphin,
+  IconFFish,
+  IconFSpoutingWhale,
+  IconFTurtle,
+} from 'react-fluentui-emoji/lib/flat'
 
 import FormOverlay from '@/components/form/FormOverlay'
 import ShareOverlay from '@/components/form/ShareOverlay'
@@ -13,16 +18,16 @@ import {
   StyledContainerThree,
 } from '@/components/styledComponents/StyledContainer'
 
-interface Animal {
+export interface Animal {
   id: number
   label: string
   icon?: React.ReactNode
 }
 
-const iconList: { [key: number]: React.ReactNode } = {
-  1: <IconFDolphin size={'1.5rem'} />,
-  2: <IconFSpoutingWhale size={'1.5rem'} />,
-  3: <IconFTurtle size={'1.5rem'} />,
+const iconList: { [key: string]: React.ReactNode } = {
+  남방큰돌고래: <IconFDolphin size={'1.5rem'} />,
+  상괭이: <IconFSpoutingWhale size={'1.5rem'} />,
+  바다거북: <IconFTurtle size={'1.5rem'} />,
 }
 
 const Form = () => {
@@ -38,7 +43,7 @@ const Form = () => {
           response.data.map(({ id, label }: Animal) => ({
             id: id,
             label: label,
-            icon: iconList[id],
+            icon: iconList[label] ? iconList[label] : <IconFFish size={'1.5rem'} />,
           }))
         )
         console.log(response.data)

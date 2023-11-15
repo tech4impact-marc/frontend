@@ -9,7 +9,7 @@ import { RadioAnswer } from './options/RadioAnswer'
 export type AnswerType = TextAnswerType | ImageAnswerType | LocationAnswerType | DateTimeAnswerType
 
 export interface Option {
-  id: string
+  id: number
   answerNumber: number
   value: string
 }
