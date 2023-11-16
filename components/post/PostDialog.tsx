@@ -10,6 +10,7 @@ import IconButton from '@mui/material/IconButton'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import Slide from '@mui/material/Slide'
 import { styled } from '@mui/material/styles'
+import Toolbar from '@mui/material/Toolbar'
 import { TransitionProps } from '@mui/material/transitions'
 import Typography from '@mui/material/Typography'
 import React from 'react'
@@ -93,16 +94,19 @@ export default function PostDialog({ data, open, onClose }: PostDialogProps) {
           </ParagraphBox>
         </List>
       </Box>
-      <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>
-        <IconButton>
-          <IosShareIcon />
-        </IconButton>
-        <Box display={'flex'} alignItems={'center'}>
+      <AppBar position="fixed" sx={{ top: 'auto', bottom: 0, backgroundColor: '#eee' }}>
+        <Toolbar>
           <IconButton>
-            <FavoriteBorderIcon />
+            <IosShareIcon />
           </IconButton>
-          <Typography fontSize={'15px'}>96</Typography>
-        </Box>
+          <Box flexGrow={1} />
+          <Box display={'flex'} alignItems={'center'}>
+            <IconButton>
+              <FavoriteBorderIcon />
+            </IconButton>
+            <Typography fontSize={'15px'}>96</Typography>
+          </Box>
+        </Toolbar>
       </AppBar>
     </Dialog>
   )

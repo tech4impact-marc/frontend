@@ -8,15 +8,22 @@ type CarouselProps = {
   onClick?: () => void
 }
 
-export default function EmblaCarousel({ slides, onClick }: CarouselProps) {
-  const [emblaRef] = useEmblaCarousel({ dragFree: true, containScroll: 'trimSnaps' })
+export default function CardCarousel({ slides, onClick }: CarouselProps) {
+  const [emblaRef] = useEmblaCarousel({ containScroll: 'trimSnaps' })
 
   return (
-    <Box overflow={'hidden'} ref={emblaRef}>
-      <Box marginLeft={'20px'} display={'flex'}>
+    <Box overflow={'hidden'} ref={emblaRef} marginLeft={'20px'}>
+      <Box display={'flex'} sx={{ backfaceVisibility: 'hidden' }}>
         {slides.map((image: string, index: number) => (
-          <Box key={index} mr={'4px'}>
-            <Image src={image} width={156} height={222} alt="post-image" onClick={onClick}></Image>
+          <Box key={index} pl={'4px'}>
+            <Image
+              src={image}
+              width={156}
+              height={222}
+              alt="card-image"
+              onClick={onClick}
+              objectFit="cover"
+            ></Image>
           </Box>
         ))}
       </Box>

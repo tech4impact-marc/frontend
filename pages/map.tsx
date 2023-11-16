@@ -41,20 +41,19 @@ function convertDataToGeoJson(content: any) {
     type: 'FeatureCollection',
     features: content.map((element: any) => {
       const mainInfo = element.mainInfo
+      console.log(mainInfo.images)
       const dateValue = element.createdDateTime ? new Date(element.createdDateTime) : new Date()
       return {
         type: 'Feature',
         properties: {
           id: element.id,
-          title: 'Title',
-          description: 'Description',
           address: '애월읍',
-          image_url_list: ['/test.jpeg', '/test.jpeg', '/test.jpeg'],
-          report_type: 1, // dynamic하게 바꾸기
-          // save the date as a timestamp which was originally datetime in MySQL
+          image_url_list: mainInfo.images,
+          report_type: element.reportType.id, // dynamic하게 바꾸기
           year: dateValue.getFullYear(),
           month: dateValue.getMonth() + 1,
           day: dateValue.getDay(),
+          post_id: element.postId,
         },
         geometry: {
           type: 'Point',

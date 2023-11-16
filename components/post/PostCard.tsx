@@ -34,10 +34,7 @@ export default function PostCard({ index, data }: PostCardProps) {
       <Card elevation={0}>
         <Box
           width={'Calc(100vw - 40px)'}
-          mb={'12px'}
-          mt={'12px'}
-          ml={'20px'}
-          mr={'20px'}
+          margin={'12px 20px'}
           display={'flex'}
           justifyContent={'space-between'}
         >

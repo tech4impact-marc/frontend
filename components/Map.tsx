@@ -6,14 +6,36 @@ import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 import mapboxgl, { LngLatBoundsLike } from 'mapbox-gl'
 import { MapLayerMouseEvent } from 'mapbox-gl'
-import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 
 import PostList from './post/PostList'
 
+export interface reportGeoJson {
+  type: 'Feature'
+  properties: {
+    id: number
+    address: string
+    image_url_list: string[]
+    report_type: Number
+    year: number
+    month: number
+    day: number
+    post_id: number
+  }
+  geometry: {
+    type: 'Point'
+    coordinates: [number, number]
+  }
+}
+
+interface reportCollectionGeoJson {
+  type: 'FeatureCollection'
+  features: reportGeoJson[]
+}
+
 // 추후 데이터 따라서 설정 필요
 interface MapProps {
-  data: any
+  data: reportCollectionGeoJson
 }
 
 const TypeButton = styled(Button)`
@@ -24,13 +46,12 @@ const TypeButton = styled(Button)`
 const Map = ({ data }: MapProps) => {
   const mapContainer = useRef<any>(null)
   const map = useRef<mapboxgl.Map | null>(null)
-  const router = useRouter()
 
   // 위도, 경도, 줌 초깃값 설정
   const [lng, setLng] = useState(126.5311884)
   const [lat, setLat] = useState(33.4)
   const [zoom, setZoom] = useState(8)
-  const [posts, setPosts] = useState<any[]>([]) // 추후 데이터 따라서 타입 설정 필요
+  const [posts, setPosts] = useState<reportGeoJson[]>([]) // 추후 데이터 따라서 타입 설정 필요
   const [dataType, setDataType] = useState<number>(1) // 추후 데이터 따라서 타입 설정 필요
 
   // 지도 범위 제한 좌표 설정 (제주도)
@@ -49,8 +70,19 @@ const Map = ({ data }: MapProps) => {
   }
 
   const handleTypeClick = (index: number) => {
-    console.log(index)
+    if (!map.current || index == dataType) return
+    const currentMap = map.current
+
+    // 현재 타입 레이어 숨기기
+    currentMap.setLayoutProperty(`point${dataType}`, 'visibility', 'none')
+    currentMap.setLayoutProperty(`cluster${dataType}`, 'visibility', 'none')
+    currentMap.setLayoutProperty(`cluster-count${dataType}`, 'visibility', 'none')
+
+    // 현재 타입 변경
     setDataType(index)
+    currentMap.setLayoutProperty(`point${index}`, 'visibility', 'visible')
+    currentMap.setLayoutProperty(`cluster${index}`, 'visibility', 'visible')
+    currentMap.setLayoutProperty(`cluster-count${index}`, 'visibility', 'visible')
   }
 
   const renderClusterOfType = (currentMap: any, data: any, dataType: number) => {
@@ -64,13 +96,30 @@ const Map = ({ data }: MapProps) => {
         'circle-color': '#3478F5',
         'circle-radius': 20,
       },
+      visibility: 'none',
     })
 
     // 단일 포인트 클릭시 포스트 보여주기
     currentMap.on('click', `point${dataType}`, (e: MapLayerMouseEvent) => {
       if (!e?.features) return
       const feature = e.features[0]
-      setPosts([feature])
+      const properties = feature.properties
+      const newPost = {
+        type: 'Feature',
+        properties: {
+          id: properties?.id,
+          address: properties?.address,
+          image_url_list: JSON.parse(properties?.image_url_list),
+          report_type: properties?.report_type,
+          year: properties?.year,
+          month: properties?.month,
+          day: properties?.day,
+          post_id: properties?.post_id,
+        },
+        geometry: feature.geometry,
+      }
+
+      setPosts([newPost as reportGeoJson])
     })
 
     // 클러스터를 나타낼 레이어 생성
@@ -83,6 +132,7 @@ const Map = ({ data }: MapProps) => {
         'circle-color': '#3478F5',
         'circle-radius': 20,
       },
+      visibility: 'none',
     })
 
     // 클러스터의 숫자를 나타낼 레이어 생성
@@ -99,6 +149,7 @@ const Map = ({ data }: MapProps) => {
       paint: {
         'text-color': '#ffffff',
       },
+      visibility: 'none',
     })
 
     // 클러스터 클릭시 포스트 리스트 보여주기
@@ -119,15 +170,20 @@ const Map = ({ data }: MapProps) => {
       if (clusterSource?.type !== 'geojson') return
 
       // 추후 데이터 따라서 타입 설정 필요
-      clusterSource.getClusterLeaves(clusterId, pointCount, 0, (err: any, aFeatures: any) => {
-        if (err) {
-          console.error(err)
-          return
-        }
+      clusterSource.getClusterLeaves(
+        clusterId,
+        pointCount,
+        0,
+        (err: any, aFeatures: reportGeoJson[]) => {
+          if (err) {
+            console.error(err)
+            return
+          }
 
-        const newPosts: any[] = aFeatures.slice()
-        setPosts(newPosts)
-      })
+          const newPosts: reportGeoJson[] = aFeatures.slice()
+          setPosts(newPosts)
+        }
+      )
     })
   }
 
@@ -163,7 +219,15 @@ const Map = ({ data }: MapProps) => {
         },
       })
 
-      renderClusterOfType(map.current, data, dataType)
+      // 데이터 타입별로 레이어 생성
+      renderClusterOfType(map.current, data, 1)
+      renderClusterOfType(map.current, data, 2)
+      renderClusterOfType(map.current, data, 3)
+
+      // 현재 타입 레이어 보여주기
+      map.current.setLayoutProperty(`point${dataType}`, 'visibility', 'visible')
+      map.current.setLayoutProperty(`cluster${dataType}`, 'visibility', 'visible')
+      map.current.setLayoutProperty(`cluster-count${dataType}`, 'visibility', 'visible')
     })
   }, [])
 
