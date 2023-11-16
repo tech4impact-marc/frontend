@@ -36,7 +36,7 @@ let theme = createTheme({
     },
     h2: {
       fontSize: '1.5rem',
-      fontWeight: 600,
+      fontWeight: 700,
     },
     h3: {
       fontSize: '1.17rem',
