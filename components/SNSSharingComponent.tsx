@@ -1,7 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import GetAppIcon from '@mui/icons-material/GetApp'
-import InstagramIcon from '@mui/icons-material/Instagram'
 import ShareIcon from '@mui/icons-material/Share'
 import { Box, Button, Divider, IconButton, Modal, Typography } from '@mui/material'
 import React, { useState } from 'react'
@@ -106,10 +105,6 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
     })
   }
 
-  const handleInstagramShare = () => {
-    alert('이미지를 다운로드 후, 인스타그램 앱을 켜 공유해주세요.')
-  }
-
   if (isMobile) {
     // Mobile
     return (
@@ -183,22 +178,6 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
             }}
           >
             카카오톡으로 공유
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            startIcon={<InstagramIcon />}
-            onClick={handleInstagramShare}
-            sx={{
-              borderRadius: 0,
-              width: '100%',
-              height: '48px',
-              justifyContent: 'flex-start',
-              fontSize: '15px',
-              boxShadow: 'none',
-            }}
-          >
-            인스타그램에 공유
           </Button>
         </Box>
       </Modal>
