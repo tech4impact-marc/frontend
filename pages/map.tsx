@@ -48,7 +48,7 @@ function convertDataToGeoJson(content: any) {
         properties: {
           id: element.id,
           address: '애월읍',
-          image_url_list: mainInfo.images,
+          image_url_list: mainInfo.images.map((image: any) => image.fileUrl),
           report_type: element.reportType.id, // dynamic하게 바꾸기
           year: dateValue.getFullYear(),
           month: dateValue.getMonth() + 1,
