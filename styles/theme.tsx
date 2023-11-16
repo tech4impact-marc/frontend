@@ -4,10 +4,18 @@ import { createTheme, responsiveFontSizes } from '@mui/material/styles'
 let theme = createTheme({
   palette: {
     primary: {
-      main: '#b3d1c6',
+      main: '#000000',
       light: '#ffffff',
       dark: '#46747c',
     },
+    secondary: {
+      main: '#ffffff',
+      light: '#000000',
+      dark: '#46747c',
+    },
+  },
+  typography: {
+    fontFamily: 'Pretendard',
   },
 })
 
