@@ -36,7 +36,7 @@ let theme = createTheme({
     },
     h2: {
       fontSize: '1.5rem',
-      fontWeight: 700,
+      fontWeight: 600,
     },
     h3: {
       fontSize: '1.17rem',
@@ -89,14 +89,6 @@ let theme = createTheme({
         },
       },
     },
-    secondary: {
-      main: '#ffffff',
-      light: '#000000',
-      dark: '#46747c',
-    },
-  },
-  typography: {
-    fontFamily: 'Pretendard',
   },
 })
 
