@@ -89,6 +89,14 @@ let theme = createTheme({
         },
       },
     },
+    secondary: {
+      main: '#ffffff',
+      light: '#000000',
+      dark: '#46747c',
+    },
+  },
+  typography: {
+    fontFamily: 'Pretendard',
   },
 })
 
