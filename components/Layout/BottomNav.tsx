@@ -19,15 +19,15 @@ const CustomPaper = styled(Paper)`
 `
 export default function BottomNav() {
   const navLinks = [
-    { name: 'Map', icon: <LocationOn />, path: '/map' },
-    { name: '제보하기', icon: <FmdBad />, path: '/reportshare' },
+    { name: '지도', icon: <LocationOn />, path: '/map' },
+    { name: '제보하기', icon: <FmdBad />, path: '/' },
     { name: '마이페이지', icon: <Person />, path: '/' },
   ]
 
   const [value, setValue] = useState(1)
 
   return (
-    <CustomPaper elevation={3}>
+    <CustomPaper elevation={3} sx={{ zIndex: 10 }}>
       <BottomNavigation
         showLabels
         value={value}
