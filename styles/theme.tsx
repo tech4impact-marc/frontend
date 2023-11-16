@@ -73,7 +73,6 @@ let theme = createTheme({
         root: {
           display: 'flex',
           flexDirection: 'column',
-          maxWidth: '400px',
         },
       },
     },
