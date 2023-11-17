@@ -32,7 +32,7 @@ const DateAnswer: React.FC<DateAnswerProps> = React.memo(({ currentAnswer, updat
             }}
             minutesStep={30}
             timeSteps={{ minutes: 30 }}
-            slotProps={{ textField: { variant: 'standard' } }}
+            slotProps={{ textField: { variant: 'standard' }, popper: { disablePortal: true } }}
             views={['year', 'month', 'day', 'hours', 'minutes']}
           />
         </StyledContainerTwo>
