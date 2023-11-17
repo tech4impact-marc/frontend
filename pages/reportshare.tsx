@@ -1,5 +1,4 @@
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
-import { Box, Button, IconButton, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -28,9 +27,6 @@ export default function ReportShare() {
   const userName = '미남강현'
   return (
     <div>
-      <IconButton sx={{ marginLeft: '10px', marginTop: '10px', color: '#000000' }}>
-        <ArrowBackIosNewIcon />
-      </IconButton>
       <Typography
         style={{ whiteSpace: 'pre-line' }}
         variant="h1"
