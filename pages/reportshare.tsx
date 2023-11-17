@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Button, Container, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -26,52 +26,55 @@ export default function ReportShare() {
   const animalType = '남방큰돌고래'
   const userName = '미남강현'
   return (
-    <div>
-      <Typography
-        style={{ whiteSpace: 'pre-line' }}
-        variant="h1"
+    <Container
+      sx={{
+        alignItems: 'flex-start',
+        height: 'calc(90vh - 56px)',
+        maxWidth: '100%',
+        padding: '0px',
+      }}
+    >
+      <Container id="1" sx={{ padding: '16px', gap: '10px', maxWidth: '100%' }}>
+        <Typography style={{ whiteSpace: 'pre-line' }} variant="h1">
+          {animalType}를{'\n'}도와주셔서 감사합니다!
+        </Typography>
+        <Typography variant="body1">
+          {userName}님 덕분에 {animalType}가 행복해요{'\n'}
+        </Typography>
+      </Container>
+
+      <Container
+        id="2"
         sx={{
-          marginTop: '20px',
-          marginLeft: '10px',
-        }}
-      >
-        {animalType}를{'\n'}도와주셔서 감사합니다!
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          marginTop: '8px',
-          marginLeft: '10px',
-          marginBottom: '30px',
-        }}
-      >
-        {userName}님 덕분에 {animalType}가 행복해요{'\n'}
-      </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #76BFFF 10%, #6278FE 90%)',
-          padding: '20px', // 내부 여백
-          margin: '0 auto',
-          maxWidth: '280px',
-          borderRadius: 3,
+          alignItems: 'center',
+          alignSelf: 'stretch',
+          padding: '16px',
+          height: '100%',
+          maxWidth: '100%',
         }}
       >
-        <Image src={drawer} alt="testimg" width="250" />
-        <Typography variant="body1" color={theme.palette.primary.light} sx={{ marginTop: '15px' }}>
-          초보 탐험가
-        </Typography>
-        <Typography
-          variant="h1"
-          color={theme.palette.primary.light}
-          sx={{ marginTop: '5px', marginBottom: '20px' }}
+        <Container
+          sx={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #76BFFF 10%, #6278FE 90%)',
+            padding: '16px 16px 40px 16px',
+            width: '280px',
+            gap: '8px',
+            borderRadius: '20px',
+          }}
         >
-          {userName}
-        </Typography>
-      </Box>
+          <Image src={drawer} alt="testimg" width="248" />
+          <Typography variant="body1" color={theme.palette.primary.light} sx={{ marginTop: '8px' }}>
+            초보 탐험가
+          </Typography>
+          <Typography variant="h1" color={theme.palette.primary.light}>
+            {userName}
+          </Typography>
+        </Container>
+      </Container>
+
       {isComponentVisible && (
         <SNSSharingComponent
           isOpen={isModalOpen}
@@ -80,13 +83,14 @@ export default function ReportShare() {
           isMobile={isMobile}
         />
       )}
-      <Box
+      <Container
+        id="3"
         sx={{
-          display: 'flex',
-          gap: '20px',
+          padding: '16px 16px 48px 16px',
+          gap: '16px',
           justifyContent: 'center',
-          marginTop: '24px',
-          marginX: '10px',
+          flexDirection: 'row',
+          maxWidth: '100%',
         }}
       >
         <Button onClick={handleButtonClick} variant="contained" color="primary">
@@ -95,7 +99,7 @@ export default function ReportShare() {
         <Button href="/" variant="contained" color="primary">
           <Typography variant="body1">완료</Typography>
         </Button>
-      </Box>
-    </div>
+      </Container>
+    </Container>
   )
 }
