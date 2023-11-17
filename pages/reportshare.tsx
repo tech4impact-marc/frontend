@@ -1,6 +1,5 @@
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { Box, Button, IconButton, Typography } from '@mui/material'
-import { Inter } from 'next/font/google'
 import Image from 'next/image'
 import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -8,7 +7,7 @@ import { isMobile } from 'react-device-detect'
 import SNSSharingComponent from '@/components/SNSSharingComponent'
 import drawer from '@/public/drawer.png'
 
-const inter = Inter({ subsets: ['latin'] })
+import theme from '../styles/theme'
 
 export default function ReportShare() {
   const [isComponentVisible, setComponentVisibility] = useState(false)
@@ -29,27 +28,28 @@ export default function ReportShare() {
   const userName = '미남강현'
   return (
     <div>
-      <IconButton color="primary" sx={{ marginLeft: '10px', marginTop: '10px' }}>
+      <IconButton sx={{ marginLeft: '10px', marginTop: '10px', color: '#000000' }}>
         <ArrowBackIosNewIcon />
       </IconButton>
       <Typography
-        variant="h6"
         style={{ whiteSpace: 'pre-line' }}
+        variant="h1"
         sx={{
-          fontWeight: 'bold',
-          fontSize: '24px',
           marginTop: '20px',
           marginLeft: '10px',
-          lineHeight: '1.2',
         }}
       >
         {animalType}를{'\n'}도와주셔서 감사합니다!
       </Typography>
       <Typography
-        variant="h6"
-        sx={{ fontSize: '16px', marginTop: '8px', marginLeft: '10px', marginBottom: '30px' }}
+        variant="body1"
+        sx={{
+          marginTop: '8px',
+          marginLeft: '10px',
+          marginBottom: '30px',
+        }}
       >
-        {userName}님의 제보는 해양생태계 보존에 큰 힘이 됩니다.{'\n'}
+        {userName}님 덕분에 {animalType}가 행복해요{'\n'}
       </Typography>
       <Box
         sx={{
@@ -57,7 +57,7 @@ export default function ReportShare() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#7B82FE',
+          background: 'linear-gradient(135deg, #76BFFF 10%, #6278FE 90%)',
           padding: '20px', // 내부 여백
           margin: '0 auto',
           maxWidth: '280px',
@@ -65,12 +65,13 @@ export default function ReportShare() {
         }}
       >
         <Image src={drawer} alt="testimg" width="250" />
-        <Typography variant="body2" sx={{ marginTop: '15px' }}>
+        <Typography variant="body1" color={theme.palette.primary.light} sx={{ marginTop: '15px' }}>
           초보 탐험가
         </Typography>
         <Typography
-          variant="body2"
-          sx={{ fontColor: 'white', fontWeight: 'bold', fontSize: '24px', marginTop: '5px' }}
+          variant="h1"
+          color={theme.palette.primary.light}
+          sx={{ marginTop: '5px', marginBottom: '20px' }}
         >
           {userName}
         </Typography>
@@ -83,32 +84,20 @@ export default function ReportShare() {
           isMobile={isMobile}
         />
       )}
-      <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'center', marginTop: '24px' }}>
-        <Button
-          onClick={handleButtonClick}
-          color="secondary"
-          sx={{
-            backgroundColor: '#2D9AFF',
-            borderRadius: 3,
-            width: '30%',
-            height: '48px',
-            fontSize: '15px',
-          }}
-        >
-          공유하기
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '20px',
+          justifyContent: 'center',
+          marginTop: '24px',
+          marginX: '10px',
+        }}
+      >
+        <Button onClick={handleButtonClick} variant="contained" color="primary">
+          <Typography variant="body1">공유하기</Typography>
         </Button>
-        <Button
-          href="/"
-          color="secondary"
-          sx={{
-            backgroundColor: '#ABB0BC',
-            borderRadius: 3,
-            width: '30%',
-            height: '48px',
-            fontSize: '15px',
-          }}
-        >
-          완료
+        <Button href="/" variant="contained" color="primary">
+          <Typography variant="body1">완료</Typography>
         </Button>
       </Box>
     </div>

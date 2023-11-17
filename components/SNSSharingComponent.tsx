@@ -69,18 +69,6 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
     }
     const staticWebUrl = process.env.NEXT_PUBLIC_WEBURL // 본인 URL
 
-    // let imgUrl
-    // window.Kakao.Share.uploadImage({
-    //   file: imageUrl,
-    // })
-    //   .then(function (response) {
-    //     console.log(response.infos.original.url)
-    //     imgUrl = response.infos.original.url
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error)
-    //   })
-
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
@@ -131,10 +119,7 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
             padding: '10px',
           }}
         >
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 'bold', fontSize: '20px', marginTop: '16px', marginBottom: '16px' }}
-          >
+          <Typography variant="h2" sx={{ marginTop: '16px', marginBottom: '16px' }}>
             공유하기
           </Typography>
           <Divider sx={{ width: '100%', margin: '0' }} />
@@ -148,8 +133,8 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
           <img src={imageUrl} alt="Photo to be Shared" style={{ maxWidth: '300px' }} />
           <Divider sx={{ width: '100%', margin: '0', marginBottom: '12px' }} />
           <Button
-            variant="contained"
-            color="secondary"
+            variant="text"
+            color="primary"
             startIcon={<GetAppIcon />}
             onClick={handleDownload}
             sx={{
@@ -159,13 +144,14 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
               justifyContent: 'flex-start',
               fontSize: '15px',
               boxShadow: 'none',
+              color: 'black',
             }}
           >
             이미지 다운로드
           </Button>
           <Button
-            variant="contained"
-            color="secondary"
+            variant="text"
+            color="primary"
             startIcon={<ShareIcon />}
             onClick={handleKakaoShare}
             sx={{
@@ -175,6 +161,7 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
               justifyContent: 'flex-start',
               fontSize: '15px',
               boxShadow: 'none',
+              color: 'black',
             }}
           >
             카카오톡으로 공유
@@ -197,6 +184,7 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
+            width: 300,
             bgcolor: 'background.paper',
             borderRadius: 3,
             boxShadow: 10,
@@ -204,6 +192,7 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
             flexDirection: 'column',
             alignItems: 'center',
             marginBottom: '16px',
+            padding: '10px',
           }}
         >
           <Typography
@@ -220,10 +209,11 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
           >
             <CloseIcon />
           </IconButton>
-          <img src={imageUrl} alt="Photo to be Shared" />
+          <img src={imageUrl} alt="Photo to be Shared" style={{ maxWidth: '300px' }} />
           <Divider sx={{ width: '100%', margin: '0', marginBottom: '12px' }} />
+
           <Button
-            variant="contained"
+            variant="text"
             color="primary"
             startIcon={<GetAppIcon />}
             onClick={handleDownload}
@@ -234,12 +224,13 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
               justifyContent: 'flex-start',
               fontSize: '15px',
               boxShadow: 'none',
+              color: 'black',
             }}
           >
             이미지 다운로드
           </Button>
           <Button
-            variant="contained"
+            variant="text"
             color="primary"
             startIcon={<ContentCopyIcon />}
             onClick={handleCopyToClipboard}
@@ -250,6 +241,7 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
               justifyContent: 'flex-start',
               fontSize: '15px',
               boxShadow: 'none',
+              color: 'black',
             }}
           >
             이미지를 클립보드에 복사
