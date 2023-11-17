@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import { CheckboxAnswer } from './options/CheckboxAnswer'
 import { DateAnswer } from './options/DateAnswer'
@@ -67,11 +67,14 @@ interface AnswerTypeProps {
 
 const AnswerChoice: React.FC<AnswerTypeProps> = React.memo(
   ({ currentAnswer, updateAnswers, currentImageAnswers, updateImageAnswers, options }) => {
-    switch (currentAnswer[0].type) {
+    const firstCurrentAnswer = useMemo(() => currentAnswer[0], [currentAnswer])
+
+    console.log('AnswerChoice')
+    switch (firstCurrentAnswer.type) {
       case 'LOCATION':
         return (
           <LocationAnswer
-            currentAnswer={currentAnswer[0] as LocationAnswerType}
+            currentAnswer={firstCurrentAnswer as LocationAnswerType}
             updateAnswers={updateAnswers}
           />
         )
@@ -86,7 +89,7 @@ const AnswerChoice: React.FC<AnswerTypeProps> = React.memo(
       case 'MULTIPLE_CHOICE(SINGLE)':
         return (
           <RadioAnswer
-            currentAnswer={currentAnswer[0] as TextAnswerType}
+            currentAnswer={firstCurrentAnswer as TextAnswerType}
             updateAnswers={updateAnswers}
             options={options}
           />
@@ -94,7 +97,7 @@ const AnswerChoice: React.FC<AnswerTypeProps> = React.memo(
       case 'DATETIME':
         return (
           <DateAnswer
-            currentAnswer={currentAnswer[0] as DateTimeAnswerType}
+            currentAnswer={firstCurrentAnswer as DateTimeAnswerType}
             updateAnswers={updateAnswers}
           />
         )

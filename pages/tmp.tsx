@@ -4,18 +4,17 @@ import { FormControl } from '@mui/material'
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
-import React from 'react'
+import React, { useState } from 'react'
 
-import { DateTimeAnswerType, UpdateAnswersType } from '@/components/form/AnswerChoice'
+import { DateTimeAnswerType } from '@/components/form/AnswerChoice'
 import { StyledContainerTwo } from '@/components/styledComponents/StyledContainer'
 
-interface DateAnswerProps {
-  currentAnswer: DateTimeAnswerType
-  updateAnswers: UpdateAnswersType
-}
-
-const DateAnswer: React.FC<DateAnswerProps> = React.memo(({ currentAnswer, updateAnswers }) => {
-  console.log(currentAnswer)
+const DateAnswer = () => {
+  const [currentAnswer, setCurrentAnswer] = useState<DateTimeAnswerType>({
+    value: null,
+    type: '',
+    questionId: 1,
+  })
   return (
     <FormControl fullWidth>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
@@ -24,9 +23,9 @@ const DateAnswer: React.FC<DateAnswerProps> = React.memo(({ currentAnswer, updat
             label="날짜"
             value={currentAnswer ? dayjs(currentAnswer.value) : null}
             onChange={(newValue: dayjs.Dayjs) => {
-              updateAnswers(true, {
+              setCurrentAnswer({
                 ...currentAnswer,
-                value: newValue ? newValue.format('YYYY-MM-DD HH:mm') : null,
+                value: newValue ? newValue.format('YYYY-MM-DD') : null,
               })
               console.log('DateTimePicker:', newValue)
             }}
@@ -35,12 +34,24 @@ const DateAnswer: React.FC<DateAnswerProps> = React.memo(({ currentAnswer, updat
             slotProps={{ textField: { variant: 'standard' } }}
             views={['year', 'month', 'day', 'hours', 'minutes']}
           />
+
+          {/* <DateTimePicker
+            label="날짜"
+            // value={currentAnswer ? dayjs(currentAnswer.value) : null}
+            // onChange={(newValue: dayjs.Dayjs) => {
+            //   updateAnswers(true, {
+            //     ...currentAnswer,
+            //     value: newValue ? newValue.format('YYYY-MM-DD') : null,
+            //   })
+            //   console.log(newValue)
+            // }}
+            slotProps={{ textField: { variant: 'standard' } }}
+          />
+          <MobileTimePicker label="시간" slotProps={{ textField: { variant: 'standard' } }} /> */}
         </StyledContainerTwo>
       </LocalizationProvider>
     </FormControl>
   )
-})
+}
 
-DateAnswer.displayName = 'DateAnswer'
-
-export { DateAnswer }
+export default DateAnswer

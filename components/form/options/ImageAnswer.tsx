@@ -10,15 +10,27 @@ import { UpdateImageAnswersType } from '../AnswerChoice'
 
 require('dotenv').config()
 
+function roundToNearest30Minutes(hour: string, minute: string) {
+  if (Number(minute) < 15) {
+    return { hour: hour, minute: '00' }
+  } else if (Number(minute) < 45) {
+    return { hour: hour, minute: '30' }
+  } else {
+    return { hour: `${Number(hour) + 1}`.padStart(2, '0'), minute: '00' }
+  }
+}
+
 function formatDate(inputDate: string) {
-  const dateRegex1 = /^(\d{4}):(\d{1,2}):(\d{1,2}).*/
+  const dateRegex1 = /^(\d{4}):(\d{1,2}):(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/
+
   const match1 = typeof inputDate === 'string' && inputDate.match(dateRegex1)
 
   if (match1) {
     const year = match1[1]
     const month = String(match1[2]).padStart(2, '0')
     const day = String(match1[3]).padStart(2, '0')
-    return `${year}-${month}-${day}`
+    const { hour, minute } = roundToNearest30Minutes(String(match1[4]), String(match1[5]))
+    return `${year}-${month}-${day}T${hour}:${minute}`
   }
 
   const dateObject = new Date(inputDate)
@@ -26,7 +38,11 @@ function formatDate(inputDate: string) {
     const year = dateObject.getFullYear()
     const month = String(dateObject.getMonth() + 1).padStart(2, '0')
     const day = String(dateObject.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+    const { hour, minute } = roundToNearest30Minutes(
+      String(dateObject.getHours()),
+      String(dateObject.getMinutes())
+    )
+    return `${year}-${month}-${day}T${hour}:${minute}`
   }
 
   return ''

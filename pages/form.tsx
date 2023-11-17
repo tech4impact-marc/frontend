@@ -1,6 +1,4 @@
 import { Backdrop, Typography } from '@mui/material'
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import axios from 'axios'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
@@ -74,15 +72,6 @@ const Form = ({ animals, questions }: { animals: Animal[]; questions: Question[]
             ))}
         </StyledContainerThree>
       </StyledContainerOne>
-
-      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-        <DateTimePicker
-          label="날짜"
-          minutesStep={30}
-          timeSteps={{ minutes: 30 }}
-          slotProps={{ textField: { variant: 'standard' } }}
-        />
-      </LocalizationProvider>
 
       <Backdrop
         open={router.query.animal !== undefined && questions !== undefined}

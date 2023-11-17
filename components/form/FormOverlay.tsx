@@ -22,6 +22,7 @@ import {
   StyledContainerThree,
   StyledContainerTwo,
 } from '../styledComponents/StyledContainer'
+import { DateAnswer } from './options/DateAnswer'
 
 export interface Question {
   id: number
@@ -240,6 +241,8 @@ const FormOverlay = React.memo(({ questions }: { questions: Question[] }) => {
     }
   }
 
+  const firstCurrentAnswer = useMemo(() => currentAnswer[0], [currentAnswer])
+
   return (
     <React.Fragment>
       {questions && (
@@ -275,13 +278,19 @@ const FormOverlay = React.memo(({ questions }: { questions: Question[] }) => {
         )}
 
         <StyledContainerTwo style={{ flex: '1' }}>
-          {questions[step] && currentAnswer && (
-            <AnswerChoice
-              options={currentOptions}
-              currentAnswer={currentAnswer}
+          {/* {questions[step] && currentAnswer && ( */}
+          <AnswerChoice
+            options={currentOptions}
+            currentAnswer={currentAnswer}
+            updateAnswers={updateAnswers}
+            currentImageAnswers={images}
+            updateImageAnswers={updateImageAnswers}
+          />
+          {/* )} */}
+          {questions[step] && currentAnswer && firstCurrentAnswer.type == 'DATETIME' && (
+            <DateAnswer
+              currentAnswer={firstCurrentAnswer as DateTimeAnswerType}
               updateAnswers={updateAnswers}
-              currentImageAnswers={images}
-              updateImageAnswers={updateImageAnswers}
             />
           )}
         </StyledContainerTwo>
