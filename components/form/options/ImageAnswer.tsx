@@ -38,12 +38,17 @@ interface ImageAnswerProps {
 }
 
 const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateImageAnswers }) => {
-  const { kakao } = window
   const [showMap, setShowMap] = useState(
-    Array.from(document.scripts).some(
-      (script) => script.src.includes('kakao') && script.src.includes('maps')
-    )
+    typeof window !== 'undefined'
+      ? Array.from(document.scripts).some(
+          (script) => script.src.includes('kakao') && script.src.includes('maps')
+        )
+      : null
   )
+  if (typeof window === 'undefined') {
+    return <></>
+  }
+  const { kakao } = window
   const handleImageChange = (e: React.ChangeEvent<any>) => {
     const file = e.target.files[0]
 
@@ -53,8 +58,6 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
         const date = formatDate(EXIF_info.DateTime ? EXIF_info.DateTime : file.lastModifiedDate)
         const GPSLatitude = EXIF_info.GPSLatitude
         const GPSLongitude = EXIF_info.GPSLongitude
-
-        console.log(EXIF_info)
 
         if (GPSLatitude && GPSLongitude) {
           const geocoder = new kakao.maps.services.Geocoder()

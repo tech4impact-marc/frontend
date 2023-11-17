@@ -4,38 +4,63 @@ import { createTheme, responsiveFontSizes } from '@mui/material/styles'
 let theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#2D9AFF',
       light: '#ffffff',
       dark: '#115293',
-    },
-    secondary: {
-      main: '#F2F2F2',
-      light: '#ffffff',
-      dark: '#BDBDBD',
+      contrastText: '#fff', //button text white instead of black
     },
   },
   typography: {
+    fontFamily: [
+      'Pretendard',
+      'Roboto',
+      'Noto Sans KR',
+      'Segoe UI',
+      'Malgun Gothic',
+      'Apple Color Emoji',
+      'Segoe UI Emoji',
+      'Segoe UI Symbol',
+      'sans-serif',
+    ].join(','),
     button: {
-      fontSize: '0.8rem',
+      fontSize: '1rem',
       fontWeight: 700,
     },
     h1: {
-      fontSize: '1.6rem',
-      fontWeight: 600,
+      fontSize: '2rem',
+      fontWeight: 700,
     },
     h2: {
-      fontSize: '1.2rem',
-      fontWeight: 600,
+      fontSize: '1.5rem',
+      fontWeight: 700,
     },
     h3: {
-      fontSize: '0.9rem',
-      fontWeight: 600,
+      fontSize: '1.17rem',
+      fontWeight: 700,
+    },
+    h4: {
+      fontSize: '1rem',
+      fontWeight: 700,
+    },
+    h5: {
+      fontSize: '0.83rem',
+      fontWeight: 700,
+    },
+    h6: {
+      fontSize: '0.67rem',
+      fontWeight: 700,
     },
     body1: {
-      fontSize: '0.9rem',
+      fontSize: '1rem',
+      fontWeight: 400,
+    },
+    body2: {
+      fontSize: '0.875rem',
+      fontWeight: 400,
     },
     subtitle1: {
-      fontSize: '0.8rem',
+      fontSize: '0.75rem',
+      fontWeight: 400,
     },
   },
   components: {
@@ -45,21 +70,20 @@ let theme = createTheme({
           display: 'flex',
           flexDirection: 'column',
           maxWidth: '400px',
-          padding: '0',
+          // padding: '0',
         },
       },
     },
-    MuiSwitch: {
+    MuiButton: {
       styleOverrides: {
         root: {
-          padding: '0.2rem',
-        },
-
-        thumb: {
-          padding: '0.5rem',
-        },
-        track: {
-          borderRadius: '10rem',
+          //width, height 추가하면 살짝 고장납니다!
+          padding: '0.3rem',
+          borderRadius: '0.5rem',
+          '&.Mui-disabled': {
+            background: '#6eb9ff',
+            color: '#fff',
+          },
         },
       },
     },

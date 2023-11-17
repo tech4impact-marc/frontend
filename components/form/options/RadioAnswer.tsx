@@ -61,7 +61,9 @@ export const RadioAnswer: React.FC<MultipleAnswerProps> = ({
                   component="span"
                   sx={{ width: '100%', display: 'flex', alignItems: 'center' }}
                 >
-                  <div style={{ marginRight: '10px', flexShrink: '0' }}>기타:</div>
+                  <Typography variant="body1" style={{ marginRight: '10px', flexShrink: '0' }}>
+                    기타:
+                  </Typography>
                   <TextField
                     variant="standard"
                     value={other}

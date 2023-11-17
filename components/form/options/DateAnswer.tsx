@@ -1,11 +1,11 @@
 import 'dayjs/locale/ko'
 
 import { FormControl } from '@mui/material'
-import { DatePicker } from '@mui/x-date-pickers'
-import { LocalizationProvider } from '@mui/x-date-pickers'
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import dayjs from 'dayjs'
 import React from 'react'
+
+import { StyledContainerTwo } from '@/components/styledComponents/StyledContainer'
 
 import { DateTimeAnswerType, UpdateAnswersType } from '../AnswerChoice'
 
@@ -14,23 +14,38 @@ interface DateAnswerProps {
   updateAnswers: UpdateAnswersType
 }
 
-export const DateAnswer: React.FC<DateAnswerProps> = ({ currentAnswer, updateAnswers }) => {
+const DateAnswer: React.FC<DateAnswerProps> = React.memo(({ currentAnswer, updateAnswers }) => {
+  console.log(currentAnswer)
   return (
     <FormControl fullWidth>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-        <DatePicker
-          label="날짜를 입력하세요"
-          value={currentAnswer ? dayjs(currentAnswer.value) : null}
-          onChange={(newValue: dayjs.Dayjs) => {
-            updateAnswers(true, {
-              ...currentAnswer,
-              value: newValue ? newValue.format('YYYY-MM-DD') : null,
-            })
-            console.log(newValue)
-          }}
-          slotProps={{ field: { clearable: true } }}
-        />
+        <StyledContainerTwo>
+          <DateTimePicker
+            label="날짜"
+            minutesStep={30}
+            timeSteps={{ minutes: 30 }}
+            slotProps={{ textField: { variant: 'standard' } }}
+          />
+
+          {/* <DateTimePicker
+            label="날짜"
+            // value={currentAnswer ? dayjs(currentAnswer.value) : null}
+            // onChange={(newValue: dayjs.Dayjs) => {
+            //   updateAnswers(true, {
+            //     ...currentAnswer,
+            //     value: newValue ? newValue.format('YYYY-MM-DD') : null,
+            //   })
+            //   console.log(newValue)
+            // }}
+            slotProps={{ textField: { variant: 'standard' } }}
+          />
+          <MobileTimePicker label="시간" slotProps={{ textField: { variant: 'standard' } }} /> */}
+        </StyledContainerTwo>
       </LocalizationProvider>
     </FormControl>
   )
-}
+})
+
+DateAnswer.displayName = 'DateAnswer'
+
+export { DateAnswer }

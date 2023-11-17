@@ -65,54 +65,52 @@ interface AnswerTypeProps {
   options: Option[]
 }
 
-const AnswerChoice: React.FC<AnswerTypeProps> = ({
-  currentAnswer,
-  updateAnswers,
-  currentImageAnswers,
-  updateImageAnswers,
-  options,
-}) => {
-  switch (currentAnswer[0].type) {
-    case 'LOCATION':
-      return (
-        <LocationAnswer
-          currentAnswer={currentAnswer[0] as LocationAnswerType}
-          updateAnswers={updateAnswers}
-        />
-      )
-    case 'MULTIPLE_CHOICE(MULTI)':
-      return (
-        <CheckboxAnswer
-          currentAnswer={currentAnswer as TextAnswerType[]}
-          updateAnswers={updateAnswers}
-          options={options}
-        />
-      )
-    case 'MULTIPLE_CHOICE(SINGLE)':
-      return (
-        <RadioAnswer
-          currentAnswer={currentAnswer[0] as TextAnswerType}
-          updateAnswers={updateAnswers}
-          options={options}
-        />
-      )
-    case 'DATETIME':
-      return (
-        <DateAnswer
-          currentAnswer={currentAnswer[0] as DateTimeAnswerType}
-          updateAnswers={updateAnswers}
-        />
-      )
-    case 'FILE':
-      return (
-        <ImageAnswer
-          currentImageAnswers={currentImageAnswers}
-          updateImageAnswers={updateImageAnswers}
-        />
-      )
-    default:
-      return <></>
+const AnswerChoice: React.FC<AnswerTypeProps> = React.memo(
+  ({ currentAnswer, updateAnswers, currentImageAnswers, updateImageAnswers, options }) => {
+    switch (currentAnswer[0].type) {
+      case 'LOCATION':
+        return (
+          <LocationAnswer
+            currentAnswer={currentAnswer[0] as LocationAnswerType}
+            updateAnswers={updateAnswers}
+          />
+        )
+      case 'MULTIPLE_CHOICE(MULTI)':
+        return (
+          <CheckboxAnswer
+            currentAnswer={currentAnswer as TextAnswerType[]}
+            updateAnswers={updateAnswers}
+            options={options}
+          />
+        )
+      case 'MULTIPLE_CHOICE(SINGLE)':
+        return (
+          <RadioAnswer
+            currentAnswer={currentAnswer[0] as TextAnswerType}
+            updateAnswers={updateAnswers}
+            options={options}
+          />
+        )
+      case 'DATETIME':
+        return (
+          <DateAnswer
+            currentAnswer={currentAnswer[0] as DateTimeAnswerType}
+            updateAnswers={updateAnswers}
+          />
+        )
+      case 'FILE':
+        return (
+          <ImageAnswer
+            currentImageAnswers={currentImageAnswers}
+            updateImageAnswers={updateImageAnswers}
+          />
+        )
+      default:
+        return <></>
+    }
   }
-}
+)
 
-export default AnswerChoice
+AnswerChoice.displayName = 'AnswerChoice'
+
+export { AnswerChoice }

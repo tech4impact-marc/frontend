@@ -1,10 +1,12 @@
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded'
 import { Button, Typography } from '@mui/material'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
 
-import AnswerChoice, {
+import {
+  AnswerChoice,
   AnswerType,
   currentAnswerType,
   DateTimeAnswerType,
@@ -31,17 +33,18 @@ export interface Question {
   options: Option[]
 }
 
-const FormOverlay = ({
-  selectedAnimal,
-  setSelectedAnimal,
-}: {
-  selectedAnimal: number
-  setSelectedAnimal: (selectedAnimal: number) => void
-}) => {
-  const [questions, setQuestions] = useState<Question[]>([])
+const FormOverlay = React.memo(({ questions }: { questions: Question[] }) => {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      console.log('FormOverlay:', questions)
+    }
+  }, [questions])
+
+  const router = useRouter()
+
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<AnswerType[]>([])
-  const formData = useMemo(() => new FormData(), [selectedAnimal])
+  const formData = useMemo(() => new FormData(), [])
   const [images, setImages] = useState<File[]>([])
   const [dateIndex, setDateIndex] = useState(0)
   const [locationIndex, setLocationIndex] = useState(0)
@@ -50,7 +53,6 @@ const FormOverlay = ({
   const returnCurrentAnswer = useCallback(() => {
     const question = questions[step]
     if (!questions[step]) {
-      console.log(questions[step], questions, step)
       return
     }
     const targetObjects = answers.filter((answer) => answer.questionId === questions[step].id)
@@ -94,7 +96,14 @@ const FormOverlay = ({
         ]
     }
   }, [questions, answers, step])
-  const currentAnswer: currentAnswerType = returnCurrentAnswer() as currentAnswerType
+  const currentAnswer: currentAnswerType = useMemo(
+    () => returnCurrentAnswer(),
+    [returnCurrentAnswer]
+  ) as currentAnswerType
+  const currentOptions = useMemo(
+    () => questions[step].options.sort((a, b) => a.answerNumber - b.answerNumber),
+    [questions, step]
+  )
 
   const currentAnswerAnswered =
     currentAnswer &&
@@ -109,31 +118,14 @@ const FormOverlay = ({
   const disableNext = questions[step] && currentAnswer.length !== 0 && !currentAnswerAnswered //todo
 
   useEffect(() => {
-    if (selectedAnimal <= 0) {
-      return
+    for (const question of questions) {
+      if (question.type === 'LOCATION') {
+        setLocationIndex(question.id)
+      } else if (question.type === 'DATETIME') {
+        setDateIndex(question.id)
+      }
     }
-
-    axios
-      .get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${selectedAnimal}`)
-      .then((response) => {
-        const sortedQuestions = response.data.questions.sort(
-          (a: Question, b: Question) => a.questionNumber - b.questionNumber
-        )
-        setQuestions(sortedQuestions)
-        console.log(sortedQuestions)
-
-        for (const question of sortedQuestions) {
-          if (question.type === 'LOCATION') {
-            setLocationIndex(question.id)
-          } else if (question.type === 'DATETIME') {
-            setDateIndex(question.id)
-          }
-        }
-      })
-      .catch((err) => {
-        console.log(err.message)
-      })
-  }, [selectedAnimal])
+  }, [questions])
 
   const updateAnswers = useCallback(
     (changeType: Boolean, newAnswer: AnswerType | undefined) => {
@@ -142,7 +134,6 @@ const FormOverlay = ({
       }
 
       if (changeType == false) {
-        // for checkbox only, remove
         setAnswers((prevAnswers: AnswerType[]) => {
           const updatedAnswers = answers.filter(
             (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
@@ -202,7 +193,7 @@ const FormOverlay = ({
         return updatedAnswers
       })
     },
-    [answers, dateIndex, locationIndex, currentAnswer, images, selectedAnimal]
+    [answers, dateIndex, locationIndex, currentAnswer, images]
   )
 
   useEffect(() => {
@@ -214,7 +205,7 @@ const FormOverlay = ({
       formData.append(
         'data',
         JSON.stringify({
-          reportTypeId: selectedAnimal,
+          reportTypeId: router.query.animal,
           answers: answers,
         })
       )
@@ -234,7 +225,7 @@ const FormOverlay = ({
             setStep(0)
             setAnswers([])
             setImages([])
-            setSelectedAnimal(-1)
+            router.push({ pathname: '/form', query: { animal: -1 } })
           } else {
             console.log(response)
           }
@@ -270,7 +261,7 @@ const FormOverlay = ({
               setStep(0)
               setAnswers([])
               setImages([])
-              setSelectedAnimal(0)
+              router.push({ pathname: '/form' })
             }}
             sx={{ cursor: 'pointer', fontSize: (theme) => theme.typography.h2.fontSize }}
           />
@@ -286,7 +277,7 @@ const FormOverlay = ({
         <StyledContainerTwo style={{ flex: '1' }}>
           {questions[step] && currentAnswer && (
             <AnswerChoice
-              options={questions[step].options.sort((a, b) => a.answerNumber - b.answerNumber)}
+              options={currentOptions}
               currentAnswer={currentAnswer}
               updateAnswers={updateAnswers}
               currentImageAnswers={images}
@@ -319,7 +310,7 @@ const FormOverlay = ({
       </StyledContainerOne>
     </React.Fragment>
   )
-}
+})
 
-export default FormOverlay
-// need to add getstaticprops
+FormOverlay.displayName = 'FormOverlay'
+export { FormOverlay }
