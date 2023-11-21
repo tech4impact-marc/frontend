@@ -7,14 +7,19 @@ import NextLink from 'next/link'
 import { SyntheticEvent, useState } from 'react'
 
 const CustomBottomNavAction = (props: any) => {
-  return <BottomNavigationAction sx={{ maxWidth: '30%' }} {...props} />
+  return (
+    <BottomNavigationAction
+      sx={{ maxWidth: '30%', '&.Mui-selected': { color: '#000' }, color: '#bec1c7' }}
+      {...props}
+    />
+  )
 }
 
 const CustomPaper = styled(Paper)`
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
   width: 100%;
 `
 export default function BottomNav() {
