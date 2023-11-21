@@ -1,4 +1,4 @@
-import { FmdBad, LocationOn, Person } from '@mui/icons-material'
+import { AccountCircleRounded, AddOutlined, MapOutlined } from '@mui/icons-material'
 import BottomNavigation from '@mui/material/BottomNavigation'
 import BottomNavigationAction from '@mui/material/BottomNavigationAction'
 import Paper from '@mui/material/Paper'
@@ -7,27 +7,32 @@ import NextLink from 'next/link'
 import { SyntheticEvent, useState } from 'react'
 
 const CustomBottomNavAction = (props: any) => {
-  return <BottomNavigationAction sx={{ maxWidth: '30%' }} {...props} />
+  return (
+    <BottomNavigationAction
+      sx={{ maxWidth: '30%', '&.Mui-selected': { color: '#000' }, color: '#bec1c7' }}
+      {...props}
+    />
+  )
 }
 
 const CustomPaper = styled(Paper)`
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
   width: 100%;
 `
 export default function BottomNav() {
   const navLinks = [
-    { name: 'Map', icon: <LocationOn />, path: '/map' },
-    { name: '제보하기', icon: <FmdBad />, path: '/form' },
-    { name: '마이페이지', icon: <Person />, path: '/mypage/redirect' },
+    { name: '지도', icon: <MapOutlined />, path: '/map' },
+    { name: '제보하기', icon: <AddOutlined />, path: '/' },
+    { name: '마이페이지', icon: <AccountCircleRounded />, path: '/' },
   ]
 
   const [value, setValue] = useState(1)
 
   return (
-    <CustomPaper elevation={3}>
+    <CustomPaper elevation={3} sx={{ zIndex: 10 }}>
       <BottomNavigation
         showLabels
         value={value}
