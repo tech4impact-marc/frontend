@@ -1,34 +1,49 @@
 import axios from 'axios'
 
+import { store } from '@/redux/store'
+
 async function refreshAccessToken() {
+  const state = store.getState()
+  const accessToken = state.tokens.accessToken
+  const refreshToken = state.tokens.refreshToken
+  const accessTokenExpiresAt = state.tokenExpiresAt.accessToken
+  console.log(accessToken)
+  console.log(refreshToken)
+  console.log(accessTokenExpiresAt)
   try {
     // 서버에 액세스 토큰과 리프레시 토큰을 담아 POST 요청 보내기
-    const jwtToken = JSON.parse(sessionStorage.getItem('jwtToken') as string)
-    const accessTokenExpiresAt = Number(sessionStorage.getItem('accessTokenExpiresAt'))
     const currentTime = Date.now()
 
-    if (!jwtToken || !accessTokenExpiresAt) {
+    if (Object.keys(state.tokens).length === 0) {
+      console.log('no token')
       return null
-    } else if (accessTokenExpiresAt > currentTime) {
-      return JSON.stringify(jwtToken)
+    } else if (accessTokenExpiresAt === 0 || accessTokenExpiresAt > currentTime) {
+      //not expired
+      console.log('not expired')
+      return {
+        accessToken: accessToken,
+        tokenType: 'Bearer',
+        expiresIn: state.tokens.expiresIn,
+        refreshToken: refreshToken,
+        refreshTokenExpiresIn: state.tokens.refreshTokenExpiresIn,
+      }
     }
 
     const response = await axios.post('http://localhost:3000/auth/refresh', null, {
       headers: {
-        Authorization: `Bearer ${jwtToken.accessToken}`,
-        Refresh: jwtToken.refreshToken,
+        Authorization: `Bearer ${accessToken}`,
+        Refresh: refreshToken,
       },
       withCredentials: true,
     })
 
     // 새로운 jwtToken 받기
-    const newjwtToken = JSON.stringify(response.data)
-
-    sessionStorage.setItem('jwtToken', newjwtToken)
-    sessionStorage.setItem(
-      'accessTokenExpiresAt',
-      (Date.now() + response.data.expiresIn * 1000).toString()
-    )
+    const newjwtToken = response.data
+    store.dispatch({ type: 'SET_TOKENS', payload: newjwtToken })
+    store.dispatch({
+      type: 'SET_ACCESSTOKEN_EXPIRESAT',
+      payload: currentTime + response.data.expiresIn * 1000,
+    })
 
     console.log('AccessToken has been refreshed')
 
@@ -38,7 +53,6 @@ async function refreshAccessToken() {
     return newjwtToken
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      sessionStorage.removeItem('jwtToken')
       alert('토큰이 만료되었습니다. 다시 로그인해 주세요.')
       window.location.href = '/auth/login'
     } else {
