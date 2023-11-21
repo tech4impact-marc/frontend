@@ -100,7 +100,7 @@ export default function KakaoSignUpPage4() {
       </Container>
       <Container sx={{ padding: '16px 16px 48px 16px', alignItems: 'center' }}>
         <Button onClick={handleSignup} variant="contained" color="primary">
-          회원가입 완료하기
+          <Typography variant="body1">회원가입 완료하기</Typography>
         </Button>
       </Container>
     </Container>

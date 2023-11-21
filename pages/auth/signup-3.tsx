@@ -126,7 +126,7 @@ export default function KakaoSignUpPage3() {
           color="primary"
           disabled={isNextButtonDisabled()}
         >
-          다음
+          <Typography variant="body1">다음</Typography>
         </Button>
       </Container>
     </Container>
