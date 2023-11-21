@@ -1,43 +1,22 @@
-import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded'
 import { Button } from '@mui/material'
 import { Typography } from '@mui/material'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import {
-  StyledContainerHeader,
   StyledContainerOne,
   StyledContainerThree,
   StyledContainerTwo,
 } from '../styledComponents/StyledContainer'
 
-const ShareOverlay = ({
-  setSelectedAnimal,
-}: {
-  setSelectedAnimal: (selectedAnimal: number) => void
-}) => {
+const ShareOverlay = () => {
+  const router = useRouter()
+  const { pathname, query } = router
+
   const handleShare = () => {}
   return (
     <React.Fragment>
-      <div
-        style={{
-          position: 'fixed',
-          top: '0',
-          width: '100%',
-          height: '4px',
-          backgroundColor: 'black',
-        }}
-      ></div>
-
       <StyledContainerOne>
-        <StyledContainerHeader>
-          <ArrowBackIosRoundedIcon
-            onClick={() => {
-              setSelectedAnimal(0)
-            }}
-            sx={{ cursor: 'pointer', fontSize: (theme) => theme.typography.h2.fontSize }}
-          />
-        </StyledContainerHeader>
-
         <StyledContainerThree>
           <Typography variant="h2">남방큰돌고래를 도와주셔서 감사합니다!</Typography>
           <Typography variant="subtitle1">
@@ -56,10 +35,9 @@ const ShareOverlay = ({
           <Button
             variant="contained"
             onClick={() => {
-              setSelectedAnimal(0)
+              router.push({ pathname: pathname })
             }}
             disableElevation
-            sx={{ backgroundColor: 'grey' }}
           >
             완료
           </Button>

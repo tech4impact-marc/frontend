@@ -22,7 +22,6 @@ import {
   StyledContainerThree,
   StyledContainerTwo,
 } from '../styledComponents/StyledContainer'
-import { DateAnswer } from './options/DateAnswer'
 
 export interface Question {
   id: number
@@ -35,13 +34,8 @@ export interface Question {
 }
 
 const FormOverlay = React.memo(({ questions }: { questions: Question[] }) => {
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      console.log('FormOverlay:', questions)
-    }
-  }, [questions])
-
   const router = useRouter()
+  const { pathname, query } = router
 
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<AnswerType[]>([])
@@ -62,23 +56,6 @@ const FormOverlay = React.memo(({ questions }: { questions: Question[] }) => {
     }
 
     switch (question.type) {
-      case 'LOCATION':
-        return [
-          {
-            value: { latitude: 33.3846, longitude: 126.5535, address: '', addressDetail: '' },
-            type: question.type,
-            questionId: question.id,
-          } as LocationAnswerType,
-        ]
-      case 'MULTIPLE_CHOICE(MULTI)':
-      case 'MULTIPLE_CHOICE(SINGLE)':
-        return [
-          {
-            value: '',
-            type: question.type,
-            questionId: question.id,
-          } as TextAnswerType,
-        ]
       case 'DATETIME':
         return [
           {
@@ -87,6 +64,14 @@ const FormOverlay = React.memo(({ questions }: { questions: Question[] }) => {
             questionId: question.id,
           } as DateTimeAnswerType,
         ]
+      case 'LOCATION':
+        return [
+          {
+            value: { latitude: 33.3846, longitude: 126.5535, address: '', addressDetail: '' },
+            type: question.type,
+            questionId: question.id,
+          } as LocationAnswerType,
+        ]
       case 'FILE':
         return [
           {
@@ -94,6 +79,18 @@ const FormOverlay = React.memo(({ questions }: { questions: Question[] }) => {
             type: question.type,
             questionId: question.id,
           } as ImageAnswerType,
+        ]
+      case 'SHORT_ANSWER':
+      case 'LONG_ANSWER':
+      case 'MULTIPLE_CHOICE(SINGLE)':
+      case 'MULTIPLE_CHOICE(MULTI)':
+      default:
+        return [
+          {
+            value: '',
+            type: question.type,
+            questionId: question.id,
+          } as TextAnswerType,
         ]
     }
   }, [questions, answers, step])
@@ -223,10 +220,7 @@ const FormOverlay = React.memo(({ questions }: { questions: Question[] }) => {
         })
         .then(function (response) {
           if (response.status == 200) {
-            setStep(0)
-            setAnswers([])
-            setImages([])
-            router.push({ pathname: '/form', query: { animal: -1 } })
+            router.push({ pathname: pathname, query: { ...query, complete: true } })
           } else {
             console.log(response)
           }
@@ -261,10 +255,7 @@ const FormOverlay = React.memo(({ questions }: { questions: Question[] }) => {
         <StyledContainerHeader>
           <ArrowBackIosRoundedIcon
             onClick={() => {
-              setStep(0)
-              setAnswers([])
-              setImages([])
-              router.push({ pathname: '/form' })
+              router.push({ pathname: pathname })
             }}
             sx={{ cursor: 'pointer', fontSize: (theme) => theme.typography.h2.fontSize }}
           />
@@ -278,19 +269,13 @@ const FormOverlay = React.memo(({ questions }: { questions: Question[] }) => {
         )}
 
         <StyledContainerTwo style={{ flex: '1' }}>
-          {/* {questions[step] && currentAnswer && ( */}
-          <AnswerChoice
-            options={currentOptions}
-            currentAnswer={currentAnswer}
-            updateAnswers={updateAnswers}
-            currentImageAnswers={images}
-            updateImageAnswers={updateImageAnswers}
-          />
-          {/* )} */}
-          {questions[step] && currentAnswer && firstCurrentAnswer.type == 'DATETIME' && (
-            <DateAnswer
-              currentAnswer={firstCurrentAnswer as DateTimeAnswerType}
+          {questions[step] && currentAnswer && (
+            <AnswerChoice
+              options={currentOptions}
+              currentAnswer={currentAnswer}
               updateAnswers={updateAnswers}
+              currentImageAnswers={images}
+              updateImageAnswers={updateImageAnswers}
             />
           )}
         </StyledContainerTwo>

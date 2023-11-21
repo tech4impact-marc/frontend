@@ -5,6 +5,7 @@ import { DateAnswer } from './options/DateAnswer'
 import { ImageAnswer } from './options/ImageAnswer'
 import { LocationAnswer } from './options/LocationAnswer'
 import { RadioAnswer } from './options/RadioAnswer'
+import { ShortAnswer } from './options/ShortAnswer'
 
 export type AnswerType = TextAnswerType | ImageAnswerType | LocationAnswerType | DateTimeAnswerType
 
@@ -69,35 +70,18 @@ const AnswerChoice: React.FC<AnswerTypeProps> = React.memo(
   ({ currentAnswer, updateAnswers, currentImageAnswers, updateImageAnswers, options }) => {
     const firstCurrentAnswer = useMemo(() => currentAnswer[0], [currentAnswer])
 
-    console.log('AnswerChoice')
     switch (firstCurrentAnswer.type) {
-      case 'LOCATION':
-        return (
-          <LocationAnswer
-            currentAnswer={firstCurrentAnswer as LocationAnswerType}
-            updateAnswers={updateAnswers}
-          />
-        )
-      case 'MULTIPLE_CHOICE(MULTI)':
-        return (
-          <CheckboxAnswer
-            currentAnswer={currentAnswer as TextAnswerType[]}
-            updateAnswers={updateAnswers}
-            options={options}
-          />
-        )
-      case 'MULTIPLE_CHOICE(SINGLE)':
-        return (
-          <RadioAnswer
-            currentAnswer={firstCurrentAnswer as TextAnswerType}
-            updateAnswers={updateAnswers}
-            options={options}
-          />
-        )
       case 'DATETIME':
         return (
           <DateAnswer
             currentAnswer={firstCurrentAnswer as DateTimeAnswerType}
+            updateAnswers={updateAnswers}
+          />
+        )
+      case 'LOCATION':
+        return (
+          <LocationAnswer
+            currentAnswer={firstCurrentAnswer as LocationAnswerType}
             updateAnswers={updateAnswers}
           />
         )
@@ -106,6 +90,31 @@ const AnswerChoice: React.FC<AnswerTypeProps> = React.memo(
           <ImageAnswer
             currentImageAnswers={currentImageAnswers}
             updateImageAnswers={updateImageAnswers}
+          />
+        )
+      case 'SHORT_ANSWER':
+      case 'LONG_ANSWER':
+        return (
+          <ShortAnswer
+            currentAnswer={firstCurrentAnswer as TextAnswerType}
+            updateAnswers={updateAnswers}
+          />
+        )
+
+      case 'MULTIPLE_CHOICE(SINGLE)':
+        return (
+          <RadioAnswer
+            currentAnswer={firstCurrentAnswer as TextAnswerType}
+            updateAnswers={updateAnswers}
+            options={options}
+          />
+        )
+      case 'MULTIPLE_CHOICE(MULTI)':
+        return (
+          <CheckboxAnswer
+            currentAnswer={currentAnswer as TextAnswerType[]}
+            updateAnswers={updateAnswers}
+            options={options}
           />
         )
       default:

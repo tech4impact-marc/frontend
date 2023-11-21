@@ -11,6 +11,7 @@ import {
 } from 'react-fluentui-emoji/lib/flat'
 
 import { FormOverlay, Question } from '@/components/form/FormOverlay'
+import ShareOverlay from '@/components/form/ShareOverlay'
 import CommonLayout from '@/components/layout/CommonLayout'
 import {
   StyledContainerHeader,
@@ -77,16 +78,16 @@ const Form = ({ animals, questions }: { animals: Animal[]; questions: Question[]
         open={router.query.animal !== undefined && questions !== undefined}
         sx={{ backgroundColor: 'white', zIndex: '9999' }}
       >
-        {router.query.animal !== undefined && questions !== undefined && (
-          <FormOverlay questions={questions} />
-        )}
+        {router.query.animal !== undefined &&
+          questions !== undefined &&
+          Number(router.query.animal) > 0 && <FormOverlay questions={questions} />}
       </Backdrop>
-      {/* <Backdrop
+      <Backdrop
         open={router.query.animal !== undefined}
         sx={{ backgroundColor: 'white', zIndex: '9999' }}
       >
         <ShareOverlay />
-      </Backdrop> */}
+      </Backdrop>
     </React.Fragment>
   )
 }

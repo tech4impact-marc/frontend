@@ -80,6 +80,9 @@ let theme = createTheme({
           //width, height 추가하면 살짝 고장납니다!
           padding: '0.3rem',
           borderRadius: '0.5rem',
+        },
+        contained: {
+          //text 버튼은 따로입니다!
           '&.Mui-disabled': {
             background: '#6eb9ff',
             color: '#fff',
