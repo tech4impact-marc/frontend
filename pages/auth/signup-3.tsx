@@ -38,17 +38,17 @@ export default function KakaoSignUpPage3() {
     router.push('/auth/signup-4')
   }
 
-  const handleUserNameChange = (e) => {
+  const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     setUserName(value)
   }
 
-  const handleDomainChange = (e) => {
+  const handleDomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     setDomain(value)
   }
 
-  const handleCustomDomainChange = (e) => {
+  const handleCustomDomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     setCustomDomain(value)
   }

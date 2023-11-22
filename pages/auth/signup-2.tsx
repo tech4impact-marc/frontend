@@ -27,7 +27,7 @@ export default function KakaoSignUpPage2() {
     router.push('/auth/signup-3')
   }
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value)
   }
 
