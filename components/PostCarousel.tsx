@@ -1,0 +1,56 @@
+import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import useEmblaCarousel from 'embla-carousel-react'
+import Image from 'next/image'
+import React, { useCallback } from 'react'
+
+type CarouselProps = {
+  slides: string[]
+}
+
+export default function EmblaCarousel({ slides }: CarouselProps) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    dragFree: true,
+    containScroll: 'trimSnaps',
+    loop: true,
+  })
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext()
+  }, [emblaApi])
+
+  return (
+    <Box overflow={'hidden'} ref={emblaRef}>
+      <Box display={'flex'} sx={{ backfaceVisibility: 'hidden' }} justifyContent={'center'}>
+        {slides.map((image: string, index: number) =>
+          image ? (
+            <Box
+              flex="0 0 100%"
+              minWidth={'22.5rem'}
+              key={index}
+              position={'relative'}
+              sx={{ aspectRatio: '3 / 4' }}
+            >
+              <Image src={image} alt="post-image" fill></Image>
+            </Box>
+          ) : (
+            <Box
+              flex="0 0 100%"
+              minWidth={'22.5rem'}
+              key={index}
+              position={'relative'}
+              sx={{ aspectRatio: '3 / 4', background: '#e0e0e0' }}
+            ></Box>
+          )
+        )}
+      </Box>
+      <IconButton
+        sx={{ color: '#ffffff', position: 'absolute', right: 0, top: '50%' }}
+        onClick={scrollNext}
+      >
+        <ArrowForwardIos />
+      </IconButton>
+    </Box>
+  )
+}
