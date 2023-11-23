@@ -20,12 +20,16 @@ export default function SettingPage() {
       try {
         const jwtToken = await refreshAccessToken()
         console.log(jwtToken)
-        const response = await axios.post('http://localhost:3000/auth/logout', null, {
-          headers: {
-            Authorization: `Bearer ${jwtToken.accessToken}`,
-          },
-          withCredentials: true,
-        })
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/logout`,
+          null,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken.accessToken}`,
+            },
+            withCredentials: true,
+          }
+        )
         if (response.status !== 200) {
           throw new Error('Network response was not ok')
         }
@@ -56,12 +60,15 @@ export default function SettingPage() {
           const jwtToken = await refreshAccessToken()
           console.log(jwtToken)
           console.log(jwtToken.accessToken)
-          const response = await axios.delete('http://localhost:3000/auth/users/self', {
-            headers: {
-              Authorization: `Bearer ${jwtToken.accessToken}`,
-            },
-            withCredentials: true,
-          })
+          const response = await axios.delete(
+            `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/users/self`,
+            {
+              headers: {
+                Authorization: `Bearer ${jwtToken.accessToken}`,
+              },
+              withCredentials: true,
+            }
+          )
           if (response.status !== 200) {
             throw new Error('Network response was not ok')
           }
@@ -84,6 +91,10 @@ export default function SettingPage() {
     } else {
       alert('회원탈퇴 취소')
     }
+  }
+
+  const handleLogOut2 = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao/logout`
   }
 
   return (
@@ -124,6 +135,13 @@ export default function SettingPage() {
           sx={{ width: '100%', color: 'grey', justifyContent: 'flex-start' }}
         >
           회원탈퇴
+        </Button>
+        <Divider sx={{ width: '100%' }} />
+        <Button
+          onClick={handleLogOut2}
+          sx={{ width: '100%', color: 'grey', justifyContent: 'flex-start' }}
+        >
+          로그아웃2
         </Button>
         <Divider sx={{ width: '100%' }} />
       </Container>
