@@ -45,7 +45,7 @@ export default function MapPage({ data }: MapPageProps) {
 export async function getServerSideProps() {
   try {
     // 임시 api 호출
-    const jsonData = await axios('http://localhost:3000/api/map')
+    const jsonData = await axios('http://localhost:3001/api/map')
     return {
       props: {
         data: jsonData.data,
