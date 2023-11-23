@@ -66,6 +66,10 @@ let theme = createTheme({
       fontSize: '0.875rem',
       fontWeight: 400,
     },
+    subtitle2: {
+      fontSize: '0.938rem',
+      fontWeight: 400,
+    },
   },
   components: {
     MuiContainer: {
