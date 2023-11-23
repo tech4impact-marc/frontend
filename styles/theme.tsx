@@ -12,10 +12,6 @@ let theme = createTheme({
   },
   typography: {
     fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      'Apple SD Gothic Neo',
-      'Pretendard Variable',
       'Pretendard',
       'Roboto',
       'Noto Sans KR',
@@ -36,7 +32,7 @@ let theme = createTheme({
     },
     h2: {
       fontSize: '1.5rem',
-      fontWeight: 600,
+      fontWeight: 700,
     },
     h3: {
       fontSize: '1.17rem',
@@ -58,12 +54,12 @@ let theme = createTheme({
       fontSize: '1rem',
       fontWeight: 400,
     },
-    subtitle1: {
-      fontSize: '0.75rem',
-      fontWeight: 400,
-    },
     body2: {
       fontSize: '0.875rem',
+      fontWeight: 400,
+    },
+    subtitle1: {
+      fontSize: '0.75rem',
       fontWeight: 400,
     },
     subtitle2: {
@@ -77,17 +73,23 @@ let theme = createTheme({
         root: {
           display: 'flex',
           flexDirection: 'column',
+          maxWidth: '400px',
+          // padding: '0',
         },
       },
     },
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: '0.75rem',
-          height: '3.5rem',
-          width: '22.375rem',
+          //width, height 추가하면 살짝 고장납니다!
+          padding: '0.3rem',
+          borderRadius: '0.5rem',
+        },
+        contained: {
+          //text 버튼은 따로입니다!
           '&.Mui-disabled': {
             background: '#6eb9ff',
+            color: '#fff',
           },
         },
       },
