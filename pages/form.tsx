@@ -11,8 +11,7 @@ import {
 } from 'react-fluentui-emoji/lib/flat'
 
 import { FormOverlay, Question } from '@/components/form/FormOverlay'
-import ShareOverlay from '@/components/form/ShareOverlay'
-import CommonLayout from '@/components/layout/CommonLayout'
+import CommonLayout from '@/components/Layout/CommonLayout'
 import {
   StyledContainerHeader,
   StyledContainerOne,
@@ -31,7 +30,15 @@ const iconList: { [key: string]: React.ReactNode } = {
   바다거북: <IconFTurtle size={'1.5rem'} />,
 }
 
-const Form = ({ animals, questions }: { animals: Animal[]; questions: Question[] }) => {
+const Form = ({
+  animals,
+  questions,
+  animal,
+}: {
+  animals: Animal[]
+  questions: Question[]
+  animal: string
+}) => {
   const router = useRouter()
   const { pathname, query } = router
 
@@ -76,17 +83,11 @@ const Form = ({ animals, questions }: { animals: Animal[]; questions: Question[]
 
       <Backdrop
         open={router.query.animal !== undefined && questions !== undefined}
-        sx={{ backgroundColor: 'white', zIndex: '9999' }}
+        sx={{ backgroundColor: 'white', zIndex: 11 }}
       >
         {router.query.animal !== undefined &&
           questions !== undefined &&
-          Number(router.query.animal) > 0 && <FormOverlay questions={questions} />}
-      </Backdrop>
-      <Backdrop
-        open={router.query.animal !== undefined}
-        sx={{ backgroundColor: 'white', zIndex: '9999' }}
-      >
-        <ShareOverlay />
+          Number(router.query.animal) > 0 && <FormOverlay questions={questions} animal={animal} />}
       </Backdrop>
     </React.Fragment>
   )
@@ -110,7 +111,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const questions = await response.data.questions.sort(
       (a: Question, b: Question) => a.questionNumber - b.questionNumber
     )
-    return { props: { animals, questions } }
+    const animal = animals.find((animal) => String(animal.id) === context.query.animal)?.label
+    return { props: { animals, questions, animal } }
   }
 
   return { props: { animals } }
