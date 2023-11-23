@@ -62,10 +62,6 @@ let theme = createTheme({
       fontSize: '0.75rem',
       fontWeight: 400,
     },
-    body2: {
-      fontSize: '0.875rem',
-      fontWeight: 400,
-    },
     subtitle2: {
       fontSize: '0.938rem',
       fontWeight: 400,
