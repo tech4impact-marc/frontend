@@ -110,7 +110,7 @@ export async function getServerSideProps() {
   try {
     // 임시 api 호출
     // const jsonData = await axios('http://localhost:3000/api/map')
-    const jsonData = await axios(`${process.env.NEXT_PUBLIC_SERVER_URL}/reports/map`)
+    const jsonData = await axios(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/map`)
     const data = jsonData.data
     return {
       props: {
