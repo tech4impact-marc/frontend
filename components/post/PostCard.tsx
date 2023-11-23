@@ -1,5 +1,3 @@
-import FavoriteIcon from '@mui/icons-material/FavoriteBorder'
-import { IconButton } from '@mui/material'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
@@ -7,6 +5,8 @@ import { useState } from 'react'
 
 import Carousel from '@/components/CardCarousel'
 
+import { FlexBox } from '../styledComponents/StyledBox'
+import LikeButton from './LikeButton'
 import PostDialog from './PostDialog'
 
 interface PostCardProps {
@@ -16,6 +16,7 @@ interface PostCardProps {
 
 export default function PostCard({ index, data }: PostCardProps) {
   const [showDialog, setShowDialog] = useState(false)
+  const [liked, setLiked] = useState(false)
 
   const handleCardClick = () => {
     setShowDialog(true)
@@ -29,34 +30,35 @@ export default function PostCard({ index, data }: PostCardProps) {
     setShowDialog(true)
   }
 
+  const handleLikeClick = () => {
+    setLiked(!liked)
+  }
+
   return (
     <>
       <Card elevation={0}>
-        <Box
-          width={'Calc(100vw - 40px)'}
-          margin={'12px 20px'}
-          display={'flex'}
+        <FlexBox
+          width={'Calc(100vw - 2.5rem)'}
+          margin={'0.75rem 1.25rem'}
           justifyContent={'space-between'}
         >
           <Box width={'80%'} onClick={handleCardClick}>
             <Typography
-              fontSize={'18px'}
-              fontWeight={700}
+              variant="h3"
               gutterBottom
             >{`${data.properties?.address} 앞바다`}</Typography>
-            <Typography
-              fontSize={'12px'}
-              fontWeight={400}
-            >{`${data.properties?.year}년 ${data.properties?.month}월 ${data.properties?.day}일`}</Typography>
+            <Typography variant="subtitle1">{`${data.properties?.year}년 ${data.properties?.month}월 ${data.properties?.day}일`}</Typography>
           </Box>
-          <IconButton>
-            <FavoriteIcon />
-          </IconButton>
-        </Box>
-
+          <LikeButton liked={liked} onClick={handleLikeClick} />
+        </FlexBox>
         <Carousel slides={data.properties?.image_url_list} onClick={handleCardImageClick} />
       </Card>
-      <PostDialog data={data} open={showDialog} onClose={handleDialogClose}></PostDialog>
+      <PostDialog
+        images={data.properties?.image_url_list}
+        postId={data.properties?.post_id}
+        open={showDialog}
+        onClose={handleDialogClose}
+      ></PostDialog>
     </>
   )
 }

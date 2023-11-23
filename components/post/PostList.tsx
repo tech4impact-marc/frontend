@@ -73,7 +73,7 @@ export default function Post(props: PostProps) {
             borderRadius: 2,
             position: 'absolute',
             top: 8,
-            left: 'calc(50% - 20px)',
+            left: 'calc(50% - 1.25rem)',
           }}
         ></Box>
 

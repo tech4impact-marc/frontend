@@ -22,14 +22,29 @@ export default function EmblaCarousel({ slides }: CarouselProps) {
 
   return (
     <Box overflow={'hidden'} ref={emblaRef}>
-      <Box display={'flex'}>
-        {slides.map((image: string, index: number) => (
-          <Box key={index}>
-            <Image src={image} width={390} height={560} alt="post-image"></Image>
-          </Box>
-        ))}
+      <Box display={'flex'} sx={{ backfaceVisibility: 'hidden' }} justifyContent={'center'}>
+        {slides.map((image: string, index: number) =>
+          image ? (
+            <Box
+              flex="0 0 100%"
+              minWidth={'22.5rem'}
+              key={index}
+              position={'relative'}
+              sx={{ aspectRatio: '3 / 4' }}
+            >
+              <Image src={image} alt="post-image" fill></Image>
+            </Box>
+          ) : (
+            <Box
+              flex="0 0 100%"
+              minWidth={'22.5rem'}
+              key={index}
+              position={'relative'}
+              sx={{ aspectRatio: '3 / 4', background: '#e0e0e0' }}
+            ></Box>
+          )
+        )}
       </Box>
-
       <IconButton
         sx={{ color: '#ffffff', position: 'absolute', right: 0, top: '50%' }}
         onClick={scrollNext}
