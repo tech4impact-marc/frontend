@@ -97,7 +97,7 @@ export default function PostDialog({ postId, open, onClose, images }: PostDialog
   useEffect(() => {
     if (!open) return
     // 포스트 정보 가져오기
-    const requestURL = `${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}`
+    const requestURL = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}`
     axios.get(requestURL).then((res) => {
       const data: PostResponse = res.data
       console.log(data)
@@ -111,7 +111,7 @@ export default function PostDialog({ postId, open, onClose, images }: PostDialog
     return () => {
       // 언마운트시 좋아요 값이 바뀐 경우 서버에 반영
       if (!likeEdited) return
-      const requestURL = `${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}/likes`
+      const requestURL = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/likes`
 
       if (liked) {
         axios
@@ -152,7 +152,7 @@ export default function PostDialog({ postId, open, onClose, images }: PostDialog
   const handleUpload = () => {
     if (newComment == '') return
     axios
-      .post(`${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}/comments`, {
+      .post(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/comments`, {
         value: newComment,
       })
       .then((res) => {
