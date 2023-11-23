@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  return <>Main Page</>
+  return <>Home</>
 }
 
 Home.getLayout = (page: ReactElement) => <CommonLayout>{page}</CommonLayout>
