@@ -7,7 +7,7 @@ const initialState = {
   signupUserInfo: {
     userName: '',
     userEmail: '',
-    userProfileImage: '',
+    userProfile: {},
     // 다른 필요한 정보들 추가 가능
   },
   tokens: {},
@@ -31,10 +31,10 @@ const reducer = (state = initialState, action: any) => {
         ...state,
         signupUserInfo: { ...state.signupUserInfo, userEmail: action.payload },
       }
-    case 'SIGNUP_SET_USERPROFILEIMAGE':
+    case 'SIGNUP_SET_USERPROFILE':
       return {
         ...state,
-        signupUserInfo: { ...state.signupUserInfo, userProfileImage: action.payload },
+        signupUserInfo: { ...state.signupUserInfo, userProfile: action.payload },
       }
     case 'SET_TOKENS':
       return {

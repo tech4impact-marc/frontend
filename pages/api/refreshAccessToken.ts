@@ -29,7 +29,7 @@ async function refreshAccessToken() {
       }
     }
 
-    const response = await axios.post('http://localhost:3000/auth/refresh', null, {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/refresh`, null, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Refresh: refreshToken,
