@@ -53,7 +53,12 @@ async function refreshAccessToken() {
     return newjwtToken
   } catch (error) {
     if (error.response && error.response.status === 401) {
+      //refreshToken Expired
       alert('토큰이 만료되었습니다. 다시 로그인해 주세요.')
+      store.dispatch({ type: 'SET_TOKENS', payload: {} })
+      store.dispatch({ type: 'SET_USER', payload: {} })
+      store.dispatch({ type: 'SET_ACCESSTOKEN_EXPIRESAT', payload: 0 })
+      store.dispatch({ type: 'SET_REFRESHTOKEN_EXPIRESAT', payload: 0 })
       window.location.href = '/auth/login'
     } else {
       console.error('토큰 리프레시 요청 실패:', error)
