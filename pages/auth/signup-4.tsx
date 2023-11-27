@@ -16,7 +16,7 @@ export default function KakaoSignUpPage4() {
   const isDefault = state.signupUserInfo.userProfile.isDefaultImage
   let profileImage
   if (isDefault) {
-    profileImage = `${process.env.NEXT_PUBLIC_FRONT_IP_ADDRESS}/defaultprofile.png`
+    profileImage = '/defaultprofile.png'
   } else {
     profileImage = state.signupUserInfo.userProfile.profileImageUrl
   }
