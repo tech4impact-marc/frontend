@@ -23,7 +23,7 @@ export default function MyPageRedirectPage() {
         })
         .then((response) => {
           store.dispatch({ type: 'SET_USER', payload: response.data })
-          router.push('/mypage/user/' + response.data.nickname)
+          router.push('/mypage')
         })
         .catch((error) => {
           console.error('Error occured:', error)
