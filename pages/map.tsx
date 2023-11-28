@@ -9,7 +9,7 @@ interface MapPageProps {
   data: any
 }
 
-interface RawImage {
+export interface ImageInfo {
   fileUrl: string
   provider: string
   createdDateTime: string
@@ -24,10 +24,10 @@ interface MainInfo {
     address: string
     addressDetail: string
   }
-  images: RawImage[]
+  images: ImageInfo[]
 }
 
-interface MapResponse {
+export interface MapResponse {
   id: number
   reportTypeVersion: {
     id: number
@@ -72,7 +72,7 @@ function convertDataToGeoJson(content: MapResponse[]) {
         id: element.id,
         address: mainInfo.location.address,
         address_detail: mainInfo.location.addressDetail,
-        image_url_list: mainInfo.images.map((image: RawImage) => image.fileUrl),
+        image_list: mainInfo.images,
         report_type: element.reportTypeVersion.reportType.id,
         year: dateValue.getFullYear(),
         month: dateValue.getMonth() + 1,

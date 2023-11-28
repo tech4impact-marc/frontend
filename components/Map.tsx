@@ -12,6 +12,7 @@ import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 
 import { FlexBox, VFlexBox } from '@/components/styledComponents/StyledBox'
+import type { ImageInfo } from '@/pages/map'
 
 import PostList from './post/PostList'
 
@@ -21,7 +22,7 @@ export interface reportGeoJson {
     id: number
     address: string
     address_detail: string
-    image_url_list: string[]
+    image_list: ImageInfo[]
     report_type: number
     year: number
     month: number
@@ -139,7 +140,7 @@ const Map = ({ data }: MapProps) => {
           id: properties?.id,
           address: properties?.address,
           address_detail: properties?.address_detail,
-          image_url_list: JSON.parse(properties?.image_url_list),
+          image_list: JSON.parse(properties?.image_list),
           report_type: properties?.report_type,
           year: properties?.year,
           month: properties?.month,

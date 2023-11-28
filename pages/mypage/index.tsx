@@ -17,25 +17,16 @@ import Setting from '@/components/myPage/Setting'
 import { FlexBox } from '@/components/styledComponents/StyledBox'
 import { store } from '@/redux/store'
 
-interface UserReport {
+import type { MapResponse } from '../map'
+
+export interface UserReport {
   totalNumberOfPages: number
   totalNumberOfElements: number
   first: boolean
   last: boolean
   isEmpty: boolean
   numberOfElements: number
-  contents: any //TODO
-  mainInfo: any
-  createdDateTime: string
-  modifiedDatetTime: string
-  author: {
-    id: number
-    nickname: string
-  }
-  post: {
-    id: number
-    liked: boolean
-  }
+  contents: MapResponse[]
 }
 
 interface ReportTypeCount {
@@ -69,7 +60,7 @@ const InfoBox = styled(Box)`
 
 export default function MyPage() {
   const [reportTypeCounts, setReportTypeCounts] = useState<ReportTypeCount[]>([])
-  const [reports, setReports] = useState<UserReport>()
+  const [reports, setReports] = useState<UserReport | null>(null)
   const [openMission, setOpenMission] = useState(false)
   const [openSetting, setOpenSetting] = useState(false)
   const state = store.getState()
@@ -147,7 +138,7 @@ export default function MyPage() {
           </Box>
         </SectionContainer>
         <SectionContainer>
-          <Gallery images={['/test.jpeg', '/test.jpeg', '/test.jpeg', '/test.jpeg']} post_id={1} />
+          <Gallery reports={reports} />
         </SectionContainer>
       </MyPageContainer>
       <Backdrop open={openMission} sx={{ backgroundColor: 'white' }}>
