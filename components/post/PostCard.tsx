@@ -54,7 +54,7 @@ export default function PostCard({ index, data }: PostCardProps) {
         <Carousel imageInfoList={data.properties?.image_list} onClick={handleCardImageClick} />
       </Card>
       <PostDialog
-        images={data.properties?.image_list}
+        imageInfoList={data.properties?.image_list}
         postId={data.properties?.post_id}
         open={showDialog}
         onClose={handleDialogClose}
