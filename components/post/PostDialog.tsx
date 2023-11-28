@@ -1,11 +1,12 @@
 import Close from '@mui/icons-material/Close'
 import IosShareIcon from '@mui/icons-material/IosShare'
-import PresentToAllIcon from '@mui/icons-material/PresentToAll'
-import { Container, List, ListItem } from '@mui/material'
+import { Container, List, ListItemButton } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
+import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import Slide from '@mui/material/Slide'
 import { styled } from '@mui/material/styles'
@@ -14,11 +15,14 @@ import Toolbar from '@mui/material/Toolbar'
 import { TransitionProps } from '@mui/material/transitions'
 import Typography from '@mui/material/Typography'
 import axios from 'axios'
-import React, { useEffect } from 'react'
+import { debounce } from 'lodash'
+import React, { useCallback, useEffect } from 'react'
 
 import Carousel from '@/components/PostCarousel'
-import type { ImageInfo } from '@/pages/map'
+import { store } from '@/redux/store'
+import type { ImageInfo } from '@/types/type'
 
+import SNSSharingComponent from '../share/SNSSharingComponent'
 import { FlexBox, VFlexBox } from '../styledComponents/StyledBox'
 import LikeButton from './LikeButton'
 
@@ -26,7 +30,9 @@ interface PostDialogProps {
   postId: number
   imageInfoList: ImageInfo[]
   open: boolean
+  userLike: boolean
   onClose: () => void
+  onClickLike: () => void
 }
 
 interface Author {
@@ -55,10 +61,10 @@ interface PostResponse {
 }
 
 const ParagraphBox = styled(Box)`
-  padding-top: 12px;
-  padding-bottom: 12px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
 `
 
 const PostAvatar = styled(Avatar)`
@@ -76,24 +82,30 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="left" ref={ref} {...props} />
 })
 
-const UserProfile = (userName: string) => {
+const UserProfile = (userName: string, variant: 'h3' | 'h5') => {
   return (
     <FlexBox alignItems={'center'}>
       <PostAvatar alt="user name" />
-      <Typography variant="h3">{userName}</Typography>
+      <Typography variant={variant}>{userName}</Typography>
     </FlexBox>
   )
 }
 
-export default function PostDialog({ postId, open, onClose, imageInfoList }: PostDialogProps) {
+export default function PostDialog({
+  postId,
+  open,
+  userLike,
+  onClose,
+  onClickLike,
+  imageInfoList,
+}: PostDialogProps) {
   const [author, setAuthor] = React.useState<Author | null>(null)
   const [comments, setComments] = React.useState<Comment[]>([])
   const [value, setValue] = React.useState<string>('')
   const [like_count, setLikeCount] = React.useState<number>(0)
-  const [liked, setLiked] = React.useState<boolean>(false)
   const [newComment, setNewComment] = React.useState<string>('')
-
-  const [likeEdited, setLikeEdited] = React.useState<boolean>(false)
+  const [isSNSShareVisible, setIsSNSShareVisible] = React.useState<boolean>(false)
+  const state = store.getState()
 
   useEffect(() => {
     if (!open) return
@@ -105,46 +117,41 @@ export default function PostDialog({ postId, open, onClose, imageInfoList }: Pos
       setAuthor(data.author)
       setComments(data.comments)
       setLikeCount(data.likeCount)
-      setLiked(data.liked)
       setValue(data.value)
     })
-
-    return () => {
-      // 언마운트시 좋아요 값이 바뀐 경우 서버에 반영
-      if (!likeEdited) return
-      const requestURL = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/likes`
-
-      if (liked) {
-        axios
-          .post(requestURL)
-          .then((res) => {
-            console.log(res)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      } else {
-        axios
-          .delete(requestURL)
-          .then((res) => {
-            console.log(res)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      }
-    }
   }, [open, postId])
 
   const handleLike = () => {
-    setLiked(!liked)
-    setLikeEdited(!likeEdited)
-    if (liked) {
+    onClickLike()
+    if (userLike) {
       setLikeCount(like_count - 1)
     } else {
       setLikeCount(like_count + 1)
     }
+    debouncedLikeUpdate(!userLike, postId)
   }
+
+  const debouncedLikeUpdate = useCallback(
+    debounce(async (like: boolean, postId: number) => {
+      const requestUrl = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/likes`
+      try {
+        if (like) {
+          const res = await axios.post(requestUrl)
+          if (res.status !== 200) {
+            throw new Error('like post error')
+          }
+        } else {
+          const res = await axios.delete(requestUrl)
+          if (res.status !== 200) {
+            throw new Error('like delete error')
+          }
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }, 1000),
+    []
+  )
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewComment(event.target.value)
@@ -167,75 +174,138 @@ export default function PostDialog({ postId, open, onClose, imageInfoList }: Pos
     setNewComment('')
   }
 
+  const handleShareOpen = () => {
+    setIsSNSShareVisible(true)
+  }
+
+  const handleShareClose = () => {
+    setIsSNSShareVisible(false)
+  }
+
+  const handleClickComment = () => {}
+
   return (
-    <Dialog fullScreen open={open} onClose={onClose} TransitionComponent={Transition}>
-      <Box marginBottom={'2.5rem'}>
-        <Box position={'relative'}>
-          <Carousel imageInfoList={imageInfoList}></Carousel>
-          <IconButton
-            onClick={onClose}
-            sx={{ position: 'absolute', top: '0.625rem', left: '0.625rem', color: '#ffffff' }}
-          >
-            <Close />
-          </IconButton>
-        </Box>
-        <Box>
-          <VFlexBox margin={'1.5rem 1.25rem 1rem'}>
-            {UserProfile(author?.nickname ?? 'user name')}
-            <Typography variant="subtitle1" marginTop={'0.5rem'}>
-              2023년 12월 1일
-            </Typography>
-          </VFlexBox>
-          <ParagraphBox>
-            <Typography variant="subtitle2">{value}</Typography>
-          </ParagraphBox>
-          <List disablePadding>
+    <React.Fragment>
+      <Dialog
+        fullScreen
+        open={open}
+        onClose={onClose}
+        TransitionComponent={Transition}
+        disableScrollLock
+      >
+        <Box marginBottom={'2.5rem'}>
+          <Box position={'relative'}>
+            <Carousel imageInfoList={imageInfoList}></Carousel>
+            <IconButton
+              onClick={onClose}
+              sx={{ position: 'absolute', top: '0.625rem', left: '0.625rem', color: '#ffffff' }}
+            >
+              <Close />
+            </IconButton>
+          </Box>
+          <Box>
+            <VFlexBox margin={'1.5rem 1.25rem 1rem'}>
+              {UserProfile(author?.nickname ?? 'user name', 'h3')}
+              <Typography variant="subtitle1" marginTop={'0.5rem'}>
+                2023년 12월 1일
+              </Typography>
+            </VFlexBox>
             <ParagraphBox>
-              {comments.map((comment: Comment) => {
-                return (
-                  <ListItem button disableGutters key={comment.id} sx={{ display: 'block' }}>
-                    <FlexBox alignItems={'center'}>{UserProfile(comment.author.nickname)}</FlexBox>
-                    <Box mt={'8px'} ml={'48px'}>
-                      <Typography fontSize={'15px'} ml={'8px'}>
-                        {comment.value}
-                      </Typography>
-                    </Box>
-                  </ListItem>
-                )
-              })}
+              <Typography variant="subtitle2">{value}</Typography>
             </ParagraphBox>
-          </List>
+            <Divider />
+            <List sx={{ padding: '0.75rem 0' }}>
+              {comments.map((comment: Comment) => {
+                const currentUserId = state.user.id
+                const commentUserId = comment.author.id
+                console.log(currentUserId, commentUserId)
+                const clickable = currentUserId ? currentUserId == commentUserId : false
+
+                if (!clickable) {
+                  return (
+                    <ListItemButton
+                      disableGutters
+                      disableRipple
+                      key={comment.id}
+                      sx={{ display: 'block', pl: '1.25rem' }}
+                    >
+                      <FlexBox alignItems={'center'}>
+                        {UserProfile(comment.author.nickname, 'h5')}
+                      </FlexBox>
+                      <Box mt={'0.5rem'} ml={'3rem'}>
+                        <Typography fontSize={'0.813rem'} ml={'0.5rem'}>
+                          {comment.value}
+                        </Typography>
+                      </Box>
+                    </ListItemButton>
+                  )
+                } else {
+                  return (
+                    <ListItemButton
+                      disableGutters
+                      key={comment.id}
+                      sx={{ display: 'block', pl: '1.25rem' }}
+                      onClick={handleClickComment}
+                    >
+                      <FlexBox alignItems={'center'}>
+                        {UserProfile(comment.author.nickname, 'h5')}
+                      </FlexBox>
+                      <Box mt={'0.5rem'} ml={'3rem'}>
+                        <Typography fontSize={'0.813rem'} ml={'0.5rem'}>
+                          {comment.value}
+                        </Typography>
+                      </Box>
+                    </ListItemButton>
+                  )
+                }
+              })}
+            </List>
+          </Box>
         </Box>
-      </Box>
-      <Container sx={{ height: '100%' }} />
-      <AppBar position="sticky" sx={{ backgroundColor: '#fff' }}>
-        <FlexBox margin={'0 1rem'} alignItems={'center'} height={'3.5rem'}>
-          <PostAvatar />
-          <TextField
-            variant="outlined"
-            size="small"
-            multiline
-            maxRows={2}
-            value={newComment}
-            sx={{ flexGrow: 1 }}
-          />
-          <IconButton color="primary" sx={{ ml: '0.5rem' }} onClick={handleUpload}>
-            <PresentToAllIcon />
-          </IconButton>
-        </FlexBox>
-        <Toolbar sx={{ backgroundColor: '#eee', height: '3.5rem' }}>
-          <IconButton>
-            <IosShareIcon />
-          </IconButton>
-          <Box flexGrow={1} />
-          <FlexBox alignItems={'center'}>
-            <LikeButton liked={liked} onClick={handleLike} />
-            <Typography variant="subtitle2" color={'#223047'}>
-              {like_count}
-            </Typography>
+        <Container sx={{ height: '100%' }} />
+        <AppBar position="sticky" sx={{ backgroundColor: '#fff' }} elevation={0}>
+          <FlexBox margin={'1rem 1.25rem'} alignItems={'center'}>
+            <PostAvatar />
+            <TextField
+              variant="standard"
+              value={newComment}
+              placeholder="입력해주세요"
+              sx={{ flexGrow: 1 }}
+              inputProps={{
+                style: {
+                  height: '3.5rem',
+                },
+              }}
+              onChange={handleCommentChange}
+            />
+            <Button
+              disableElevation
+              variant="contained"
+              sx={{ ml: '0.5rem' }}
+              onClick={handleUpload}
+            >
+              전송
+            </Button>
           </FlexBox>
-        </Toolbar>
-      </AppBar>
-    </Dialog>
+          <Toolbar sx={{ backgroundColor: '#eee', height: '3.5rem' }}>
+            <IconButton onClick={handleShareOpen}>
+              <IosShareIcon />
+            </IconButton>
+            <Box flexGrow={1} />
+            <FlexBox alignItems={'center'}>
+              <LikeButton liked={userLike} onClick={handleLike} />
+              <Typography variant="subtitle2" color={'#223047'}>
+                {like_count}
+              </Typography>
+            </FlexBox>
+          </Toolbar>
+        </AppBar>
+      </Dialog>
+      <SNSSharingComponent
+        isOpen={isSNSShareVisible}
+        onClose={handleShareClose}
+        imageUrl={'/test.jpeg'}
+      />
+    </React.Fragment>
   )
 }

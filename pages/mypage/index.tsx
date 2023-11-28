@@ -16,18 +16,7 @@ import Mission from '@/components/myPage/Mission'
 import Setting from '@/components/myPage/Setting'
 import { FlexBox } from '@/components/styledComponents/StyledBox'
 import { store } from '@/redux/store'
-
-import type { MapResponse } from '../map'
-
-export interface UserReport {
-  totalNumberOfPages: number
-  totalNumberOfElements: number
-  first: boolean
-  last: boolean
-  isEmpty: boolean
-  numberOfElements: number
-  contents: MapResponse[]
-}
+import type { UserReport } from '@/types/type'
 
 interface ReportTypeCount {
   id: number

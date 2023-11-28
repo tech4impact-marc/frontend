@@ -4,12 +4,14 @@ import { styled } from '@mui/material/styles'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 import { useState } from 'react'
 
+import type { reportGeoJson } from '@/types/type'
+
 import PostCard from './PostCard'
 
 const drawerBleeding = 240
 
 interface PostProps {
-  data: any
+  data: reportGeoJson[]
   onClickBack: () => void
 }
 
@@ -79,7 +81,7 @@ export default function Post(props: PostProps) {
 
         <ListContainer>
           <Stack spacing={2}>
-            {props.data.map((post: any, index: number) => (
+            {props.data.map((post: reportGeoJson, index: number) => (
               <PostCard data={post} index={index} key={index} />
             ))}
           </Stack>

@@ -5,7 +5,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import Image from 'next/image'
 import React, { useCallback } from 'react'
 
-import type { ImageInfo } from '@/pages/map'
+import type { ImageInfo } from '@/types/type'
 
 type CarouselProps = {
   imageInfoList: ImageInfo[]

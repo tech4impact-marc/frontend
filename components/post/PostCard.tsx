@@ -4,19 +4,20 @@ import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 
 import Carousel from '@/components/CardCarousel'
+import type { reportGeoJson } from '@/types/type'
 
 import { FlexBox } from '../styledComponents/StyledBox'
 import LikeButton from './LikeButton'
 import PostDialog from './PostDialog'
 
 interface PostCardProps {
-  data: any
+  data: reportGeoJson
   index: number
 }
 
 export default function PostCard({ index, data }: PostCardProps) {
   const [showDialog, setShowDialog] = useState(false)
-  const [liked, setLiked] = useState(false)
+  const [liked, setLiked] = useState(data.properties?.liked)
 
   const handleCardClick = () => {
     setShowDialog(true)
@@ -43,10 +44,9 @@ export default function PostCard({ index, data }: PostCardProps) {
           justifyContent={'space-between'}
         >
           <Box width={'80%'} onClick={handleCardClick}>
-            <Typography
-              variant="h3"
-              gutterBottom
-            >{`${data.properties?.address} 앞바다`}</Typography>
+            <Typography variant="h3" gutterBottom>{`${
+              data.properties?.address ?? '제주도'
+            } 앞바다`}</Typography>
             <Typography variant="subtitle1">{`${data.properties?.year}년 ${data.properties?.month}월 ${data.properties?.day}일`}</Typography>
           </Box>
           <LikeButton liked={liked} onClick={handleLikeClick} />
@@ -57,6 +57,8 @@ export default function PostCard({ index, data }: PostCardProps) {
         imageInfoList={data.properties?.image_list}
         postId={data.properties?.post_id}
         open={showDialog}
+        userLike={liked}
+        onClickLike={handleLikeClick}
         onClose={handleDialogClose}
       ></PostDialog>
     </>

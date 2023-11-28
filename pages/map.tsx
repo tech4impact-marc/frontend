@@ -1,56 +1,13 @@
 import Container from '@mui/material/Container'
 import axios from 'axios'
 
-import type { reportGeoJson, typeToReportCollectionGeoJson } from '@/components/Map'
 import Map from '@/components/Map'
+import type { reportGeoJson, typeToReportCollectionGeoJson } from '@/types/type'
+import type { ReportContentResponse } from '@/types/type'
 
 // 추후 데이터 따라서 설정 필요
 interface MapPageProps {
   data: any
-}
-
-export interface ImageInfo {
-  fileUrl: string
-  provider: string
-  createdDateTime: string
-  modifiedDateTime: string
-}
-
-interface MainInfo {
-  observedDateTime: string
-  location: {
-    latitude: string
-    longitude: string
-    address: string
-    addressDetail: string
-  }
-  images: ImageInfo[]
-}
-
-export interface MapResponse {
-  id: number
-  reportTypeVersion: {
-    id: number
-    reportType: {
-      id: number
-      label: string
-    }
-    versionNumber: number
-  }
-  createdDateTime: string
-  modifiedDateTime: string
-  mainInfo: MainInfo
-  author: { id: number; nickname: string }
-  postId: number
-}
-
-// 마커에 포함될 데이터 인터페이스 정의
-export interface Marker {
-  title: string
-  description: string
-  latCoord: number
-  longCoord: number
-  imageUrl: string
 }
 
 export default function MapPage({ data }: MapPageProps) {
@@ -61,9 +18,9 @@ export default function MapPage({ data }: MapPageProps) {
   )
 }
 
-function convertDataToGeoJson(content: MapResponse[]) {
+function convertDataToGeoJson(content: ReportContentResponse[]) {
   // 받아온 데이터를 geojson 형식으로 변환
-  const geoJsonReports = content.map((element: MapResponse) => {
+  const geoJsonReports = content.map((element: ReportContentResponse) => {
     const mainInfo = element.mainInfo
     const dateValue = element.createdDateTime ? new Date(element.createdDateTime) : new Date()
     const feature: reportGeoJson = {
@@ -77,13 +34,15 @@ function convertDataToGeoJson(content: MapResponse[]) {
         year: dateValue.getFullYear(),
         month: dateValue.getMonth() + 1,
         day: dateValue.getDay(),
-        post_id: element.postId,
+        post_id: element.post.id,
+        liked: element.post.liked,
       },
       geometry: {
         type: 'Point',
         coordinates: [Number(mainInfo.location.longitude), Number(mainInfo.location.latitude)],
       },
     }
+
     return feature
   })
 
@@ -100,8 +59,6 @@ function convertDataToGeoJson(content: MapResponse[]) {
     {}
   )
 
-  console.log(groupedGeoJsonfeatureCollections)
-
   return groupedGeoJsonfeatureCollections
 }
 
@@ -112,10 +69,11 @@ export async function getServerSideProps() {
     // const jsonData = await axios('http://localhost:3000/api/map')
     const jsonData = await axios(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/map`)
     const data = jsonData.data
+
     return {
       props: {
         // data: jsonData.data,
-        data: convertDataToGeoJson(data.content),
+        data: convertDataToGeoJson(data.contents),
       },
     }
   } catch (err) {
