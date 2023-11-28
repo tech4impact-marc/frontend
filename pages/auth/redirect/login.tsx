@@ -24,6 +24,7 @@ export default function KakaoLoginRedirectPage() {
           throw new Error('Network response was not ok')
         }
         store.dispatch({ type: 'SET_TOKENS', payload: response.data.tokens })
+        store.dispatch({ type: 'SET_USER', payload: response.data.user })
         store.dispatch({
           type: 'SET_ACCESSTOKEN_EXPIRESAT',
           payload: Date.now() + response.data.tokens.expiresIn * 1000,
