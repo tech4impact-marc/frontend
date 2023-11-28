@@ -13,11 +13,12 @@ export default function KakaoSignUpPage4() {
   const state = store.getState()
   const userName = state.signupUserInfo.userName
   const userEmail = state.signupUserInfo.userEmail
+  const isDefault = state.signupUserInfo.userProfile.isDefaultImage
   let profileImage
-  if (state.signupUserInfo.userProfileImage === '') {
-    profileImage = 'http://localhost:3001/defaultprofile.png' //defaultprofileimg
+  if (isDefault) {
+    profileImage = '/defaultprofile.png'
   } else {
-    profileImage = state.signupUserInfo.userProfileImage
+    profileImage = state.signupUserInfo.userProfile.profileImageUrl
   }
 
   const handleBack = () => {
@@ -27,8 +28,8 @@ export default function KakaoSignUpPage4() {
   const handleSignup = () => {
     axios
       .post(
-        'http://localhost:3000/auth/kakao/signup',
-        { nickname: userName, email: userEmail },
+        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao/signup`,
+        { nickname: userName, email: userEmail, profileIsDefaultImage: isDefault },
         {
           headers: {
             'Content-Type': 'application/json',

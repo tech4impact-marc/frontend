@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
 
-import SNSSharingComponent from '@/components/SNSSharingComponent'
+import SNSSharingComponent from '@/components/share/SNSSharingComponent'
 import drawer from '@/public/drawer.png'
 
 import theme from '../styles/theme'

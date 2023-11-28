@@ -3,7 +3,9 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import GetAppIcon from '@mui/icons-material/GetApp'
 import ShareIcon from '@mui/icons-material/Share'
 import { Box, Button, Divider, IconButton, Modal, Typography } from '@mui/material'
+import NextImage from 'next/image'
 import React, { useState } from 'react'
+import { isMobile } from 'react-device-detect'
 
 declare global {
   interface Window {
@@ -18,7 +20,7 @@ const loadKakaoLinkScript = () => {
   document.head.appendChild(script)
 }
 
-const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
+const SNSSharingComponent = ({ isOpen, onClose, imageUrl }: any) => {
   React.useEffect(() => {
     loadKakaoLinkScript()
   }, [])
@@ -99,27 +101,22 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
       <Modal
         open={isOpen}
         onClose={onClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        style={{ zIndex: '10000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
             width: 300,
             bgcolor: 'background.paper',
             borderRadius: 3,
             boxShadow: 10,
             display: 'flex',
             flexDirection: 'column',
+            rowGap: '1rem',
             alignItems: 'center',
-            marginBottom: '16px',
-            padding: '10px',
+            padding: '1rem',
           }}
         >
-          <Typography variant="h2" sx={{ marginTop: '16px', marginBottom: '16px' }}>
+          <Typography variant="h2" sx={{ marginTop: '16px' }}>
             공유하기
           </Typography>
           <Divider sx={{ width: '100%', margin: '0' }} />
@@ -130,8 +127,14 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
           >
             <CloseIcon />
           </IconButton>
-          <img src={imageUrl} alt="Photo to be Shared" style={{ maxWidth: '300px' }} />
-          <Divider sx={{ width: '100%', margin: '0', marginBottom: '12px' }} />
+          <NextImage
+            src={imageUrl}
+            alt="Photo to be Shared"
+            width="248"
+            height="248"
+            style={{ borderRadius: '0.8rem', objectFit: 'contain', backgroundColor: '#CCC' }}
+          />
+          <Divider sx={{ width: '100%', margin: '0' }} />
           <Button
             variant="text"
             color="primary"
@@ -175,30 +178,22 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
       <Modal
         open={isOpen}
         onClose={onClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        style={{ zIndex: '10000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
             width: 300,
             bgcolor: 'background.paper',
             borderRadius: 3,
             boxShadow: 10,
             display: 'flex',
             flexDirection: 'column',
+            rowGap: '1rem',
             alignItems: 'center',
-            marginBottom: '16px',
-            padding: '10px',
+            padding: '1rem',
           }}
         >
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 'bold', fontSize: '20px', marginTop: '16px', marginBottom: '16px' }}
-          >
+          <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '20px', marginTop: '16px' }}>
             공유하기
           </Typography>
           <Divider sx={{ width: '100%', margin: '0' }} />
@@ -209,8 +204,14 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, isMobile }: any) => {
           >
             <CloseIcon />
           </IconButton>
-          <img src={imageUrl} alt="Photo to be Shared" style={{ maxWidth: '300px' }} />
-          <Divider sx={{ width: '100%', margin: '0', marginBottom: '12px' }} />
+          <NextImage
+            src={imageUrl}
+            alt="Photo to be Shared"
+            width="248"
+            height="248"
+            style={{ borderRadius: '0.8rem', objectFit: 'contain', backgroundColor: '#CCC' }}
+          />
+          <Divider sx={{ width: '100%', margin: '0' }} />
 
           <Button
             variant="text"

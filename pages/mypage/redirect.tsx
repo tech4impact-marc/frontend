@@ -15,7 +15,7 @@ export default function MyPageRedirectPage() {
     if (Object.keys(state.tokens).length !== 0) {
       const accessToken = state.tokens.accessToken
       axios
-        .get('http://localhost:3000/auth/users/self/info', {
+        .get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/users/self/info`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -23,7 +23,7 @@ export default function MyPageRedirectPage() {
         })
         .then((response) => {
           store.dispatch({ type: 'SET_USER', payload: response.data })
-          router.push('/mypage/user/' + response.data.nickname)
+          router.push('/mypage')
         })
         .catch((error) => {
           console.error('Error occured:', error)

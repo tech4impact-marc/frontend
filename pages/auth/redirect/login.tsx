@@ -10,7 +10,7 @@ export default function KakaoLoginRedirectPage() {
   useEffect(() => {
     axios
       .post(
-        'http://localhost:3000/auth/kakao/login/done',
+        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao/login/done`,
         {},
         {
           headers: {
@@ -23,14 +23,15 @@ export default function KakaoLoginRedirectPage() {
         if (response.status !== 200) {
           throw new Error('Network response was not ok')
         }
-        store.dispatch({ type: 'SET_TOKENS', payload: response.data })
+        store.dispatch({ type: 'SET_TOKENS', payload: response.data.tokens })
+        store.dispatch({ type: 'SET_USER', payload: response.data.user })
         store.dispatch({
           type: 'SET_ACCESSTOKEN_EXPIRESAT',
-          payload: Date.now() + response.data.expiresIn * 1000,
+          payload: Date.now() + response.data.tokens.expiresIn * 1000,
         })
         store.dispatch({
           type: 'SET_REFRESHTOKEN_EXPIRESAT',
-          payload: Date.now() + response.data.refreshTokenExpiresIn * 1000,
+          payload: Date.now() + response.data.tokens.refreshTokenExpiresIn * 1000,
         })
 
         router.push('/')
