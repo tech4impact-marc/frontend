@@ -51,10 +51,10 @@ export default function PostCard({ index, data }: PostCardProps) {
           </Box>
           <LikeButton liked={liked} onClick={handleLikeClick} />
         </FlexBox>
-        <Carousel slides={data.properties?.image_url_list} onClick={handleCardImageClick} />
+        <Carousel imageInfoList={data.properties?.image_list} onClick={handleCardImageClick} />
       </Card>
       <PostDialog
-        images={data.properties?.image_url_list}
+        imageInfoList={data.properties?.image_list}
         postId={data.properties?.post_id}
         open={showDialog}
         onClose={handleDialogClose}

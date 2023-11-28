@@ -5,11 +5,14 @@ import useEmblaCarousel from 'embla-carousel-react'
 import Image from 'next/image'
 import React, { useCallback } from 'react'
 
+import type { ImageInfo } from '@/pages/map'
+
 type CarouselProps = {
-  slides: string[]
+  imageInfoList: ImageInfo[]
 }
 
-export default function EmblaCarousel({ slides }: CarouselProps) {
+export default function EmblaCarousel({ imageInfoList }: CarouselProps) {
+  const slides = imageInfoList.map((imageInfo) => '/test.jpeg') //TODO: imageInfo.fileUrl
   const [emblaRef, emblaApi] = useEmblaCarousel({
     dragFree: true,
     containScroll: 'trimSnaps',
@@ -22,7 +25,7 @@ export default function EmblaCarousel({ slides }: CarouselProps) {
 
   return (
     <Box overflow={'hidden'} ref={emblaRef}>
-      <Box display={'flex'} sx={{ backfaceVisibility: 'hidden' }} justifyContent={'center'}>
+      <Box display={'flex'} sx={{ backfaceVisibility: 'hidden' }}>
         {slides.map((image: string, index: number) =>
           image ? (
             <Box
