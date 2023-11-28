@@ -6,7 +6,8 @@ import marc_logo from '@/public/marc_logo.png'
 
 export default function LoginPage() {
   const handleLogin = () => {
-    window.location.href = 'http://localhost:3000/auth/kakao'
+    console.log('bye')
+    window.location.href = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao`
   }
   return (
     <Container

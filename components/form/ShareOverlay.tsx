@@ -13,7 +13,7 @@ import {
   StyledContainerTwo,
 } from '../styledComponents/StyledContainer'
 
-const ShareOverlay = ({ animal, imgSrc }: { animal: string | undefined; imgSrc: string }) => {
+const ShareOverlay = ({ animal, imgSrc }: { animal: string | undefined; imgSrc?: string }) => {
   const router = useRouter()
   const { pathname, query } = router
 
@@ -52,13 +52,15 @@ const ShareOverlay = ({ animal, imgSrc }: { animal: string | undefined; imgSrc: 
               borderRadius: '20px',
             }}
           >
-            <Image
-              src={imgSrc}
-              alt="testimg"
-              width="248"
-              height="248"
-              style={{ borderRadius: '0.8rem', objectFit: 'contain', backgroundColor: '#CCC' }}
-            />
+            {imgSrc && (
+              <Image
+                src={imgSrc}
+                alt="testimg"
+                width="248"
+                height="248"
+                style={{ borderRadius: '0.8rem', objectFit: 'contain', backgroundColor: '#CCC' }}
+              />
+            )}
             <Typography variant="h5" color={theme.palette.primary.light} sx={{ marginTop: '8px' }}>
               {level}
             </Typography>
@@ -91,7 +93,7 @@ const ShareOverlay = ({ animal, imgSrc }: { animal: string | undefined; imgSrc: 
         </StyledContainerTwo>
       </StyledContainerOne>
 
-      {isSNSShareVisible && (
+      {isSNSShareVisible && imgSrc && (
         <SNSSharingComponent
           isOpen={isSNSShareVisible}
           onClose={handleShareClose}

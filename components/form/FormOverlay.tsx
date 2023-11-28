@@ -26,16 +26,25 @@ import ShareOverlay from './ShareOverlay'
 
 export interface Question {
   id: number
-  questionNumber: number
+  questionOrder: number
   title: string
   type: string
+  description: string
   required: boolean
   isMain: boolean
   options: Option[]
 }
 
 const FormOverlay = React.memo(
-  ({ questions, animal }: { questions: Question[]; animal: string }) => {
+  ({
+    questions,
+    animal,
+    currentVersion,
+  }: {
+    questions: Question[]
+    animal: string
+    currentVersion: number
+  }) => {
     const router = useRouter()
     const { pathname, query } = router
 
@@ -196,16 +205,21 @@ const FormOverlay = React.memo(
       [answers, dateIndex, locationIndex, currentAnswer, images]
     )
 
-    useEffect(() => {
-      console.log(answers)
-    }, [answers])
-
     const handleNextButtonClick = () => {
+      console.log(typeof router.query.animal, typeof currentVersion)
+      console.log(
+        JSON.stringify({
+          reportTypeId: router.query.animal,
+          reportTypeVersionId: currentVersion,
+          answers: answers,
+        })
+      )
       if (step == lastStep) {
         formData.append(
           'data',
           JSON.stringify({
-            reportTypeId: router.query.animal,
+            reportTypeId: parseInt(router.query.animal as string),
+            reportTypeVersionId: currentVersion,
             answers: answers,
           })
         )
@@ -264,7 +278,7 @@ const FormOverlay = React.memo(
           {questions[step] && currentAnswer && (
             <StyledContainerThree>
               <Typography variant="h2">{questions[step].title}</Typography>
-              <Typography variant="subtitle1">질문 추가설명!</Typography>
+              <Typography variant="subtitle1">{questions[step].description}</Typography>
             </StyledContainerThree>
           )}
 

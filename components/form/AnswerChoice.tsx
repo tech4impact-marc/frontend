@@ -85,6 +85,7 @@ const AnswerChoice: React.FC<AnswerTypeProps> = React.memo(
             updateAnswers={updateAnswers}
           />
         )
+      case 'IMAGE':
       case 'FILE':
         return (
           <ImageAnswer

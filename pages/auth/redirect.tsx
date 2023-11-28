@@ -10,7 +10,7 @@ export default function KakaoLoginRedirectPage() {
   useEffect(() => {
     axios
       .post(
-        'http://localhost:3000/auth/kakao/login/done',
+        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao/login/done`,
         {},
         {
           headers: {
