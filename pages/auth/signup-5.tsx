@@ -3,6 +3,12 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import {
+  StyledContainerLogin,
+  StyledContainerSignupOne,
+  StyledContainerSignupThree,
+  StyledContainerTwo,
+} from '@/components/styledComponents/StyledContainer'
 import signup_complete from '@/public/signup_complete.png'
 import { store } from '@/redux/store'
 
@@ -19,19 +25,12 @@ const KakaoSignUpPage5 = () => {
   }
 
   return (
-    <Container
-      sx={{
-        alignItems: 'flex-start',
-        height: 'calc(90vh - 56px)',
-        maxWidth: '100%',
-        padding: '0px',
-      }}
-    >
-      <Container sx={{ height: '56px' }}></Container>
-      <Container sx={{ height: '120px', padding: '16px', gap: '8px', alignItems: 'center' }}>
+    <StyledContainerLogin>
+      <Container sx={{ height: '3.5rem' }}></Container>
+      <StyledContainerSignupOne>
         <Typography variant="h1">반갑습니다 {userName}님 🙌 </Typography>
         <Typography variant="body1">MARC에서 해양동물들을 둘러보세요!</Typography>
-      </Container>
+      </StyledContainerSignupOne>
       <Container
         sx={{
           justifyContent: 'center',
@@ -42,12 +41,14 @@ const KakaoSignUpPage5 = () => {
       >
         <Image src={signup_complete} alt="complete" width="178" />
       </Container>
-      <Container sx={{ padding: '16px 16px 48px 16px', alignItems: 'center' }}>
-        <Button onClick={handleNext} variant="contained" color="primary">
-          <Typography variant="body1">시작하기</Typography>
-        </Button>
-      </Container>
-    </Container>
+      <StyledContainerSignupThree>
+        <StyledContainerTwo>
+          <Button onClick={handleNext} variant="contained" color="primary">
+            <Typography variant="body1">시작하기</Typography>
+          </Button>
+        </StyledContainerTwo>
+      </StyledContainerSignupThree>
+    </StyledContainerLogin>
   )
 }
 

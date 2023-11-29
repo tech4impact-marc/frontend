@@ -12,6 +12,13 @@ import {
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import {
+  StyledContainerLogin,
+  StyledContainerSignupOne,
+  StyledContainerSignupThree,
+  StyledContainerSignupTwo,
+  StyledContainerTwo,
+} from '@/components/styledComponents/StyledContainer'
 import { store } from '@/redux/store'
 
 export default function KakaoSignUpPage3() {
@@ -58,23 +65,16 @@ export default function KakaoSignUpPage3() {
   }
 
   return (
-    <Container
-      sx={{
-        alignItems: 'flex-start',
-        height: 'calc(90vh - 56px)',
-        maxWidth: '100%',
-        padding: '0px',
-      }}
-    >
-      <Container sx={{ height: '56px', padding: '16px', alignItems: 'flex-start' }}>
+    <StyledContainerLogin>
+      <StyledContainerSignupOne>
         <IconButton onClick={handleBack} sx={{ color: 'black' }}>
           <ArrowBackIosNewIcon />
         </IconButton>
-      </Container>
-      <Container sx={{ padding: '16px', height: '120px', gap: '8px' }}>
+      </StyledContainerSignupOne>
+      <StyledContainerSignupTwo>
         <Typography variant="h1">이메일을 알려주세요</Typography>
         <Typography variant="body1">사용하시는 이메일을 입력해주세요</Typography>
-      </Container>
+      </StyledContainerSignupTwo>
       <Container
         sx={{
           flexDirection: 'row',
@@ -91,7 +91,7 @@ export default function KakaoSignUpPage3() {
           defaultValue={parsedUserEmail[0]}
           onChange={handleUserNameChange}
         />
-        <Typography variant="body1" sx={{ padding: '18px 0px 0px 0px' }}>
+        <Typography variant="body1" sx={{ padding: '1.125rem 0 0' }}>
           @
         </Typography>
         <FormControl variant="outlined" style={{ width: '45%' }}>
@@ -107,7 +107,7 @@ export default function KakaoSignUpPage3() {
               labelId="domain-label"
               defaultValue={parsedUserEmail[1]}
               variant="standard"
-              sx={{ padding: '16px 0px 0px 0px' }}
+              sx={{ padding: '1rem 0 0' }}
               onChange={handleDomainChange}
             >
               <MenuItem value="">직접입력</MenuItem>
@@ -119,16 +119,18 @@ export default function KakaoSignUpPage3() {
           )}
         </FormControl>
       </Container>
-      <Container sx={{ padding: '16px 16px 48px 16px', alignItems: 'center' }}>
-        <Button
-          onClick={handleNext}
-          variant="contained"
-          color="primary"
-          disabled={isNextButtonDisabled()}
-        >
-          <Typography variant="body1">다음</Typography>
-        </Button>
-      </Container>
-    </Container>
+      <StyledContainerSignupThree>
+        <StyledContainerTwo>
+          <Button
+            onClick={handleNext}
+            variant="contained"
+            color="primary"
+            disabled={isNextButtonDisabled()}
+          >
+            <Typography variant="body1">다음</Typography>
+          </Button>
+        </StyledContainerTwo>
+      </StyledContainerSignupThree>
+    </StyledContainerLogin>
   )
 }

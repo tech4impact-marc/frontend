@@ -13,6 +13,13 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import {
+  StyledContainerLogin,
+  StyledContainerSignupOne,
+  StyledContainerSignupThree,
+  StyledContainerSignupTwo,
+  StyledContainerTwo,
+} from '@/components/styledComponents/StyledContainer'
 import { store } from '@/redux/store'
 
 export default function KakaoSignUpPage2() {
@@ -53,26 +60,18 @@ export default function KakaoSignUpPage2() {
   }
 
   return (
-    <Container
-      sx={{
-        alignItems: 'flex-start',
-        height: 'calc(90vh - 56px)',
-        maxWidth: '100%',
-        padding: '0px',
-      }}
-    >
-      <Container sx={{ height: '56px', padding: '16px', alignItems: 'flex-start' }}>
+    <StyledContainerLogin>
+      <StyledContainerSignupOne>
         <IconButton onClick={handleBack} sx={{ color: 'black' }}>
           <ArrowBackIosNewIcon />
         </IconButton>
-      </Container>
-      <Container sx={{ padding: '16px', height: '120px', gap: '8px' }}>
+      </StyledContainerSignupOne>
+      <StyledContainerSignupTwo>
         <Typography variant="h1">이름을 알려주세요</Typography>
         <Typography variant="body1">MARC에서 사용하실 닉네임을 알려주세요</Typography>
-      </Container>
+      </StyledContainerSignupTwo>
       <Container
         sx={{
-          justifyContent: 'center',
           alignItems: 'flex-start',
           alignSelf: 'stretch',
           height: '100%',
@@ -99,16 +98,18 @@ export default function KakaoSignUpPage2() {
           )}
         </FormControl>
       </Container>
-      <Container sx={{ padding: '16px 16px 48px 16px', alignItems: 'center' }}>
-        <Button
-          onClick={handleNext}
-          variant="contained"
-          color="primary"
-          disabled={isNextButtonDisabled()}
-        >
-          <Typography variant="body1">다음</Typography>
-        </Button>
-      </Container>
-    </Container>
+      <StyledContainerSignupThree>
+        <StyledContainerTwo>
+          <Button
+            onClick={handleNext}
+            variant="contained"
+            color="primary"
+            disabled={isNextButtonDisabled()}
+          >
+            <Typography variant="body1">다음</Typography>
+          </Button>
+        </StyledContainerTwo>
+      </StyledContainerSignupThree>
+    </StyledContainerLogin>
   )
 }

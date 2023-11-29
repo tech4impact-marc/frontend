@@ -6,6 +6,13 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import {
+  StyledContainerLogin,
+  StyledContainerSignupOne,
+  StyledContainerSignupThree,
+  StyledContainerSignupTwo,
+  StyledContainerTwo,
+} from '@/components/styledComponents/StyledContainer'
 import { store } from '@/redux/store'
 
 export default function KakaoSignUpPage4() {
@@ -66,25 +73,18 @@ export default function KakaoSignUpPage4() {
   }
 
   return (
-    <Container
-      sx={{
-        alignItems: 'flex-start',
-        height: 'calc(90vh - 56px)',
-        maxWidth: '100%',
-        padding: '0px',
-      }}
-    >
-      <Container sx={{ height: '56px', padding: '16px', alignItems: 'flex-start' }}>
+    <StyledContainerLogin>
+      <StyledContainerSignupOne>
         <IconButton onClick={handleBack} sx={{ color: 'black' }}>
           <ArrowBackIosNewIcon />
         </IconButton>
-      </Container>
-      <Container sx={{ padding: '16px', height: '120px', gap: '8px' }}>
+      </StyledContainerSignupOne>
+      <StyledContainerSignupTwo>
         <Typography variant="h1">프로필 이미지를 설정해주세요</Typography>
         <Typography variant="body1">
           {userName}님을 표현할 수 있는 이미지를 설정해주세요.
         </Typography>
-      </Container>
+      </StyledContainerSignupTwo>
       <Container
         sx={{
           justifyContent: 'center',
@@ -96,14 +96,16 @@ export default function KakaoSignUpPage4() {
         <Avatar
           alt="Profile Image"
           src={profileImage}
-          sx={{ width: '240px', height: '240px', borderRadius: '50%', cursor: 'pointer' }}
+          sx={{ width: '15rem', height: '15rem', borderRadius: '50%', cursor: 'pointer' }}
         />
       </Container>
-      <Container sx={{ padding: '16px 16px 48px 16px', alignItems: 'center' }}>
-        <Button onClick={handleSignup} variant="contained" color="primary">
-          <Typography variant="body1">회원가입 완료하기</Typography>
-        </Button>
-      </Container>
-    </Container>
+      <StyledContainerSignupThree>
+        <StyledContainerTwo>
+          <Button onClick={handleSignup} variant="contained" color="primary">
+            <Typography variant="body1">회원가입 완료하기</Typography>
+          </Button>
+        </StyledContainerTwo>
+      </StyledContainerSignupThree>
+    </StyledContainerLogin>
   )
 }
