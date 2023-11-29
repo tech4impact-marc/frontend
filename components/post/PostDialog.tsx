@@ -145,26 +145,6 @@ export default function PostDialog({
           nickname: '익명의 돌고래',
         })
         setLikeCount(1)
-        setComments([
-          {
-            id: 1,
-            author: {
-              id: 1,
-              nickname: '미남강현',
-            },
-            post_id: 0,
-            value: '와 댓글이다!',
-          },
-          {
-            id: 2,
-            author: {
-              id: 1,
-              nickname: '미남현희',
-            },
-            post_id: 0,
-            value: '????????????????/',
-          },
-        ])
       })
   }, [open, postId])
 

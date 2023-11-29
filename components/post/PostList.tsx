@@ -1,12 +1,11 @@
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded'
-import { Button, IconButton } from '@mui/material'
+import { IconButton } from '@mui/material'
 import Backdrop from '@mui/material/Backdrop'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
 import React, { useState } from 'react'
-import { isMobile } from 'react-device-detect'
 
 import type { reportGeoJson } from '@/types/type'
 
@@ -54,14 +53,6 @@ export default function Post(props: PostProps) {
         open={!open}
         onClick={handleClose}
       />
-      {!isMobile ? (
-        <Button
-          onClick={() => setOpen(!open)}
-          sx={{ backgroundColor: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        >
-          {open ? '닫기' : '열기'}
-        </Button>
-      ) : null}
       <CustomSwipeableDrawer
         anchor="bottom"
         open={open}

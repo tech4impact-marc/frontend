@@ -66,15 +66,15 @@ export function convertDataToGeoJson(content: ReportContentResponse[]) {
 export async function getServerSideProps() {
   try {
     // 임시 api 호출
-    const jsonData = await axios('http://localhost:3001/api/map')
-    // const jsonData = await axios(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/map`)
+    // const jsonData = await axios('http://localhost:3001/api/map')
+    const jsonData = await axios(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/map`)
     const data = jsonData.data
     console.log(JSON.stringify(data))
 
     return {
       props: {
-        data: jsonData.data,
-        // data: convertDataToGeoJson(data.contents),
+        // data: jsonData.data,
+        data: convertDataToGeoJson(data.contents),
       },
     }
   } catch (err) {
