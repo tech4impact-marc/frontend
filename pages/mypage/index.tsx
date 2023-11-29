@@ -103,11 +103,11 @@ export default function MyPage() {
             </Box>
           </Box>
           <InfoBox marginTop={'0.25rem'}>
-            <Typography variant="h2">{user.nickname ?? '안녕하세요!'}</Typography>
-            <Typography variant="h4">{user.mainMission ?? '미션을 달성해볼까요?'}</Typography>
+            <Typography variant="h2">{user?.nickname ?? '안녕하세요!'}</Typography>
+            <Typography variant="h4">{user?.mainMission ?? '미션을 달성해볼까요?'}</Typography>
           </InfoBox>
           <Typography variant="h5" color={'#8f8f8f'} fontWeight={600}>
-            리포트 {reports?.totalNumberOfElements}
+            리포트 {reports?.totalNumberOfElements ?? 0}
           </Typography>
           <Box maxWidth="80%">
             <Grid container spacing={1}>

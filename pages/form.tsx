@@ -24,7 +24,7 @@ export interface Animal {
   icon?: React.ReactNode
 }
 
-const iconList: { [key: string]: React.ReactNode } = {
+export const iconList: { [key: string]: React.ReactNode } = {
   남방큰돌고래: <IconFDolphin size={'1.5rem'} />,
   상괭이: <IconFSpoutingWhale size={'1.5rem'} />,
   바다거북: <IconFTurtle size={'1.5rem'} />,

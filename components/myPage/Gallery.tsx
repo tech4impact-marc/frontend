@@ -1,10 +1,12 @@
 import Box from '@mui/material/Box'
+import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
 import Image from 'next/image'
 import React from 'react'
+import { IconFDolphin } from 'react-fluentui-emoji/lib/flat'
 
 import type { ReportContentResponse, UserReport } from '@/types/type'
-import { convertDateToString } from '@/types/util'
+import { convertDateToString } from '@/util'
 
 import PostDialog from '../post/PostDialog'
 
@@ -25,31 +27,47 @@ export default function Gallery({ reports }: GalleryProps) {
   return (
     <React.Fragment>
       <Box sx={{ flexGrow: 1 }}>
-        <Grid container rowSpacing={1} columnSpacing={1}>
-          {reportContents.map((userReport, index) => {
-            const mainImage =
-              userReport.mainInfo.images.length > 0
-                ? userReport.mainInfo.images[0].fileUrl
-                : '/test.jpeg' //TODO: fallback image
-            return (
-              <Grid xs={4} md={4} key={index} justifyContent={'center'} display={'flex'}>
-                <Box
-                  width={'100%'}
-                  height={'auto'}
-                  sx={{ aspectRatio: 1, borderRadius: '0.5rem' }}
-                  position="relative"
-                  overflow={'hidden'}
-                  onClick={() => {
-                    setLiked(userReport.post.liked)
-                    setSelectedPost(userReport)
-                  }}
-                >
-                  <Image src={mainImage} alt={'user report thumbnail'} fill />
-                </Box>
-              </Grid>
-            )
-          })}
-        </Grid>
+        {!reports || !reports?.totalNumberOfElements ? (
+          <Container
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '3rem',
+              height: '100%',
+              alignItems: 'center',
+              rowGap: '1rem',
+            }}
+          >
+            <IconFDolphin size={'3rem'} />
+            제보를 시작해 보세요!
+          </Container>
+        ) : (
+          <Grid container rowSpacing={1} columnSpacing={1}>
+            {reportContents.map((userReport, index) => {
+              const mainImage =
+                userReport.mainInfo.images.length > 0
+                  ? userReport.mainInfo.images[0].fileUrl
+                  : '/test.jpeg' //TODO: fallback image
+              return (
+                <Grid xs={4} md={4} key={index} justifyContent={'center'} display={'flex'}>
+                  <Box
+                    width={'100%'}
+                    height={'auto'}
+                    sx={{ aspectRatio: 1, borderRadius: '0.5rem' }}
+                    position="relative"
+                    overflow={'hidden'}
+                    onClick={() => {
+                      setLiked(userReport.post.liked)
+                      setSelectedPost(userReport)
+                    }}
+                  >
+                    <Image src={mainImage} alt={'user report thumbnail'} fill />
+                  </Box>
+                </Grid>
+              )
+            })}
+          </Grid>
+        )}
       </Box>
       <PostDialog
         postId={selectedPost?.id ?? -1}

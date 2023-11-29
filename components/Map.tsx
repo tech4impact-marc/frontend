@@ -8,10 +8,10 @@ import IconButton from '@mui/material/IconButton'
 import Popover from '@mui/material/Popover'
 import mapboxgl, { LngLatBoundsLike } from 'mapbox-gl'
 import { MapLayerMouseEvent } from 'mapbox-gl'
-import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { FlexBox, VFlexBox } from '@/components/styledComponents/StyledBox'
+import { iconList } from '@/pages/form'
 import type { reportGeoJson, typeToReportCollectionGeoJson } from '@/types/type'
 
 import PostList from './post/PostList'
@@ -31,9 +31,9 @@ const Map = ({ data }: MapProps) => {
 
   // TODO: 타입 정의 dynamic으로 수정
   const reportTypes = [
-    { id: 1, label: '돌고래' },
-    { id: 2, label: '바다거북' },
-    { id: 3, label: '상괭이' },
+    { id: 1, label: '남방큰돌고래', color: '#2D9AFF' },
+    { id: 2, label: '바다거북', color: '#01A459' },
+    { id: 3, label: '상괭이', color: '#9AA8BF' },
   ]
 
   // 지도 범위 제한 좌표 설정 (제주도)
@@ -213,7 +213,7 @@ const Map = ({ data }: MapProps) => {
       for (const type of reportTypes) {
         const id = type.id
         const visible = id === 1 ? 'visible' : 'none'
-        const color = id === 1 ? '#3478F5' : '#3478F5'
+        const color = type.color
         currentMap.addSource(`reports${id}`, {
           type: 'geojson',
           data: {
@@ -265,7 +265,7 @@ const Map = ({ data }: MapProps) => {
                   checked={checked[index]}
                   onClick={() => handleTypeClick(index, type.id)}
                 />
-                <Image src="/돌고래.svg" alt="logo" width={24} height={24} />
+                {iconList[type.label]}
                 <Typography ml={'0.25rem'} variant="subtitle1">
                   {type.label}
                 </Typography>

@@ -18,8 +18,7 @@ import Toolbar from '@mui/material/Toolbar'
 import { TransitionProps } from '@mui/material/transitions'
 import Typography from '@mui/material/Typography'
 import axios from 'axios'
-import { debounce } from 'lodash'
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 import Carousel from '@/components/PostCarousel'
 import { store } from '@/redux/store'
@@ -61,7 +60,7 @@ interface PostResponse {
   author: Author
   value: string
   comments: Comment[]
-  likeCount: number
+  like_count: number
   liked: boolean
 }
 
@@ -128,14 +127,24 @@ export default function PostDialog({
       .get(requestURL)
       .then((res) => {
         const data: PostResponse = res.data
+        const likeCount = data.like_count
         console.log(data)
         setAuthor(data.author)
         setComments(data.comments)
-        setLikeCount(data.likeCount)
         setValue(data.value)
+        if (likeCount === 0 && userLike) {
+          setLikeCount(likeCount + 1)
+        } else {
+          setLikeCount(likeCount)
+        }
       })
       .catch((err) => {
         console.log(err)
+        setAuthor({
+          id: 0,
+          nickname: '익명의 돌고래',
+        })
+        setLikeCount(1)
         setComments([
           {
             id: 1,
@@ -166,30 +175,7 @@ export default function PostDialog({
     } else {
       setLikeCount(like_count + 1)
     }
-    debouncedLikeUpdate(!userLike, postId)
   }
-
-  const debouncedLikeUpdate = useCallback(
-    debounce(async (like: boolean, postId: number) => {
-      const requestUrl = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/likes`
-      try {
-        if (like) {
-          const res = await axios.post(requestUrl)
-          if (res.status !== 200) {
-            throw new Error('like post error')
-          }
-        } else {
-          const res = await axios.delete(requestUrl)
-          if (res.status !== 200) {
-            throw new Error('like delete error')
-          }
-        }
-      } catch (err) {
-        console.log(err)
-      }
-    }, 1000),
-    []
-  )
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewComment(event.target.value)
@@ -418,7 +404,7 @@ export default function PostDialog({
       <SNSSharingComponent
         isOpen={isSNSShareVisible}
         onClose={handleShareClose}
-        imageUrl={'/test.jpeg'}
+        imageUrl={imageInfoList[0] ?? '/test.jpeg'} //TODO: fallback url
       />
       <ConfirmDialog
         open={openConfirm}

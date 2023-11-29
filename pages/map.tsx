@@ -4,7 +4,7 @@ import axios from 'axios'
 import Map from '@/components/Map'
 import type { reportGeoJson, typeToReportCollectionGeoJson } from '@/types/type'
 import type { ReportContentResponse } from '@/types/type'
-import { convertDateToString } from '@/types/util'
+import { convertDateToString } from '@/util'
 
 // 추후 데이터 따라서 설정 필요
 interface MapPageProps {

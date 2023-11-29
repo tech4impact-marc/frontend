@@ -1,4 +1,5 @@
-import { Button } from '@mui/material'
+import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded'
+import { Button, IconButton } from '@mui/material'
 import Backdrop from '@mui/material/Backdrop'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
@@ -67,7 +68,7 @@ export default function Post(props: PostProps) {
         onClose={handleClose}
         onOpen={handleOpen}
         disableSwipeToOpen={false}
-        swipeAreaWidth={drawerBleeding}
+        swipeAreaWidth={drawerBleeding + 14}
         ModalProps={{
           keepMounted: true,
         }}
@@ -75,7 +76,7 @@ export default function Post(props: PostProps) {
         <Box
           sx={{
             position: 'relative',
-            marginTop: `${-drawerBleeding}px`,
+            marginTop: `${-drawerBleeding - 14}px`,
             borderTopLeftRadius: 8,
             borderTopRightRadius: 8,
             visibility: 'visible',
@@ -95,6 +96,10 @@ export default function Post(props: PostProps) {
               left: 'calc(50% - 1.25rem)',
             }}
           />
+
+          <IconButton sx={{ mt: '1rem' }} onClick={props.onClickBack}>
+            {open ? <ArrowBackIosRoundedIcon /> : null}
+          </IconButton>
 
           <ListContainer>
             <Stack spacing={2}>
