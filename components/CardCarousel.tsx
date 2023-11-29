@@ -3,7 +3,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import Image from 'next/image'
 import React from 'react'
 
-import type { ImageInfo } from '@/pages/map'
+import type { ImageInfo } from '@/types/type'
 
 type CarouselProps = {
   imageInfoList: ImageInfo[]
@@ -11,7 +11,7 @@ type CarouselProps = {
 }
 
 export default function CardCarousel({ imageInfoList, onClick }: CarouselProps) {
-  const slides = imageInfoList.map((imageInfo) => imageInfo.fileUrl)
+  const slides = imageInfoList.map((imageInfo) => imageInfo.fileUrl ?? '/test.jpeg') //TODO: fallback image
   const [emblaRef] = useEmblaCarousel({ containScroll: 'trimSnaps' })
 
   if (slides?.length < 3) {

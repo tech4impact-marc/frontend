@@ -3,6 +3,14 @@ const nextConfig = {
   reactStrictMode: false,
   images: {
     domains: ['drive.google.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'marc-data.s3.ap-northeast-2.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
 }
 

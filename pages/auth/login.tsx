@@ -1,6 +1,7 @@
 import { Container } from '@mui/material'
 import Image from 'next/image'
 
+import { StyledContainerLogin } from '@/components/styledComponents/StyledContainer'
 import kakao_login_medium_wide from '@/public/kakao_login_medium_wide.png'
 import marc_logo from '@/public/marc_logo.png'
 
@@ -9,20 +10,13 @@ export default function LoginPage() {
     window.location.href = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao`
   }
   return (
-    <Container
-      sx={{
-        alignItems: 'flex-start',
-        height: 'calc(90vh - 56px)',
-        maxWidth: '100%',
-        padding: '0px',
-      }}
-    >
+    <StyledContainerLogin>
       <Container
         sx={{
           justifyContent: 'center',
           alignItems: 'center',
           alignSelf: 'stretch',
-          padding: '16px',
+          padding: '1rem',
           height: '100%',
           maxWidth: '100%',
         }}
@@ -39,6 +33,6 @@ export default function LoginPage() {
       >
         <Image src={kakao_login_medium_wide} alt="kakao_button" onClick={handleLogin} />
       </Container>
-    </Container>
+    </StyledContainerLogin>
   )
 }

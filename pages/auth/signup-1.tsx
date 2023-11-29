@@ -4,6 +4,13 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import {
+  StyledContainerLogin,
+  StyledContainerSignupOne,
+  StyledContainerSignupThree,
+  StyledContainerSignupTwo,
+  StyledContainerTwo,
+} from '@/components/styledComponents/StyledContainer'
 import signup_start from '@/public/signup_start.png'
 import { store } from '@/redux/store'
 
@@ -24,23 +31,16 @@ export default function KakaoSignUpPage1() {
   }
 
   return (
-    <Container
-      sx={{
-        alignItems: 'flex-start',
-        height: 'calc(90vh - 56px)',
-        maxWidth: '100%',
-        padding: '0px',
-      }}
-    >
-      <Container sx={{ height: '56px', padding: '16px', alignItems: 'flex-start' }}>
+    <StyledContainerLogin>
+      <StyledContainerSignupOne>
         <IconButton onClick={handleBack} sx={{ color: 'black' }}>
           <ArrowBackIosNewIcon />
         </IconButton>
-      </Container>
-      <Container sx={{ padding: '16px', height: '120px', gap: '8px' }}>
+      </StyledContainerSignupOne>
+      <StyledContainerSignupTwo>
         <Typography variant="h1">시작해볼까요?</Typography>
         <Typography variant="body1">야생동물들의 지도를 직접 만들어보세요</Typography>
-      </Container>
+      </StyledContainerSignupTwo>
       <Container
         sx={{
           justifyContent: 'center',
@@ -51,11 +51,13 @@ export default function KakaoSignUpPage1() {
       >
         <Image src={signup_start} alt="start" width="178" />
       </Container>
-      <Container sx={{ padding: '16px 16px 48px 16px', alignItems: 'center' }}>
-        <Button onClick={handleNext} variant="contained" color="primary">
-          <Typography variant="body1">시작하기</Typography>
-        </Button>
-      </Container>
-    </Container>
+      <StyledContainerSignupThree>
+        <StyledContainerTwo>
+          <Button onClick={handleNext} variant="contained" color="primary">
+            <Typography variant="body1">시작하기</Typography>
+          </Button>
+        </StyledContainerTwo>
+      </StyledContainerSignupThree>
+    </StyledContainerLogin>
   )
 }

@@ -1,79 +1,114 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-type MapResponseData = {
-  data: any
-}
-
-export interface Marker {
-  title: string
-  description: string
-  latCoord: number
-  longCoord: number
-  imageUrl: string
-}
+import type { ReportContentResponse } from '../../types/type'
+import { convertDataToGeoJson } from '../map'
 
 // 데스트용 임시 데이터 정의
-const markers: Marker[] = [
+const markers: ReportContentResponse[] = [
   {
-    title: 'Jeju',
-    description: 'Jeju',
-    longCoord: 126.0843,
-    latCoord: 33.1127,
-    imageUrl: '/test.jpeg',
+    id: 1,
+    reportTypeVersion: {
+      id: 1,
+      reportType: {
+        id: 1,
+        label: '남방 큰 돌고래',
+        title: '남방 큰 돌고래 조사',
+        subtitle: '남방 큰 돌고래 조사',
+        description: '남방 큰 돌고래 조사',
+      },
+      versionNumber: 1,
+    },
+    mainInfo: {
+      observedDateTime: '2023-10-12T06:42:47.000Z',
+      location: {
+        latitude: 33.88,
+        longitude: 127.99,
+        address: 'hi',
+        addressDetail: 'detail',
+      },
+      images: [
+        {
+          fileUrl:
+            'https://marc-data.s3.ap-northeast-2.amazonaws.com/example_image1699293346827.png',
+          provider: 'S3',
+          createdDateTime: '2023-10-12T06:42:47.000Z',
+          modifiedDateTime: '2023-10-12T06:42:47.000Z',
+        },
+      ],
+    },
+    createdDateTime: '2023-10-12T06:42:47.000Z',
+    modifiedDateTime: '2023-10-12T06:42:47.000Z',
+    author: {
+      id: 0,
+      nickname: '돌고래좋아',
+      provider: 'kakao',
+      mainMission: '메인미션',
+      profile: {
+        thumbnailImageUrl: 'some url',
+        profileImageUrl: 'some url',
+        profileImageType: 'kakao',
+        isDefaultImage: false,
+      },
+    },
+    post: {
+      id: 0,
+      liked: true,
+    },
   },
   {
-    title: 'Jeju2',
-    description: 'Jeju2',
-    longCoord: 126.582,
-    latCoord: 33.335,
-    imageUrl: '/test.jpeg',
-  },
-  {
-    title: 'Jeju3',
-    description: 'South Korea',
-    longCoord: 126.5821,
-    latCoord: 33.3351,
-    imageUrl: '/test.jpeg',
-  },
-  {
-    title: 'Jeju4',
-    description: 'Dolgorae',
-    longCoord: 126.66,
-    latCoord: 33.1527,
-    imageUrl: '/test.jpeg',
-  },
-  {
-    title: 'hi1',
-    description: 'Dolgorae',
-    longCoord: 126.68,
-    latCoord: 33.1527,
-    imageUrl: '/test.jpeg',
-  },
-  {
-    title: 'hi2',
-    description: 'Dolgorae',
-    longCoord: 126.67,
-    latCoord: 33.152,
-    imageUrl: '/test.jpeg',
+    id: 2,
+    reportTypeVersion: {
+      id: 1,
+      reportType: {
+        id: 2,
+        label: '바다 거북',
+        title: '남방 큰 돌고래 조사',
+        subtitle: '남방 큰 돌고래 조사',
+        description: '남방 큰 돌고래 조사',
+      },
+      versionNumber: 1,
+    },
+    mainInfo: {
+      observedDateTime: '2023-10-12T06:42:47.000Z',
+      location: {
+        latitude: 33.88,
+        longitude: 127.99,
+        address: 'hi',
+        addressDetail: 'detail',
+      },
+      images: [
+        {
+          fileUrl:
+            'https://marc-data.s3.ap-northeast-2.amazonaws.com/example_image1699293346827.png',
+          provider: 'S3',
+          createdDateTime: '2023-10-12T06:42:47.000Z',
+          modifiedDateTime: '2023-10-12T06:42:47.000Z',
+        },
+      ],
+    },
+    createdDateTime: '2023-10-12T06:42:47.000Z',
+    modifiedDateTime: '2023-10-12T06:42:47.000Z',
+    author: {
+      id: 0,
+      nickname: '돌고래좋아',
+      provider: 'kakao',
+      mainMission: '메인미션',
+      profile: {
+        thumbnailImageUrl: 'some url',
+        profileImageUrl: 'some url',
+        profileImageType: 'kakao',
+        isDefaultImage: false,
+      },
+    },
+    post: {
+      id: 0,
+      liked: true,
+    },
   },
 ]
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<MapResponseData>) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<ReportContentResponse>) {
   // 테스트용 임시 데이터 생성, geojson 형식으로 변환
-  const data: any = {
-    type: 'FeatureCollection',
-    features: markers.map((marker) => ({
-      type: 'Feature',
-      properties: {
-        title: marker.title,
-        description: marker.description,
-        image_url: marker.imageUrl,
-      },
-      geometry: {
-        type: 'Point',
-        coordinates: [marker.longCoord, marker.latCoord],
-      },
-    })),
-  }
+  const data: any = convertDataToGeoJson(markers)
   res.status(200).json(data)
 }
