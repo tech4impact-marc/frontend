@@ -1,7 +1,7 @@
 import Close from '@mui/icons-material/Close'
 import IosShareIcon from '@mui/icons-material/IosShare'
 import PresentToAllIcon from '@mui/icons-material/PresentToAll'
-import { List, ListItem } from '@mui/material'
+import { Container, List, ListItem } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -17,13 +17,14 @@ import axios from 'axios'
 import React, { useEffect } from 'react'
 
 import Carousel from '@/components/PostCarousel'
+import type { ImageInfo } from '@/pages/map'
 
 import { FlexBox, VFlexBox } from '../styledComponents/StyledBox'
 import LikeButton from './LikeButton'
 
 interface PostDialogProps {
   postId: number
-  images: string[]
+  imageInfoList: ImageInfo[]
   open: boolean
   onClose: () => void
 }
@@ -84,7 +85,7 @@ const UserProfile = (userName: string) => {
   )
 }
 
-export default function PostDialog({ postId, open, onClose, images }: PostDialogProps) {
+export default function PostDialog({ postId, open, onClose, imageInfoList }: PostDialogProps) {
   const [author, setAuthor] = React.useState<Author | null>(null)
   const [comments, setComments] = React.useState<Comment[]>([])
   const [value, setValue] = React.useState<string>('')
@@ -97,7 +98,7 @@ export default function PostDialog({ postId, open, onClose, images }: PostDialog
   useEffect(() => {
     if (!open) return
     // 포스트 정보 가져오기
-    const requestURL = `${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}`
+    const requestURL = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}`
     axios.get(requestURL).then((res) => {
       const data: PostResponse = res.data
       console.log(data)
@@ -111,7 +112,7 @@ export default function PostDialog({ postId, open, onClose, images }: PostDialog
     return () => {
       // 언마운트시 좋아요 값이 바뀐 경우 서버에 반영
       if (!likeEdited) return
-      const requestURL = `${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}/likes`
+      const requestURL = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/likes`
 
       if (liked) {
         axios
@@ -152,7 +153,7 @@ export default function PostDialog({ postId, open, onClose, images }: PostDialog
   const handleUpload = () => {
     if (newComment == '') return
     axios
-      .post(`${process.env.NEXT_PUBLIC_SERVER_URL}/posts/${postId}/comments`, {
+      .post(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/comments`, {
         value: newComment,
       })
       .then((res) => {
@@ -170,7 +171,7 @@ export default function PostDialog({ postId, open, onClose, images }: PostDialog
     <Dialog fullScreen open={open} onClose={onClose} TransitionComponent={Transition}>
       <Box marginBottom={'2.5rem'}>
         <Box position={'relative'}>
-          <Carousel slides={images}></Carousel>
+          <Carousel imageInfoList={imageInfoList}></Carousel>
           <IconButton
             onClick={onClose}
             sx={{ position: 'absolute', top: '0.625rem', left: '0.625rem', color: '#ffffff' }}
@@ -206,7 +207,7 @@ export default function PostDialog({ postId, open, onClose, images }: PostDialog
           </List>
         </Box>
       </Box>
-
+      <Container sx={{ height: '100%' }} />
       <AppBar position="sticky" sx={{ backgroundColor: '#fff' }}>
         <FlexBox margin={'0 1rem'} alignItems={'center'} height={'3.5rem'}>
           <PostAvatar />

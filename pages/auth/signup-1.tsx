@@ -19,12 +19,7 @@ export default function KakaoSignUpPage1() {
   async function handleNext() {
     const userData = await getSignupUserData()
     store.dispatch({ type: 'SIGNUP_SET_USEREMAIL', payload: userData.email })
-    if (!userData.profile.isDefaultImage) {
-      store.dispatch({
-        type: 'SIGNUP_SET_USERPROFILEIMAGE',
-        payload: userData.profile.profileImageUrl,
-      })
-    }
+    store.dispatch({ type: 'SIGNUP_SET_USERPROFILE', payload: userData.profile })
     router.push('/auth/signup-2')
   }
 

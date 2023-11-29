@@ -16,6 +16,13 @@ export const StyledContainerThree = styled(Container)`
   row-gap: 0.5rem;
 `
 
+export const StyledContainerFour = styled(Container)`
+  padding: 1rem;
+  row-gap: 2rem;
+  min-width: 100%;
+  height: 100%;
+`
+
 export const StyledContainerHeader = styled(Container)`
   padding: 0 !important;
   justify-content: center;

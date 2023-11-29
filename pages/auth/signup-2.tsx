@@ -9,6 +9,7 @@ import {
   InputLabel,
   Typography,
 } from '@mui/material'
+import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
@@ -17,17 +18,33 @@ import { store } from '@/redux/store'
 export default function KakaoSignUpPage2() {
   const router = useRouter()
   const [nickname, setNickname] = useState('')
+  const [isDuplicate, setIsDuplicate] = useState(false)
 
   const handleBack = () => {
     router.push('/auth/signup-1')
   }
 
-  const handleNext = () => {
-    store.dispatch({ type: 'SIGNUP_SET_USERNAME', payload: nickname })
-    router.push('/auth/signup-3')
+  const handleNext = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/users/exist`, {
+        params: { nickname: nickname },
+      })
+
+      if (response.data.exist) {
+        setIsDuplicate(true)
+      } else {
+        store.dispatch({ type: 'SIGNUP_SET_USERNAME', payload: nickname })
+        router.push('/auth/signup-3')
+      }
+    } catch (error) {
+      console.log('에러 발생: ', error)
+    }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (nickname !== e.target.value) {
+      setIsDuplicate(false)
+    }
     setNickname(e.target.value)
   }
 
@@ -55,7 +72,7 @@ export default function KakaoSignUpPage2() {
       </Container>
       <Container
         sx={{
-          justifyContent: 'flex-start',
+          justifyContent: 'center',
           alignItems: 'flex-start',
           alignSelf: 'stretch',
           height: '100%',
@@ -69,10 +86,17 @@ export default function KakaoSignUpPage2() {
             placeholder="입력해주세요"
             onChange={handleInputChange}
             autoFocus
+            error={isDuplicate}
           />
-          <FormHelperText id="component-helper-text">
-            탐험가님을 8글자 이내로 표현해주세요!
-          </FormHelperText>
+          {isDuplicate ? (
+            <FormHelperText id="component-helper-text" error>
+              중복된 이름입니다.
+            </FormHelperText>
+          ) : (
+            <FormHelperText id="component-helper-text">
+              탐험가님을 8글자 이내로 표현해주세요!
+            </FormHelperText>
+          )}
         </FormControl>
       </Container>
       <Container sx={{ padding: '16px 16px 48px 16px', alignItems: 'center' }}>
