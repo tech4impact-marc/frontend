@@ -167,18 +167,58 @@ const FormOverlay = React.memo(
     )
 
     const updateImageAnswers = useCallback(
-      (file: File, newDate: Date, newLocation: LocationAnswerType['value'] | boolean) => {
+      (
+        file?: File,
+        newDate?: Date,
+        newLocation?: LocationAnswerType['value'] | boolean,
+        deleteIndex?: number
+      ) => {
         if (!currentAnswer) {
           return
         }
 
+        if (deleteIndex !== undefined) {
+          console.log('FormOverlay image delete start')
+          const currentImages = images.filter((_, index) => index !== deleteIndex)
+          if (images.length === 1) {
+            setImages([])
+            setAnswers((prevAnswers: AnswerType[]) => {
+              let updatedAnswers = answers.filter(
+                (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
+              )
+              console.log('FormOverlay image delete end', updatedAnswers)
+              return updatedAnswers
+            })
+            console.log(answers)
+          } else {
+            setImages(currentImages)
+            setAnswers((prevAnswers: AnswerType[]) => {
+              let updatedAnswers = answers.filter(
+                (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
+              )
+              for (let i = 0; i < currentImages.length; i++) {
+                // 시간이 많이 걸리면 이거 바꾸기
+                console.log(i)
+                updatedAnswers.push({
+                  ...currentAnswer[0],
+                  value: { fileType: 'IMAGE', fileKey: `image_${i}` },
+                } as ImageAnswerType)
+              }
+              console.log('FormOverlay image delete end', updatedAnswers)
+              return updatedAnswers
+            })
+          }
+        }
+
+        if (file === undefined) {
+          return
+        }
         const currentImages = [file, ...images]
         setImages(currentImages)
 
         setAnswers((prevAnswers: AnswerType[]) => {
           let updatedAnswers = answers.filter(
             (prevAnswers) =>
-              prevAnswers.questionId !== currentAnswer[0]?.questionId ||
               prevAnswers.questionId !== dateIndex ||
               (newLocation && prevAnswers.questionId !== locationIndex)
           )
@@ -317,7 +357,10 @@ const FormOverlay = React.memo(
           </StyledContainerTwo>
         </StyledContainerOne>
 
-        <Backdrop open={router.query.complete === 'true'} sx={{ backgroundColor: 'white' }}>
+        <Backdrop
+          open={router.query.complete === 'true'}
+          sx={{ backgroundColor: 'white', zIndex: '10000' }}
+        >
           <ShareOverlay
             animal={animal}
             imgSrc={images.length !== 0 ? URL.createObjectURL(images[0]) : ''}

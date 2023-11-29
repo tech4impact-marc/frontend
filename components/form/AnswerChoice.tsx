@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 
 import { CheckboxAnswer } from './options/CheckboxAnswer'
 import { DateAnswer } from './options/DateAnswer'
-import { ImageAnswer } from './options/ImageAnswer'
+import ImageAnswer from './options/ImageAnswer'
 import { LocationAnswer } from './options/LocationAnswer'
 import { RadioAnswer } from './options/RadioAnswer'
 import { ShortAnswer } from './options/ShortAnswer'
@@ -47,10 +47,12 @@ export interface DateTimeAnswerType extends CommonAnswerType {
 
 export type UpdateAnswersType = (changeType: Boolean, newAnswer: AnswerType | undefined) => void
 export type UpdateImageAnswersType = (
-  file: File,
-  newDate: DateTimeAnswerType['value'],
-  newLocation: LocationAnswerType['value'] | boolean
+  file?: File,
+  newDate?: DateTimeAnswerType['value'],
+  newLocation?: LocationAnswerType['value'] | boolean,
+  deleteIndex?: number
 ) => void
+
 export type currentAnswerType = AnswerType[]
 
 export interface SingleAnswerProps {

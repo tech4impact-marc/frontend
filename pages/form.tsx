@@ -1,14 +1,9 @@
-import { Backdrop, Typography } from '@mui/material'
+import { Backdrop, Container, Typography } from '@mui/material'
 import axios from 'axios'
 import { GetServerSideProps } from 'next'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect } from 'react'
-import {
-  IconFDolphin,
-  IconFFish,
-  IconFSpoutingWhale,
-  IconFTurtle,
-} from 'react-fluentui-emoji/lib/flat'
 
 import { FormOverlay, Question } from '@/components/form/FormOverlay'
 import CommonLayout from '@/components/Layout/CommonLayout'
@@ -21,13 +16,7 @@ import {
 export interface Animal {
   id: number
   label: string
-  icon?: React.ReactNode
-}
-
-const iconList: { [key: string]: React.ReactNode } = {
-  남방큰돌고래: <IconFDolphin size={'1.5rem'} />,
-  상괭이: <IconFSpoutingWhale size={'1.5rem'} />,
-  바다거북: <IconFTurtle size={'1.5rem'} />,
+  thumbnailUrl?: string
 }
 
 const Form = ({
@@ -55,11 +44,21 @@ const Form = ({
   }, [animals, questions])
 
   if (!animals) {
-    return <React.Fragment></React.Fragment>
+    return (
+      <Container sx={{ paddingBottom: '2rem' }}>
+        <StyledContainerOne>
+          <StyledContainerHeader></StyledContainerHeader>
+          <StyledContainerThree>
+            <Typography variant="h2">제보하기</Typography>
+            <Typography variant="subtitle1">해양생물생태지도를 완성해보세요</Typography>
+          </StyledContainerThree>{' '}
+        </StyledContainerOne>
+      </Container>
+    )
   }
 
   return (
-    <React.Fragment>
+    <Container sx={{ paddingBottom: '2rem' }}>
       <StyledContainerOne>
         <StyledContainerHeader></StyledContainerHeader>
         <StyledContainerThree>
@@ -79,7 +78,13 @@ const Form = ({
                 cursor: 'pointer',
               }}
             >
-              {iconList[animal.label] ? iconList[animal.label] : <IconFFish size={'1.5rem'} />}
+              <Image
+                src={animal.thumbnailUrl ? animal.thumbnailUrl : '/marc_logo.png'}
+                alt="animal"
+                width={10}
+                height={10}
+              />
+              {/* {animal.thumbnailUrl?  : <IconFFish size={'1.5rem'} />} */}
               <Typography variant="h4">{animal.label} 제보하기</Typography>
             </div>
           ))}
@@ -96,7 +101,7 @@ const Form = ({
             <FormOverlay questions={questions} animal={animal} currentVersion={currentVersion} />
           )}
       </Backdrop>
-    </React.Fragment>
+    </Container>
   )
 }
 

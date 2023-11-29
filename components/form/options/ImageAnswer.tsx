@@ -1,9 +1,10 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
-import { ImageListItem } from '@mui/material'
+import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
+import { IconButton, ImageListItem } from '@mui/material'
 import EXIF from 'exif-js'
 import Image from 'next/image'
 import Script from 'next/script'
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import { Map } from 'react-kakao-maps-sdk'
 
 import { UpdateImageAnswersType } from '../AnswerChoice'
@@ -162,12 +163,19 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
             >
               {currentImageAnswers.map((image, index) => (
                 <ImageListItem key={index}>
+                  <IconButton
+                    id={`${index}`}
+                    sx={{ position: 'absolute', right: '0' }}
+                    onClick={() => updateImageAnswers(undefined, undefined, undefined, index)}
+                  >
+                    <CancelRoundedIcon />
+                  </IconButton>
                   <Image
                     src={URL.createObjectURL(image)}
                     alt="Selected Image"
                     width={parseInt(containerStyle.width)}
                     height={parseInt(containerStyle.height)}
-                    style={{ ...containerStyle, objectFit: 'contain', backgroundColor: '#CCC' }}
+                    style={{ ...containerStyle, objectFit: 'contain', backgroundColor: '#fff' }}
                   />
                 </ImageListItem>
               ))}
@@ -179,4 +187,4 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
   )
 }
 
-export { ImageAnswer }
+export default memo(ImageAnswer)
