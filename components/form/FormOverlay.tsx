@@ -22,6 +22,7 @@ import {
   StyledContainerThree,
   StyledContainerTwo,
 } from '../styledComponents/StyledContainer'
+import PostOverlay from './PostOverlay'
 import ShareOverlay from './ShareOverlay'
 
 export interface Question {
@@ -54,7 +55,8 @@ const FormOverlay = React.memo(
     const [images, setImages] = useState<File[]>([])
     const [dateIndex, setDateIndex] = useState(0)
     const [locationIndex, setLocationIndex] = useState(0)
-    const lastStep = questions?.length - 1
+    const lastStep = useMemo(() => questions?.length - 1, [questions])
+    const [postID, setPostID] = useState<number | null>(null)
 
     const returnCurrentAnswer = useCallback(() => {
       const question = questions[step]
@@ -178,7 +180,7 @@ const FormOverlay = React.memo(
         }
 
         if (deleteIndex !== undefined) {
-          console.log('FormOverlay image delete start')
+          // console.log('FormOverlay image delete start')
           const currentImages = images.filter((_, index) => index !== deleteIndex)
           if (images.length === 1) {
             setImages([])
@@ -186,10 +188,10 @@ const FormOverlay = React.memo(
               let updatedAnswers = answers.filter(
                 (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
               )
-              console.log('FormOverlay image delete end', updatedAnswers)
+              // console.log('FormOverlay image delete end', updatedAnswers)
               return updatedAnswers
             })
-            console.log(answers)
+            // console.log(answers)
           } else {
             setImages(currentImages)
             setAnswers((prevAnswers: AnswerType[]) => {
@@ -198,13 +200,13 @@ const FormOverlay = React.memo(
               )
               for (let i = 0; i < currentImages.length; i++) {
                 // 시간이 많이 걸리면 이거 바꾸기
-                console.log(i)
+                // console.log(i)
                 updatedAnswers.push({
                   ...currentAnswer[0],
                   value: { fileType: 'IMAGE', fileKey: `image_${i}` },
                 } as ImageAnswerType)
               }
-              console.log('FormOverlay image delete end', updatedAnswers)
+              // console.log('FormOverlay image delete end', updatedAnswers)
               return updatedAnswers
             })
           }
@@ -246,14 +248,14 @@ const FormOverlay = React.memo(
     )
 
     const handleNextButtonClick = () => {
-      console.log(typeof router.query.animal, typeof currentVersion)
-      console.log(
-        JSON.stringify({
-          reportTypeId: router.query.animal,
-          reportTypeVersionId: currentVersion,
-          answers: answers,
-        })
-      )
+      // console.log(typeof router.query.animal, typeof currentVersion)
+      // console.log(
+      //   JSON.stringify({
+      //     reportTypeId: router.query.animal,
+      //     reportTypeVersionId: currentVersion,
+      //     answers: answers,
+      //   })
+      // )
       if (step == lastStep) {
         formData.append(
           'data',
@@ -276,7 +278,9 @@ const FormOverlay = React.memo(
           })
           .then(function (response) {
             if (response.status == 200) {
-              router.push({ pathname: pathname, query: { ...query, complete: true } })
+              console.log('FormOverlay:', response)
+              setPostID(response.data.post.id)
+              setStep(lastStep + 1)
             } else {
               console.log(response)
             }
@@ -358,12 +362,16 @@ const FormOverlay = React.memo(
         </StyledContainerOne>
 
         <Backdrop
-          open={router.query.complete === 'true'}
+          open={postID !== null && step == lastStep + 1}
           sx={{ backgroundColor: 'white', zIndex: '10000' }}
         >
+          <PostOverlay postID={postID as number} setStep={setStep} />
+        </Backdrop>
+
+        <Backdrop open={step == lastStep + 2} sx={{ backgroundColor: 'white', zIndex: '10000' }}>
           <ShareOverlay
             animal={animal}
-            imgSrc={images.length !== 0 ? URL.createObjectURL(images[0]) : ''}
+            imgSrc={images.length !== 0 ? URL.createObjectURL(images[0]) : '/marc_logo.png'}
           />
         </Backdrop>
       </React.Fragment>

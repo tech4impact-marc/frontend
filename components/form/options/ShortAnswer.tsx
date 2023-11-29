@@ -16,7 +16,7 @@ export const ShortAnswer: React.FC<ShortAnswerProps> = ({ currentAnswer, updateA
   return (
     <FormControl fullWidth>
       <TextField
-        placeholder="답변을 입력하세요"
+        placeholder="입력해주세요"
         variant="standard"
         value={currentAnswer.value}
         onChange={handleTextChange}
