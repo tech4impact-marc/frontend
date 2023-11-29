@@ -9,6 +9,7 @@ export interface Author {
   id: number
   nickname: string
   provider: string
+  mainMission: string
   profile: {
     thumbnailImageUrl: string
     profileImageUrl: string
@@ -20,8 +21,8 @@ export interface Author {
 interface MainInfo {
   observedDateTime: string
   location: {
-    latitude: string
-    longitude: string
+    latitude: number
+    longitude: number
     address: string
     addressDetail: string
   }
@@ -69,11 +70,10 @@ export interface reportGeoJson {
     address_detail: string
     image_list: ImageInfo[]
     report_type: number
-    year: number
-    month: number
-    day: number
+    date: string
     post_id: number
     liked: boolean
+    author_name: string
   }
   geometry: {
     type: 'Point'

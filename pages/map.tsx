@@ -4,6 +4,7 @@ import axios from 'axios'
 import Map from '@/components/Map'
 import type { reportGeoJson, typeToReportCollectionGeoJson } from '@/types/type'
 import type { ReportContentResponse } from '@/types/type'
+import { convertDateToString } from '@/types/util'
 
 // 추후 데이터 따라서 설정 필요
 interface MapPageProps {
@@ -18,11 +19,11 @@ export default function MapPage({ data }: MapPageProps) {
   )
 }
 
-function convertDataToGeoJson(content: ReportContentResponse[]) {
+export function convertDataToGeoJson(content: ReportContentResponse[]) {
   // 받아온 데이터를 geojson 형식으로 변환
   const geoJsonReports = content.map((element: ReportContentResponse) => {
     const mainInfo = element.mainInfo
-    const dateValue = element.createdDateTime ? new Date(element.createdDateTime) : new Date()
+    const dateValue = element.createdDateTime
     const feature: reportGeoJson = {
       type: 'Feature',
       properties: {
@@ -31,11 +32,10 @@ function convertDataToGeoJson(content: ReportContentResponse[]) {
         address_detail: mainInfo.location.addressDetail,
         image_list: mainInfo.images,
         report_type: element.reportTypeVersion.reportType.id,
-        year: dateValue.getFullYear(),
-        month: dateValue.getMonth() + 1,
-        day: dateValue.getDay(),
+        date: convertDateToString(dateValue),
         post_id: element.post.id,
         liked: element.post.liked,
+        author_name: element.author.nickname ?? '익명의 돌고래',
       },
       geometry: {
         type: 'Point',
@@ -66,14 +66,15 @@ function convertDataToGeoJson(content: ReportContentResponse[]) {
 export async function getServerSideProps() {
   try {
     // 임시 api 호출
-    // const jsonData = await axios('http://localhost:3000/api/map')
-    const jsonData = await axios(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/map`)
+    const jsonData = await axios('http://localhost:3001/api/map')
+    // const jsonData = await axios(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/map`)
     const data = jsonData.data
+    console.log(JSON.stringify(data))
 
     return {
       props: {
-        // data: jsonData.data,
-        data: convertDataToGeoJson(data.contents),
+        data: jsonData.data,
+        // data: convertDataToGeoJson(data.contents),
       },
     }
   } catch (err) {

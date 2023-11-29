@@ -12,7 +12,7 @@ type CarouselProps = {
 }
 
 export default function EmblaCarousel({ imageInfoList }: CarouselProps) {
-  const slides = imageInfoList.map((imageInfo) => '/test.jpeg') //TODO: imageInfo.fileUrl
+  const slides = imageInfoList.map((imageInfo) => imageInfo.fileUrl ?? '/test.jpeg') //TODO: fallback image
   const [emblaRef, emblaApi] = useEmblaCarousel({
     dragFree: true,
     containScroll: 'trimSnaps',

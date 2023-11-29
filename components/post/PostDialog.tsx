@@ -1,5 +1,7 @@
 import Close from '@mui/icons-material/Close'
 import IosShareIcon from '@mui/icons-material/IosShare'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
 import { Container, List, ListItemButton } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Avatar from '@mui/material/Avatar'
@@ -8,6 +10,7 @@ import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
+import Popover from '@mui/material/Popover'
 import Slide from '@mui/material/Slide'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
@@ -22,6 +25,7 @@ import Carousel from '@/components/PostCarousel'
 import { store } from '@/redux/store'
 import type { ImageInfo } from '@/types/type'
 
+import ConfirmDialog from '../confirmDialog'
 import SNSSharingComponent from '../share/SNSSharingComponent'
 import { FlexBox, VFlexBox } from '../styledComponents/StyledBox'
 import LikeButton from './LikeButton'
@@ -31,6 +35,7 @@ interface PostDialogProps {
   imageInfoList: ImageInfo[]
   open: boolean
   userLike: boolean
+  date: string
   onClose: () => void
   onClickLike: () => void
 }
@@ -98,6 +103,7 @@ export default function PostDialog({
   onClose,
   onClickLike,
   imageInfoList,
+  date,
 }: PostDialogProps) {
   const [author, setAuthor] = React.useState<Author | null>(null)
   const [comments, setComments] = React.useState<Comment[]>([])
@@ -105,20 +111,52 @@ export default function PostDialog({
   const [like_count, setLikeCount] = React.useState<number>(0)
   const [newComment, setNewComment] = React.useState<string>('')
   const [isSNSShareVisible, setIsSNSShareVisible] = React.useState<boolean>(false)
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
+  const [openConfirm, setOpenConfirm] = React.useState<boolean>(false)
+  const [editCommentIndex, seteditCommentIndex] = React.useState<number>(-1)
+  const [editComment, setEditComment] = React.useState<string>('')
+  const [isEditMode, setIsEditMode] = React.useState<number>(-1)
   const state = store.getState()
+  const isLoggedin = state.user == null
 
   useEffect(() => {
-    if (!open) return
+    if (!open || postId < 0) return
     // 포스트 정보 가져오기
+
     const requestURL = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}`
-    axios.get(requestURL).then((res) => {
-      const data: PostResponse = res.data
-      console.log(data)
-      setAuthor(data.author)
-      setComments(data.comments)
-      setLikeCount(data.likeCount)
-      setValue(data.value)
-    })
+    axios
+      .get(requestURL)
+      .then((res) => {
+        const data: PostResponse = res.data
+        console.log(data)
+        setAuthor(data.author)
+        setComments(data.comments)
+        setLikeCount(data.likeCount)
+        setValue(data.value)
+      })
+      .catch((err) => {
+        console.log(err)
+        setComments([
+          {
+            id: 1,
+            author: {
+              id: 1,
+              nickname: '미남강현',
+            },
+            post_id: 0,
+            value: '와 댓글이다!',
+          },
+          {
+            id: 2,
+            author: {
+              id: 1,
+              nickname: '미남현희',
+            },
+            post_id: 0,
+            value: '????????????????/',
+          },
+        ])
+      })
   }, [open, postId])
 
   const handleLike = () => {
@@ -174,6 +212,39 @@ export default function PostDialog({
     setNewComment('')
   }
 
+  const handleCommentEditUpload = () => {
+    if (editComment != '' && isEditMode >= 0 && state?.user) {
+      const editedComment = comments[isEditMode]
+      if (editedComment && editedComment.author.id == state.user.id) {
+        const editedCommentId = editedComment.id
+        axios
+          .patch(
+            `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/comments/${editedCommentId}`,
+            {
+              value: editComment,
+            }
+          )
+          .then((res) => {
+            const data: Comment = res.data
+            const newComments = comments.map((comment) => {
+              if (comment.id == editedCommentId) {
+                return data
+              } else {
+                return comment
+              }
+            })
+            setComments(newComments)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
+    }
+    setIsEditMode(-1)
+    setEditComment('')
+    seteditCommentIndex(-1)
+  }
+
   const handleShareOpen = () => {
     setIsSNSShareVisible(true)
   }
@@ -182,7 +253,36 @@ export default function PostDialog({
     setIsSNSShareVisible(false)
   }
 
-  const handleClickComment = () => {}
+  const handleCommentEtc = (index: number, event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+    seteditCommentIndex(index)
+  }
+
+  const handleCommentEdit = () => {
+    setAnchorEl(null)
+    if (isEditMode >= 0 && isEditMode == editCommentIndex) {
+      // 취소
+      setIsEditMode(-1)
+      setEditComment('')
+      seteditCommentIndex(-1)
+    } else {
+      // 수정
+      setIsEditMode(editCommentIndex)
+      setEditComment(comments[editCommentIndex].value) // ??
+    }
+  }
+
+  const handleCommentDelete = () => {
+    setOpenConfirm(true)
+  }
+
+  const handleConfirmClose = () => {
+    setOpenConfirm(false)
+  }
+
+  const handleConfirmYes = () => {
+    setOpenConfirm(false)
+  }
 
   return (
     <React.Fragment>
@@ -207,85 +307,99 @@ export default function PostDialog({
             <VFlexBox margin={'1.5rem 1.25rem 1rem'}>
               {UserProfile(author?.nickname ?? 'user name', 'h3')}
               <Typography variant="subtitle1" marginTop={'0.5rem'}>
-                2023년 12월 1일
+                {date}
               </Typography>
             </VFlexBox>
             <ParagraphBox>
               <Typography variant="subtitle2">{value}</Typography>
             </ParagraphBox>
             <Divider />
-            <List sx={{ padding: '0.75rem 0' }}>
-              {comments.map((comment: Comment) => {
-                const currentUserId = state.user.id
+            <List>
+              {comments.map((comment: Comment, index: number) => {
+                const currentUserId = state?.user ? state.user.id : null
                 const commentUserId = comment.author.id
-                console.log(currentUserId, commentUserId)
-                const clickable = currentUserId ? currentUserId == commentUserId : false
-
-                if (!clickable) {
-                  return (
-                    <ListItemButton
-                      disableGutters
-                      disableRipple
-                      key={comment.id}
-                      sx={{ display: 'block', pl: '1.25rem' }}
-                    >
-                      <FlexBox alignItems={'center'}>
-                        {UserProfile(comment.author.nickname, 'h5')}
-                      </FlexBox>
-                      <Box mt={'0.5rem'} ml={'3rem'}>
+                const clickable = currentUserId ? currentUserId == commentUserId : true
+                return (
+                  <ListItemButton
+                    disableGutters
+                    disableRipple
+                    key={comment.id}
+                    sx={{ display: 'block', p: '0.75rem 1.25rem' }}
+                  >
+                    <FlexBox alignItems={'center'} justifyContent="space-between">
+                      {UserProfile(comment.author.nickname, 'h5')}
+                      {clickable ? (
+                        <React.Fragment>
+                          <IconButton onClick={(e) => handleCommentEtc(index, e)}>
+                            <MoreHorizIcon />
+                          </IconButton>
+                          <Popover
+                            elevation={0}
+                            open={Boolean(anchorEl)}
+                            anchorEl={anchorEl}
+                            onClose={() => setAnchorEl(null)}
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'left',
+                            }}
+                          >
+                            <VFlexBox sx={{ borderRadius: 1, backgroundColor: '#eee' }}>
+                              <Button onClick={handleCommentEdit}>
+                                {isEditMode >= 0 && isEditMode == editCommentIndex
+                                  ? '취소'
+                                  : '수정'}
+                              </Button>
+                              <Button onClick={handleCommentDelete}>삭제</Button>
+                            </VFlexBox>
+                          </Popover>
+                        </React.Fragment>
+                      ) : null}
+                    </FlexBox>
+                    <Box mt={'0.5rem'} ml={'3rem'}>
+                      {isEditMode >= 0 && comments[isEditMode].id == comment.id ? (
+                        <FlexBox>
+                          <TextField
+                            variant="outlined"
+                            value={editComment}
+                            sx={{ flexGrow: 1 }}
+                            onChange={(e) => setEditComment(e.target.value)}
+                          />
+                          <IconButton onClick={handleCommentEditUpload}>
+                            <SendOutlinedIcon />
+                          </IconButton>
+                        </FlexBox>
+                      ) : (
                         <Typography fontSize={'0.813rem'} ml={'0.5rem'}>
                           {comment.value}
                         </Typography>
-                      </Box>
-                    </ListItemButton>
-                  )
-                } else {
-                  return (
-                    <ListItemButton
-                      disableGutters
-                      key={comment.id}
-                      sx={{ display: 'block', pl: '1.25rem' }}
-                      onClick={handleClickComment}
-                    >
-                      <FlexBox alignItems={'center'}>
-                        {UserProfile(comment.author.nickname, 'h5')}
-                      </FlexBox>
-                      <Box mt={'0.5rem'} ml={'3rem'}>
-                        <Typography fontSize={'0.813rem'} ml={'0.5rem'}>
-                          {comment.value}
-                        </Typography>
-                      </Box>
-                    </ListItemButton>
-                  )
-                }
+                      )}
+                    </Box>
+                  </ListItemButton>
+                )
               })}
             </List>
           </Box>
         </Box>
         <Container sx={{ height: '100%' }} />
         <AppBar position="sticky" sx={{ backgroundColor: '#fff' }} elevation={0}>
-          <FlexBox margin={'1rem 1.25rem'} alignItems={'center'}>
+          <FlexBox margin={'1rem 1.25rem'} alignItems={'flex-end'}>
             <PostAvatar />
             <TextField
+              multiline
+              maxRows={3}
+              disabled={!isLoggedin}
               variant="standard"
               value={newComment}
-              placeholder="입력해주세요"
+              label={isLoggedin ? '입력해주세요' : '로그인 해주세요'}
               sx={{ flexGrow: 1 }}
               inputProps={{
-                style: {
-                  height: '3.5rem',
-                },
+                style: {},
               }}
               onChange={handleCommentChange}
             />
-            <Button
-              disableElevation
-              variant="contained"
-              sx={{ ml: '0.5rem' }}
-              onClick={handleUpload}
-            >
-              전송
-            </Button>
+            <IconButton sx={{ ml: '0.5rem' }} onClick={handleUpload}>
+              <SendOutlinedIcon />
+            </IconButton>
           </FlexBox>
           <Toolbar sx={{ backgroundColor: '#eee', height: '3.5rem' }}>
             <IconButton onClick={handleShareOpen}>
@@ -305,6 +419,15 @@ export default function PostDialog({
         isOpen={isSNSShareVisible}
         onClose={handleShareClose}
         imageUrl={'/test.jpeg'}
+      />
+      <ConfirmDialog
+        open={openConfirm}
+        onClose={handleConfirmClose}
+        onClickYes={handleConfirmYes}
+        onClickNo={handleConfirmClose}
+        title="댓글 삭제"
+        description="댓글을 삭제 하시겠습니까?"
+        warning="삭제 후 취소할 수 없습니다."
       />
     </React.Fragment>
   )

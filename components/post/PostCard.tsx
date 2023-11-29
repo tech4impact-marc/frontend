@@ -45,9 +45,11 @@ export default function PostCard({ index, data }: PostCardProps) {
         >
           <Box width={'80%'} onClick={handleCardClick}>
             <Typography variant="h3" gutterBottom>{`${
-              data.properties?.address ?? '제주도'
-            } 앞바다`}</Typography>
-            <Typography variant="subtitle1">{`${data.properties?.year}년 ${data.properties?.month}월 ${data.properties?.day}일`}</Typography>
+              data.properties?.author_name ?? '익명의 돌고래'
+            }`}</Typography>
+            <Typography variant="subtitle1">{`${
+              data.properties?.date ?? '2023년 11월 18일'
+            }`}</Typography>
           </Box>
           <LikeButton liked={liked} onClick={handleLikeClick} />
         </FlexBox>
@@ -56,6 +58,7 @@ export default function PostCard({ index, data }: PostCardProps) {
       <PostDialog
         imageInfoList={data.properties?.image_list}
         postId={data.properties?.post_id}
+        date={data.properties?.date}
         open={showDialog}
         userLike={liked}
         onClickLike={handleLikeClick}

@@ -11,7 +11,7 @@ type CarouselProps = {
 }
 
 export default function CardCarousel({ imageInfoList, onClick }: CarouselProps) {
-  const slides = imageInfoList.map((imageInfo) => '/test.jpeg') //TODO: ImageInfo.fileUrl
+  const slides = imageInfoList.map((imageInfo) => imageInfo.fileUrl ?? '/test.jpeg') //TODO: fallback image
   const [emblaRef] = useEmblaCarousel({ containScroll: 'trimSnaps' })
 
   if (slides?.length < 3) {

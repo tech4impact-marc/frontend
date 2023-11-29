@@ -43,9 +43,10 @@ export default function Mission({ onClose }: MissionProps) {
     async function getMissions() {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/missions/users`)
       const data = await res.data.items
-      const missions = await data.sort(
-        (a: MissionResponse, b: MissionResponse) => a.mission.id - b.mission.id
-      )
+      const missions =
+        (await data?.sort(
+          (a: MissionResponse, b: MissionResponse) => a.mission.id - b.mission.id
+        )) ?? []
       console.log(missions)
       setMissions(missions)
     }

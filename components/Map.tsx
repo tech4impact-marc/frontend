@@ -9,7 +9,7 @@ import Popover from '@mui/material/Popover'
 import mapboxgl, { LngLatBoundsLike } from 'mapbox-gl'
 import { MapLayerMouseEvent } from 'mapbox-gl'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { FlexBox, VFlexBox } from '@/components/styledComponents/StyledBox'
 import type { reportGeoJson, typeToReportCollectionGeoJson } from '@/types/type'
@@ -112,10 +112,9 @@ const Map = ({ data }: MapProps) => {
           address_detail: properties?.address_detail,
           image_list: JSON.parse(properties?.image_list),
           report_type: properties?.report_type,
-          year: properties?.year,
-          month: properties?.month,
-          day: properties?.day,
+          date: properties?.date,
           post_id: properties?.post_id,
+          author_name: properties?.author_name,
         },
         geometry: feature.geometry,
       }
@@ -236,7 +235,7 @@ const Map = ({ data }: MapProps) => {
   const open = Boolean(anchorEl)
 
   return (
-    <div>
+    <React.Fragment>
       <div
         style={{
           position: 'absolute',
@@ -287,7 +286,7 @@ const Map = ({ data }: MapProps) => {
         className={`map-container`}
         ref={mapContainer}
       ></div>
-    </div>
+    </React.Fragment>
   )
 }
 

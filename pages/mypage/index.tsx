@@ -44,7 +44,7 @@ const InfoBox = styled(Box)`
   display: flex;
   max-width: 80%;
   gap: 1rem;
-  align-items: center;
+  align-items: flex-end;
 `
 
 export default function MyPage() {
@@ -102,9 +102,9 @@ export default function MyPage() {
               </IconButton>
             </Box>
           </Box>
-          <InfoBox alignItems={'flex-start'} marginTop={'0.25rem'}>
+          <InfoBox marginTop={'0.25rem'}>
             <Typography variant="h2">{user.nickname ?? '안녕하세요!'}</Typography>
-            <Typography variant="h4">초보 탐험가</Typography>
+            <Typography variant="h4">{user.mainMission ?? '미션을 달성해볼까요?'}</Typography>
           </InfoBox>
           <Typography variant="h5" color={'#8f8f8f'} fontWeight={600}>
             리포트 {reports?.totalNumberOfElements}
