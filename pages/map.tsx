@@ -6,15 +6,18 @@ import type { ReportContentResponse } from '@/types/type'
 import instance from '@/util/axios_interceptor'
 import { convertDateToString } from '@/util/util'
 
+import type { Animal } from './form'
+
 // 추후 데이터 따라서 설정 필요
 interface MapPageProps {
   data: any
+  animals: Animal[]
 }
 
-export default function MapPage({ data }: MapPageProps) {
+export default function MapPage({ data, animals }: MapPageProps) {
   return (
     <Container disableGutters maxWidth={false}>
-      <Map data={data} />
+      <Map data={data} animals={animals} />
     </Container>
   )
 }
@@ -63,30 +66,39 @@ export function convertDataToGeoJson(content: ReportContentResponse[]) {
 }
 
 // 일단 서버사이드 렌더링 사용. 추후 최적화
-export async function getServerSideProps() {
+export async function getStaticProps() {
   try {
     // 임시 api 호출
     // const jsonData = await axios('http://localhost:3001/api/map')
-    const jsonData = await instance(`/reports/map`, {
+    const setOrigin = {
       headers: {
         Origin: `${process.env.NEXT_PUBLIC_WEBURL}`,
       },
-    })
+    }
+
+    const jsonData = await instance(`/reports/map`, setOrigin)
     const data = jsonData.data
     console.log(JSON.stringify(data))
+
+    const animalResponse = await instance.get(`/reports/types`, setOrigin)
+    const animals: Animal[] = await animalResponse.data.contents
 
     return {
       props: {
         // data: jsonData.data,
         data: convertDataToGeoJson(data.contents),
+        animals: animals,
       },
+      revalidate: 120,
     }
   } catch (err) {
     console.log(err)
     return {
       props: {
         data: {},
+        animals: [],
       },
+      revalidate: 10,
     }
   }
 }

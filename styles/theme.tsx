@@ -1,4 +1,7 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles'
+import localFont from 'next/font/local'
+
+const myFont = localFont({ src: './Pretendard-Regular.woff' })
 
 // 임시로 설정. 추후 수정 필요
 let theme = createTheme({
@@ -12,7 +15,7 @@ let theme = createTheme({
   },
   typography: {
     fontFamily: [
-      'Pretendard',
+      myFont.style.fontFamily,
       'Roboto',
       'Noto Sans KR',
       'Segoe UI',

@@ -82,7 +82,7 @@ const Form = ({
               }}
             >
               <Image
-                src={animal.thumbnailUrl ? animal.thumbnailUrl : '/marc_logo.png'}
+                src={animal.thumbnailUrl ? animal.thumbnailUrl : '/marc_logo.webp'}
                 alt="animal"
                 width={10}
                 height={10}

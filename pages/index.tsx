@@ -4,8 +4,6 @@ import Image from 'next/image'
 
 import { StyledButtonLarge } from '@/components/styledComponents/StyledButton'
 import { StyledContainerTwo } from '@/components/styledComponents/StyledContainer'
-import kakaoLogo from '@/public/kakao.svg'
-import marcLogo from '@/public/marc_logo.png'
 
 export default function Home() {
   const handleLogin = () => {
@@ -47,7 +45,7 @@ export default function Home() {
             maxWidth: '100%',
           }}
         >
-          <Image src={marcLogo} alt="logo" width="108" priority={true} />
+          <Image src={'/marc_logo.webp'} alt="logo" width={108} height={108} priority={true} />
         </Container>
         <Container
           sx={{
@@ -79,7 +77,9 @@ export default function Home() {
           <StyledContainerTwo>
             <StyledButtonLarge
               onClick={handleLogin}
-              startIcon={<Image src={kakaoLogo} alt="kakao" width={18} height={18} />}
+              startIcon={
+                <Image src="/kakao.svg" alt="kakao" width={18} height={18} priority={true} />
+              }
               sx={{
                 background: '#FEE500',
                 '&:hover': {
