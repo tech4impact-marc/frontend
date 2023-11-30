@@ -96,7 +96,13 @@ export default function KakaoSignUpPage4() {
         <Avatar
           alt="Profile Image"
           src={profileImage}
-          sx={{ width: '15rem', height: '15rem', borderRadius: '50%', cursor: 'pointer' }}
+          sx={{
+            width: '15rem',
+            height: '15rem',
+            borderRadius: '50%',
+            cursor: 'pointer',
+            border: '1px solid #9AA8BF',
+          }}
         />
       </Container>
       <StyledContainerSignupThree>
