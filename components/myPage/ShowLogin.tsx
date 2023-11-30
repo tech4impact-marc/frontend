@@ -5,7 +5,7 @@ import React from 'react'
 import { StyledButtonLarge } from '@/components/styledComponents/StyledButton'
 import { StyledContainerTwo } from '@/components/styledComponents/StyledContainer'
 import kakaoLogo from '@/public/kakao.svg'
-import marcLogo from '@/public/marc_logo.png'
+import marcLogo from '@/public/marc_logo.webp'
 
 export default function ShowLogin() {
   const [openSetting, setOpenSetting] = React.useState(false)
@@ -52,7 +52,7 @@ export default function ShowLogin() {
             gap: '2rem',
           }}
         >
-          <Typography variant="h5" color="#223047">
+          <Typography variant="body2" color="#223047">
             마이페이지를 사용하려면 로그인이 필요합니다.
           </Typography>
 

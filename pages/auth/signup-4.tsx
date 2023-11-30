@@ -23,7 +23,7 @@ export default function KakaoSignUpPage4() {
   const isDefault = state.signupUserInfo.userProfile.isDefaultImage
   let profileImage
   if (isDefault) {
-    profileImage = '/defaultprofile.png'
+    profileImage = '/defaultprofile.webp'
   } else {
     profileImage = state.signupUserInfo.userProfile.profileImageUrl
   }

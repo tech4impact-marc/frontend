@@ -63,7 +63,7 @@ export function convertDataToGeoJson(content: ReportContentResponse[]) {
 }
 
 // 일단 서버사이드 렌더링 사용. 추후 최적화
-export async function getServerSideProps() {
+export async function getStaticProps() {
   try {
     // 임시 api 호출
     // const jsonData = await axios('http://localhost:3001/api/map')
@@ -80,6 +80,7 @@ export async function getServerSideProps() {
         // data: jsonData.data,
         data: convertDataToGeoJson(data.contents),
       },
+      revalidate: 120,
     }
   } catch (err) {
     console.log(err)
@@ -87,6 +88,7 @@ export async function getServerSideProps() {
       props: {
         data: {},
       },
+      revalidate: 120,
     }
   }
 }

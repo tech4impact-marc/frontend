@@ -6,7 +6,7 @@ import { StyledButtonLarge } from '@/components/styledComponents/StyledButton'
 import { StyledContainerLogin } from '@/components/styledComponents/StyledContainer'
 import { StyledContainerTwo } from '@/components/styledComponents/StyledContainer'
 import kakaoLogo from '@/public/kakao.svg'
-import marc_logo from '@/public/marc_logo.png'
+import marc_logo from '@/public/marc_logo.webp'
 
 export default function LoginPage() {
   const handleLogin = () => {

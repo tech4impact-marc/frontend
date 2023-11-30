@@ -11,7 +11,7 @@ import {
   StyledContainerSignupTwo,
   StyledContainerTwo,
 } from '@/components/styledComponents/StyledContainer'
-import signup_start from '@/public/signup_start.png'
+import signup_start from '@/public/signup_start.webp'
 import { store } from '@/redux/store'
 
 import getSignupUserData from '../api/getSignupUserData'

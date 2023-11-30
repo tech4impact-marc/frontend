@@ -9,7 +9,7 @@ import {
   StyledContainerSignupThree,
   StyledContainerTwo,
 } from '@/components/styledComponents/StyledContainer'
-import signup_complete from '@/public/signup_complete.png'
+import signup_complete from '@/public/signup_complete.webp'
 import { store } from '@/redux/store'
 
 const KakaoSignUpPage5 = () => {
