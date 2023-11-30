@@ -14,7 +14,7 @@ export default function KakaoLoginPREPage() {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao/login`, {
           params: { code: myParam },
-          withCredentials:true
+          withCredentials: true,
         })
         if (response.status !== 200) {
           throw new Error('Network response was not ok')
