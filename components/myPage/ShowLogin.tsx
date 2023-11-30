@@ -5,7 +5,6 @@ import React from 'react'
 import { StyledButtonLarge } from '@/components/styledComponents/StyledButton'
 import { StyledContainerTwo } from '@/components/styledComponents/StyledContainer'
 import kakaoLogo from '@/public/kakao.svg'
-import marcLogo from '@/public/marc_logo.webp'
 
 export default function ShowLogin() {
   const [openSetting, setOpenSetting] = React.useState(false)
@@ -41,7 +40,12 @@ export default function ShowLogin() {
             maxWidth: '100%',
           }}
         >
-          <Image src={marcLogo} alt="logo" width="108" priority={true} />
+          <Image
+            src={'https://marc-data.s3.ap-northeast-2.amazonaws.com/marc_logo.webp'}
+            alt="logo"
+            width="108"
+            priority={true}
+          />
         </Container>
         <Container
           sx={{

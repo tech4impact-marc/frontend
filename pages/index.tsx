@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { StyledButtonLarge } from '@/components/styledComponents/StyledButton'
 import { StyledContainerTwo } from '@/components/styledComponents/StyledContainer'
 import kakaoLogo from '@/public/kakao.svg'
-import marcLogo from '@/public/marc_logo.webp'
 
 export default function Home() {
   const handleLogin = () => {
@@ -47,7 +46,12 @@ export default function Home() {
             maxWidth: '100%',
           }}
         >
-          <Image src={marcLogo} alt="logo" width={108} height={108} />
+          <Image
+            src={'https://marc-data.s3.ap-northeast-2.amazonaws.com/marc_logo.webp'}
+            alt="logo"
+            width={108}
+            height={108}
+          />
         </Container>
         <Container
           sx={{
