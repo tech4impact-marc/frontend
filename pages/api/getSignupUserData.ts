@@ -1,8 +1,10 @@
+import { store } from '@/redux/store'
 import instance from '@/util/axios_interceptor'
 
 async function getSignupUserData() {
+  const state = store.getState()
   try {
-    const response = await instance.get(`/auth/kakao/signup/ready`, {
+    const response = await instance.post(`/auth/kakao/signup/ready`, state.loginState, {
       headers: {
         'Content-Type': 'application/json',
       },

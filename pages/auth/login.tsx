@@ -36,14 +36,7 @@ export default function LoginPage() {
         <StyledContainerTwo>
           <StyledButtonLarge
             onClick={handleLogin}
-            startIcon={
-              <Image
-                src="https://marc-data.s3.ap-northeast-2.amazonaws.com/kakao.svg"
-                alt="kakao"
-                width={18}
-                height={18}
-              />
-            }
+            startIcon={<Image src="/kakao.svg" alt="kakao" width={18} height={18} />}
             sx={{
               background: '#FEE500',
               '&:hover': {

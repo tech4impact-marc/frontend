@@ -39,13 +39,7 @@ export default function ShowLogin() {
             maxWidth: '100%',
           }}
         >
-          <Image
-            src={'https://marc-data.s3.ap-northeast-2.amazonaws.com/marc_logo.webp'}
-            alt="logo"
-            width={108}
-            height={108}
-            priority={true}
-          />
+          <Image src={'/marc_logo.webp'} alt="logo" width={108} height={108} />
         </Container>
         <Container
           sx={{
@@ -63,14 +57,7 @@ export default function ShowLogin() {
           <StyledContainerTwo>
             <StyledButtonLarge
               onClick={handleLogin}
-              startIcon={
-                <Image
-                  src="https://marc-data.s3.ap-northeast-2.amazonaws.com/kakao.svg"
-                  alt="kakao"
-                  width={18}
-                  height={18}
-                />
-              }
+              startIcon={<Image src="/kakao.svg" alt="kakao" width={18} height={18} />}
               sx={{
                 background: '#FEE500',
                 '&:hover': {
