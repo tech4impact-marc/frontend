@@ -282,10 +282,7 @@ const Map = ({ data, animals }: MapProps) => {
                   onClick={() => handleTypeClick(index, type.id)}
                 />
                 <Image
-                  src={
-                    type.thumbnailUrl ??
-                    'https://marc-data.s3.ap-northeast-2.amazonaws.com/marc_logo.webp'
-                  }
+                  src={type.thumbnailUrl ?? '/marc_logo.webp'}
                   alt="logo"
                   width={24}
                   height={24}
