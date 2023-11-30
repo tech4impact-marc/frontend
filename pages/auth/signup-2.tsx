@@ -9,7 +9,6 @@ import {
   InputLabel,
   Typography,
 } from '@mui/material'
-import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
@@ -21,6 +20,7 @@ import {
   StyledContainerTwo,
 } from '@/components/styledComponents/StyledContainer'
 import { store } from '@/redux/store'
+import instance from '@/util/axios_interceptor'
 
 export default function KakaoSignUpPage2() {
   const router = useRouter()
@@ -33,7 +33,7 @@ export default function KakaoSignUpPage2() {
 
   const handleNext = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/users/exist`, {
+      const response = await instance.get(`/users/exist`, {
         params: { nickname: nickname },
       })
 

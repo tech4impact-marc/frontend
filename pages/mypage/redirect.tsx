@@ -1,8 +1,8 @@
-import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 
 import { store } from '@/redux/store'
+import instance from '@/util/axios_interceptor'
 
 import refreshAccessToken from '../api/refreshAccessToken'
 
@@ -14,13 +14,8 @@ export default function MyPageRedirectPage() {
     const state = store.getState()
     if (Object.keys(state.tokens).length !== 0) {
       const accessToken = state.tokens.accessToken
-      axios
-        .get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/users/self/info`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          withCredentials: true,
-        })
+      instance
+        .get(`/auth/users/self/info`)
         .then((response) => {
           store.dispatch({ type: 'SET_USER', payload: response.data })
           router.push('/mypage')

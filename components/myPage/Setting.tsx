@@ -10,22 +10,23 @@ import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 import Typography from '@mui/material/Typography'
-import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import ConfirmDialog from '@/components/Confirm'
 import refreshAccessToken from '@/pages/api/refreshAccessToken'
 import { store } from '@/redux/store'
+import instance from '@/util/axios_interceptor'
 
-import ConfirmDialog from '../confirmDialog'
 import { FlexBox } from '../styledComponents/StyledBox'
 import { StyledContainerFour } from '../styledComponents/StyledContainer'
 import UserInfo from './UserInfo'
 interface SettingProps {
   onClose: () => void
+  isLogin: boolean
 }
 
-export default function Setting({ onClose }: SettingProps) {
+export default function Setting({ onClose, isLogin }: SettingProps) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [openConfirm, setOpenConfirm] = useState(false)
@@ -56,12 +57,7 @@ export default function Setting({ onClose }: SettingProps) {
       const jwtToken = await refreshAccessToken()
       console.log(jwtToken)
       console.log(jwtToken.accessToken)
-      const response = await axios.delete(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/users/self`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken.accessToken}`,
-        },
-        withCredentials: true,
-      })
+      const response = await instance.delete(`/auth/users/self`)
 
       if (response.status !== 200) {
         throw new Error('Network response was not ok')
@@ -115,11 +111,11 @@ export default function Setting({ onClose }: SettingProps) {
         </FlexBox>
         <Typography variant="h2">설정</Typography>
         <List>
-          <ListItemButton onClick={handleInfo}>
+          <ListItemButton onClick={handleInfo} disabled={!isLogin}>
             <ListItemText primary="내 정보 수정" />
           </ListItemButton>
           <Divider />
-          <ListItemButton onClick={handleLogout}>
+          <ListItemButton onClick={handleLogout} disabled={!isLogin}>
             <ListItemText primary="로그아웃" />
           </ListItemButton>
           <Divider />
@@ -137,7 +133,7 @@ export default function Setting({ onClose }: SettingProps) {
                 <ListItemText primary="MARC 인스타그램" />
               </ListItemButton>
               <Divider />
-              <ListItemButton onClick={handleConfrim}>
+              <ListItemButton onClick={handleConfrim} disabled={!isLogin}>
                 <ListItemText primary="회원탈퇴" />
                 <Divider />
               </ListItemButton>
