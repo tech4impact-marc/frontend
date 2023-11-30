@@ -31,7 +31,7 @@ export default function KakaoLoginRedirectPage() {
           payload: Date.now() + response.data.tokens.refreshTokenExpiresIn * 1000,
         })
 
-        router.push('/')
+        router.push('/form')
       })
       .catch((error) => {
         console.error('Error occured:', error)
