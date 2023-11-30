@@ -1,16 +1,16 @@
-import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 
 import { store } from '@/redux/store'
+import instance from '@/util/axios_interceptor'
 
 export default function KakaoLoginRedirectPage() {
   const router = useRouter()
 
   useEffect(() => {
-    axios
+    instance
       .post(
-        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao/login/done`,
+        `/auth/kakao/login/done`,
         {},
         {
           headers: {
