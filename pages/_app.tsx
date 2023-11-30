@@ -27,7 +27,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page: ReactElement) => page)
 
   useEffect(() => {
-    console.log('app useeffect')
+    // console.log('app useeffect')
     refreshAccessToken()
   }, [Component, pageProps])
 

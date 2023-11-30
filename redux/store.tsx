@@ -16,6 +16,7 @@ const initialState = {
     accessToken: 0,
     refreshToken: 0,
   },
+  reportTypes: [],
   loginState: {},
 }
 
@@ -56,6 +57,12 @@ const reducer = (state = initialState, action: any) => {
       return {
         ...state,
         tokenExpiresAt: { ...state.tokenExpiresAt, refreshToken: action.payload },
+      }
+
+    case 'SET_REPORT_TYPES':
+      return {
+        ...state,
+        reportTypes: action.payload,
       }
     case 'SET_LOGINSTATE':
       return {
