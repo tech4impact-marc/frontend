@@ -1,7 +1,7 @@
 import { Button, TextField, Typography } from '@mui/material'
 import { memo, useState } from 'react'
 
-import authorizedAxios from '@/pages/api/authorizedAxios'
+import instance from '@/util/axios_interceptor'
 
 import {
   StyledContainerOne,
@@ -21,8 +21,8 @@ const PostOverlay = ({
     const postData = {
       value: post,
     }
-    authorizedAxios
-      .patch(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postID}`, postData)
+    instance
+      .patch(`/posts/${postID}`, postData)
       .then(function (response) {
         console.log(response)
         if (response.status == 200) {

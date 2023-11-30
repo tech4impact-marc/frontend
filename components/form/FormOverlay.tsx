@@ -12,7 +12,7 @@ import {
   LocationAnswerType,
   Option,
 } from '@/components/form/AnswerChoice'
-import authorizedAxios from '@/pages/api/authorizedAxios'
+import instance from '@/util/axios_interceptor'
 
 import {
   StyledContainerHeader,
@@ -204,8 +204,8 @@ const FormOverlay = React.memo(
           }
         })
 
-        authorizedAxios
-          .post(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports`, formData, {
+        instance
+          .post(`/reports`, formData, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },

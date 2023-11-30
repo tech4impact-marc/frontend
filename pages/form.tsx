@@ -1,5 +1,4 @@
 import { Backdrop, Container, Typography } from '@mui/material'
-import axios from 'axios'
 import { GetServerSideProps } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -12,6 +11,7 @@ import {
   StyledContainerThree,
 } from '@/components/styledComponents/StyledContainer'
 import { store } from '@/redux/store'
+import instance from '@/util/axios_interceptor'
 
 import refreshAccessToken from './api/refreshAccessToken'
 
@@ -119,23 +119,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         Origin: `${process.env.NEXT_PUBLIC_WEBURL}`,
       },
     }
-    const animalResponse = await axios.get(
-      `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types`,
-      setOrigin
-    )
+    const animalResponse = await instance.get(`/reports/types`, setOrigin)
     const animals: Animal[] = await animalResponse.data.contents
 
     if (
       context.query.animal &&
       animals.some((animal) => String(animal.id) === context.query.animal)
     ) {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${context.query.animal}`,
-        setOrigin
-      )
+      const response = await instance.get(`/reports/types/${context.query.animal}`, setOrigin)
       const currentVersion = response.data.currentVersion.id
-      const questionsResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${context.query.animal}/versions/${currentVersion}`,
+      const questionsResponse = await instance.get(
+        `/reports/types/${context.query.animal}/versions/${currentVersion}`,
         setOrigin
       )
       const questions = await questionsResponse.data.questions.sort(

@@ -4,9 +4,9 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import authorizedAxios from '@/pages/api/authorizedAxios'
 import { store } from '@/redux/store'
 import theme from '@/styles/theme'
+import instance from '@/util/axios_interceptor'
 
 import SNSSharingComponent from '../share/SNSSharingComponent'
 import {
@@ -24,8 +24,8 @@ const ShareOverlay = ({ animal, imgSrc }: { animal: string | undefined; imgSrc?:
   const userName = store.getState().user.nickname //redo using redux
   const [level, setLevel] = useState('')
   useEffect(() => {
-    authorizedAxios
-      .get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/missions/main`)
+    instance
+      .get(`/missions/main`)
       .then(function (response) {
         console.log(response)
         if (response.status == 200) {
