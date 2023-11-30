@@ -9,8 +9,6 @@ import { Map } from 'react-kakao-maps-sdk'
 
 import { UpdateImageAnswersType } from '../AnswerChoice'
 
-require('dotenv').config()
-
 function roundToNearest30Minutes(hour: string, minute: string) {
   if (Number(minute) < 15) {
     return { hour: hour, minute: '00' }

@@ -33,10 +33,6 @@ const Form = ({
   const router = useRouter()
   const { pathname, query } = router
 
-  if (router.query.animal && !animals.some((animal) => String(animal.id) === router.query.animal)) {
-    router.push({ pathname: pathname })
-  }
-
   useEffect(() => {
     if (typeof window !== 'undefined') {
       console.log('Form:', animals, questions)
@@ -55,6 +51,10 @@ const Form = ({
         </StyledContainerOne>
       </Container>
     )
+  }
+
+  if (router.query.animal && !animals.some((animal) => String(animal.id) === router.query.animal)) {
+    router.push({ pathname: pathname })
   }
 
   return (
@@ -111,7 +111,15 @@ Form.getLayout = (page: ReactElement) => <CommonLayout>{page}</CommonLayout>
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const animalResponse = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types`)
+    const setOrigin = {
+      headers: {
+        Origin: `${process.env.NEXT_PUBLIC_FRONT_URL}`,
+      },
+    }
+    const animalResponse = await axios.get(
+      `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types`,
+      setOrigin
+    )
     const animals: Animal[] = await animalResponse.data.contents
 
     if (
@@ -119,11 +127,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       animals.some((animal) => String(animal.id) === context.query.animal)
     ) {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${context.query.animal}`
+        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${context.query.animal}`,
+        setOrigin
       )
       const currentVersion = response.data.currentVersion.id
       const questionsResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${context.query.animal}/versions/${currentVersion}`
+        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${context.query.animal}/versions/${currentVersion}`,
+        setOrigin
       )
       const questions = await questionsResponse.data.questions.sort(
         (a: Question, b: Question) => a.questionOrder - b.questionOrder

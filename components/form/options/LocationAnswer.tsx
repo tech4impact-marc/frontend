@@ -8,8 +8,6 @@ import { Map, MapMarker } from 'react-kakao-maps-sdk'
 
 import { LocationAnswerType, UpdateAnswersType } from '../AnswerChoice'
 
-require('dotenv').config()
-
 interface LocationAnswerProps {
   currentAnswer: LocationAnswerType
   updateAnswers: UpdateAnswersType

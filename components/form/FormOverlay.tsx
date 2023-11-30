@@ -85,6 +85,7 @@ const FormOverlay = React.memo(
               questionId: question.id,
             } as LocationAnswerType,
           ]
+        case 'IMAGE':
         case 'FILE':
           return [
             {
@@ -154,12 +155,13 @@ const FormOverlay = React.memo(
           })
         } else {
           setAnswers((prevAnswers: AnswerType[]) => {
-            const updatedAnswers =
-              currentAnswer[0]?.type === 'MULTIPLE_CHOICE(MULTI)'
-                ? [...answers] // if checkbox don't erase
-                : answers.filter(
-                    (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
-                  )
+            const updatedAnswers = ['MULTIPLE_CHOICE(MULTI)', 'IMAGE', 'FILE'].includes(
+              currentAnswer[0]?.type
+            )
+              ? [...answers] // if checkbox don't erase
+              : answers.filter(
+                  (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
+                )
             updatedAnswers.push(newAnswer as AnswerType)
             return updatedAnswers as AnswerType[]
           })
