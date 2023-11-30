@@ -31,6 +31,7 @@ const Form = ({
 }) => {
   const router = useRouter()
   const { pathname, query } = router
+  console.log(animals, questions, currentVersion)
 
   // useEffect(() => {
   //   refreshAccessToken()
