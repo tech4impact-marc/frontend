@@ -36,7 +36,12 @@ export default function KakaoSignUpPage4() {
     instance
       .post(
         `/auth/kakao/signup`,
-        { nickname: userName, email: userEmail, profileIsDefaultImage: isDefault },
+        {
+          nickname: userName,
+          email: userEmail,
+          profileIsDefaultImage: isDefault,
+          ...state.loginState,
+        },
         {
           headers: {
             'Content-Type': 'application/json',

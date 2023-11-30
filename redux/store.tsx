@@ -17,6 +17,7 @@ const initialState = {
     refreshToken: 0,
   },
   reportTypes: [],
+  loginState: {},
 }
 
 // 리듀서
@@ -58,10 +59,15 @@ const reducer = (state = initialState, action: any) => {
         tokenExpiresAt: { ...state.tokenExpiresAt, refreshToken: action.payload },
       }
 
-    case 'SET_REPROT_TYPES':
+    case 'SET_REPORT_TYPES':
       return {
         ...state,
         reportTypes: action.payload,
+      }
+    case 'SET_LOGINSTATE':
+      return {
+        ...state,
+        loginState: action.payload,
       }
     // 다른 액션 추가 가능
     default:
