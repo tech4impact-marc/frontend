@@ -45,13 +45,7 @@ export default function Home() {
             maxWidth: '100%',
           }}
         >
-          <Image
-            src={'https://marc-data.s3.ap-northeast-2.amazonaws.com/marc_logo.webp'}
-            alt="logo"
-            width={108}
-            height={108}
-            priority={true}
-          />
+          <Image src={'/marc_logo.webp'} alt="logo" width={108} height={108} priority={true} />
         </Container>
         <Container
           sx={{
@@ -84,13 +78,7 @@ export default function Home() {
             <StyledButtonLarge
               onClick={handleLogin}
               startIcon={
-                <Image
-                  src="https://marc-data.s3.ap-northeast-2.amazonaws.com/kakao.svg"
-                  alt="kakao"
-                  width={18}
-                  height={18}
-                  priority={true}
-                />
+                <Image src="/kakao.svg" alt="kakao" width={18} height={18} priority={true} />
               }
               sx={{
                 background: '#FEE500',
