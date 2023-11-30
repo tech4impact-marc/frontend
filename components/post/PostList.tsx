@@ -1,15 +1,20 @@
+import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded'
+import { IconButton } from '@mui/material'
+import Backdrop from '@mui/material/Backdrop'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
-import { useState } from 'react'
+import React, { useState } from 'react'
+
+import type { reportGeoJson } from '@/types/type'
 
 import PostCard from './PostCard'
 
 const drawerBleeding = 240
 
 interface PostProps {
-  data: any
+  data: reportGeoJson[]
   onClickBack: () => void
 }
 
@@ -22,7 +27,7 @@ const ListContainer = styled('div')(() => ({
 const CustomSwipeableDrawer = styled(SwipeableDrawer)({
   '& .MuiDrawer-paper': {
     overflowY: 'visible',
-    height: `calc(100% - ${drawerBleeding - 14}px)`,
+    height: `calc(100% - ${drawerBleeding}px)`,
   },
   '& .MuiBackdrop-root': {
     background: 'white',
@@ -42,49 +47,60 @@ export default function Post(props: PostProps) {
   }
 
   return (
-    <CustomSwipeableDrawer
-      anchor="bottom"
-      open={open}
-      onClose={handleClose}
-      onOpen={handleOpen}
-      disableSwipeToOpen={false}
-      swipeAreaWidth={drawerBleeding + 14}
-      ModalProps={{
-        keepMounted: true,
-      }}
-    >
-      <Box
-        sx={{
-          position: 'relative',
-          marginTop: `${-drawerBleeding}px`,
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 8,
-          visibility: 'visible',
-          right: 0,
-          left: 0,
-          backgroundColor: 'white',
+    <React.Fragment>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer - 1 }}
+        open={!open}
+        onClick={handleClose}
+      />
+      <CustomSwipeableDrawer
+        anchor="bottom"
+        open={open}
+        onClose={handleClose}
+        onOpen={handleOpen}
+        disableSwipeToOpen={false}
+        swipeAreaWidth={drawerBleeding + 14}
+        ModalProps={{
+          keepMounted: true,
         }}
       >
         <Box
           sx={{
-            height: 6,
-            width: 40,
-            backgroundColor: 'gray',
-            borderRadius: 2,
-            position: 'absolute',
-            top: 8,
-            left: 'calc(50% - 1.25rem)',
+            position: 'relative',
+            marginTop: `${-drawerBleeding - 14}px`,
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8,
+            visibility: 'visible',
+            right: 0,
+            left: 0,
+            backgroundColor: 'white',
           }}
-        ></Box>
+        >
+          <Box
+            sx={{
+              height: 6,
+              width: 40,
+              backgroundColor: 'gray',
+              borderRadius: 2,
+              position: 'absolute',
+              top: 8,
+              left: 'calc(50% - 1.25rem)',
+            }}
+          />
 
-        <ListContainer>
-          <Stack spacing={2}>
-            {props.data.map((post: any, index: number) => (
-              <PostCard data={post} index={index} key={index} />
-            ))}
-          </Stack>
-        </ListContainer>
-      </Box>
-    </CustomSwipeableDrawer>
+          <IconButton sx={{ mt: '1rem' }} onClick={props.onClickBack}>
+            {open ? <ArrowBackIosRoundedIcon /> : null}
+          </IconButton>
+
+          <ListContainer>
+            <Stack spacing={2}>
+              {props.data.map((post: reportGeoJson, index: number) => (
+                <PostCard data={post} index={index} key={index} />
+              ))}
+            </Stack>
+          </ListContainer>
+        </Box>
+      </CustomSwipeableDrawer>
+    </React.Fragment>
   )
 }

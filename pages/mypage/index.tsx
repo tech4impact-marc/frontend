@@ -16,18 +16,7 @@ import Mission from '@/components/myPage/Mission'
 import Setting from '@/components/myPage/Setting'
 import { FlexBox } from '@/components/styledComponents/StyledBox'
 import { store } from '@/redux/store'
-
-import type { MapResponse } from '../map'
-
-export interface UserReport {
-  totalNumberOfPages: number
-  totalNumberOfElements: number
-  first: boolean
-  last: boolean
-  isEmpty: boolean
-  numberOfElements: number
-  contents: MapResponse[]
-}
+import type { UserReport } from '@/types/type'
 
 interface ReportTypeCount {
   id: number
@@ -55,7 +44,7 @@ const InfoBox = styled(Box)`
   display: flex;
   max-width: 80%;
   gap: 1rem;
-  align-items: center;
+  align-items: flex-end;
 `
 
 export default function MyPage() {
@@ -113,12 +102,12 @@ export default function MyPage() {
               </IconButton>
             </Box>
           </Box>
-          <InfoBox alignItems={'flex-start'} marginTop={'0.25rem'}>
-            <Typography variant="h2">{user.nickname ?? '안녕하세요!'}</Typography>
-            <Typography variant="h4">초보 탐험가</Typography>
+          <InfoBox marginTop={'0.25rem'}>
+            <Typography variant="h2">{user?.nickname ?? '안녕하세요!'}</Typography>
+            <Typography variant="h4">{user?.mainMission ?? '미션을 달성해볼까요?'}</Typography>
           </InfoBox>
           <Typography variant="h5" color={'#8f8f8f'} fontWeight={600}>
-            리포트 {reports?.totalNumberOfElements}
+            리포트 {reports?.totalNumberOfElements ?? 0}
           </Typography>
           <Box maxWidth="80%">
             <Grid container spacing={1}>

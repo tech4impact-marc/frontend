@@ -7,14 +7,14 @@ import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import axios from 'axios'
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 import { FlexBox, VFlexBox } from '@/components/styledComponents/StyledBox'
+import { store } from '@/redux/store'
 
 import { StyledContainerFour } from '../styledComponents/StyledContainer'
 
-interface MissionResponse {
+interface MissionContent {
   id: number
   isMain: boolean
   mission: {
@@ -24,6 +24,11 @@ interface MissionResponse {
     description: string
   }
 }
+interface MissionResponse {
+  contents: MissionContent[]
+  isEmpty: boolean
+  numberOfElements: number
+}
 
 interface MissionProps {
   onClose: () => void
@@ -31,9 +36,10 @@ interface MissionProps {
 
 export default function Mission({ onClose }: MissionProps) {
   const [open, setOpen] = useState(false)
-  const [missions, setMissions] = useState<MissionResponse[]>([])
-  const [unachievedMissions, setUnachievedMissions] = useState<MissionResponse[]>([])
-  const router = useRouter()
+  const [missions, setMissions] = useState<MissionContent[]>([])
+  const [unachievedMissions, setUnachievedMissions] = useState<MissionContent[]>([])
+  const state = store.getState()
+  const user = state.user
 
   const getRandomIndex = (length: number) => {
     return Math.floor(Math.random() * length)
@@ -42,24 +48,36 @@ export default function Mission({ onClose }: MissionProps) {
   useEffect(() => {
     async function getMissions() {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/missions/users`)
-      const data = await res.data.items
-      const missions = await data.sort(
-        (a: MissionResponse, b: MissionResponse) => a.mission.id - b.mission.id
-      )
-      console.log(missions)
+      const data = await res.data
+      if (data.isEmpty) {
+        setMissions([])
+        return
+      }
+
+      const contents = data.contents
+      const missions =
+        (await contents?.sort((a: MissionContent, b: MissionContent) =>
+          a.isMain ? 1 : a.mission.id - b.mission.id
+        )) ?? []
+      console.log('mission', missions)
       setMissions(missions)
     }
 
     async function getUnachievedMissions() {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/missions/users/unachieved`)
-      const data = await res.data
-      console.log(data)
-      setUnachievedMissions(data)
+      const data: MissionResponse = await res.data
+
+      if (data.isEmpty) {
+        setUnachievedMissions([])
+        return
+      }
+      console.log('else mission', data)
+      setUnachievedMissions(data.contents)
     }
 
     try {
       getMissions()
-      // getUnachievedMissions()
+      getUnachievedMissions()
     } catch (err) {
       console.error(err)
       setMissions([])
@@ -73,10 +91,11 @@ export default function Mission({ onClose }: MissionProps) {
   const DrawerContent = () => {
     let missionTitle = ''
     let missionDescription = ''
-    if (!unachievedMissions || unachievedMissions.length === 0) {
+    if (!unachievedMissions || unachievedMissions.length == 0) {
       missionTitle = '축하합니다!'
       missionDescription = '모든 업적을 달성하셨습니다!'
     } else {
+      console.log(unachievedMissions)
       const randomMission = unachievedMissions[getRandomIndex(unachievedMissions.length)]
       missionTitle = randomMission.mission.name
       missionDescription = randomMission.mission.description
@@ -114,12 +133,12 @@ export default function Mission({ onClose }: MissionProps) {
       </FlexBox>
       <Box>
         <Box height="5.5rem">
-          <Typography variant="h2">미남강현님의</Typography>
-          <Typography variant="h2">업적은 00개</Typography>
+          <Typography variant="h2">{user?.nickname ?? '유저'} 님의</Typography>
+          <Typography variant="h2">업적은 {missions.length}개</Typography>
         </Box>
       </Box>
       <List>
-        {missions.map((mission: MissionResponse) => (
+        {missions.map((mission: MissionContent) => (
           <ListItem key={mission.id}>
             <ListItemIcon>
               <Box
@@ -139,7 +158,7 @@ export default function Mission({ onClose }: MissionProps) {
           sx={{ height: '3.5rem' }}
           onClick={() => toggleDrawer(true)}
         >
-          아직 달성 못한 업적 보기
+          아직 달성못한 업적 보기
         </Button>
       </Container>
       <Drawer open={open} anchor="bottom">

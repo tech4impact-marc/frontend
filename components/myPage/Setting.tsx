@@ -1,11 +1,9 @@
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
-import { Alert, DialogActions, DialogContentText, DialogTitle } from '@mui/material'
+import { Alert } from '@mui/material'
 import Backdrop from '@mui/material/Backdrop'
-import Button from '@mui/material/Button'
 import Collapse from '@mui/material/Collapse'
-import Dialog from '@mui/material/Dialog'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
@@ -19,6 +17,7 @@ import React, { useState } from 'react'
 import refreshAccessToken from '@/pages/api/refreshAccessToken'
 import { store } from '@/redux/store'
 
+import ConfirmDialog from '../confirmDialog'
 import { FlexBox } from '../styledComponents/StyledBox'
 import { StyledContainerFour } from '../styledComponents/StyledContainer'
 import UserInfo from './UserInfo'
@@ -146,19 +145,15 @@ export default function Setting({ onClose }: SettingProps) {
             </List>
           </Collapse>
         </List>
-        <Dialog open={openConfirm} onClose={handleConfrimExit}>
-          <DialogTitle>
-            <Typography variant="h2">회원 탈퇴</Typography>
-          </DialogTitle>
-          <DialogContentText margin="2rem">회원 탈퇴 하시겠습니까?</DialogContentText>
-          <Alert severity="warning">회원 탈퇴는 취소할 수 없습니다.</Alert>
-          <DialogActions>
-            <Button onClick={handleUnregister} color="warning">
-              예
-            </Button>
-            <Button onClick={handleConfrimExit}>아니오</Button>
-          </DialogActions>
-        </Dialog>
+        <ConfirmDialog
+          open={openConfirm}
+          onClose={handleConfrimExit}
+          onClickYes={handleUnregister}
+          onClickNo={handleConfrimExit}
+          title="회원 탈퇴"
+          description="회원 탈퇴 하시겠습니까?"
+          warning="회원 탈퇴는 취소할 수 없습니다."
+        />
         {showError && <Alert severity="error">회원 탈퇴 중 오류가 발생했습니다.</Alert>}
       </StyledContainerFour>
       <Backdrop open={openInfo} sx={{ backgroundColor: 'white' }}>

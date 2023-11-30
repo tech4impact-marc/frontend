@@ -9,35 +9,12 @@ import Popover from '@mui/material/Popover'
 import mapboxgl, { LngLatBoundsLike } from 'mapbox-gl'
 import { MapLayerMouseEvent } from 'mapbox-gl'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { FlexBox, VFlexBox } from '@/components/styledComponents/StyledBox'
-import type { ImageInfo } from '@/pages/map'
+import type { reportGeoJson, typeToReportCollectionGeoJson } from '@/types/type'
 
 import PostList from './post/PostList'
-
-export interface reportGeoJson {
-  type: 'Feature'
-  properties: {
-    id: number
-    address: string
-    address_detail: string
-    image_list: ImageInfo[]
-    report_type: number
-    year: number
-    month: number
-    day: number
-    post_id: number
-  }
-  geometry: {
-    type: 'Point'
-    coordinates: [number, number]
-  }
-}
-
-export interface typeToReportCollectionGeoJson {
-  [type: number]: reportGeoJson[]
-}
 
 interface MapProps {
   data: typeToReportCollectionGeoJson
@@ -48,28 +25,22 @@ const Map = ({ data }: MapProps) => {
   const map = useRef<mapboxgl.Map | null>(null)
 
   // 위도, 경도, 줌 초깃값 설정
-  const [lng, setLng] = useState(126.5311884)
-  const [lat, setLat] = useState(33.4)
-  const [zoom, setZoom] = useState(8)
-  const [posts, setPosts] = useState<reportGeoJson[]>([]) // 추후 데이터 따라서 타입 설정 필요
-  const [checked, setChecked] = useState<boolean[]>([]) // 추후 데이터 따라서 타입 설정 필요
+  const [posts, setPosts] = useState<reportGeoJson[]>([])
+  const [checked, setChecked] = useState<boolean[]>([])
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  // 타입 정의. 나중에 수정
+
+  // TODO: 타입 정의 dynamic으로 수정
   const reportTypes = [
-    { id: 1, label: '돌고래' },
-    { id: 2, label: '바다거북' },
-    { id: 3, label: '상괭이' },
+    { id: 1, label: '남방큰돌고래', color: '#2D9AFF', url: '/돌고래.svg' },
+    { id: 2, label: '바다거북', color: '#01A459', url: '/바다거북.svg' },
+    { id: 3, label: '상괭이', color: '#9AA8BF', url: '/상괭이.svg' },
   ]
 
   // 지도 범위 제한 좌표 설정 (제주도)
   const bounds = [
-    [125.1724309, 32.1769553], // 남서쪽 끝 좌표
-    [127.889946, 34.6230447], // 북동쪽 끝 좌표
+    [124.1724309, 32.1769553], // 남서쪽 끝 좌표
+    [128.889946, 34.6230447], // 북동쪽 끝 좌표
   ] as LngLatBoundsLike
-
-  const class1 = ['==', ['get', 'report_type'], 1]
-  const class2 = ['==', ['get', 'report_type'], 2]
-  const class3 = ['==', ['get', 'report_type'], 3]
 
   // 포스트에서 지도로 돌아올 때 사용할 함수
   const handleBack = () => {
@@ -88,8 +59,6 @@ const Map = ({ data }: MapProps) => {
     if (!map.current) return
     const currentMap = map.current
     const typeChecked = checked[index]
-    console.log(dataType)
-    console.log(typeChecked)
 
     if (typeChecked) {
       // 현재 타입 레이어 숨기기
@@ -122,7 +91,8 @@ const Map = ({ data }: MapProps) => {
       filter: ['!', ['has', 'point_count']],
       paint: {
         'circle-color': color,
-        'circle-radius': 12,
+        'circle-radius': 15,
+        'circle-opacity': 0.8,
       },
       layout: {
         visibility: visible,
@@ -142,10 +112,9 @@ const Map = ({ data }: MapProps) => {
           address_detail: properties?.address_detail,
           image_list: JSON.parse(properties?.image_list),
           report_type: properties?.report_type,
-          year: properties?.year,
-          month: properties?.month,
-          day: properties?.day,
+          date: properties?.date,
           post_id: properties?.post_id,
+          author_name: properties?.author_name,
         },
         geometry: feature.geometry,
       }
@@ -161,7 +130,8 @@ const Map = ({ data }: MapProps) => {
       filter: ['has', 'point_count'],
       paint: {
         'circle-color': color,
-        'circle-radius': 15,
+        'circle-radius': 18,
+        'circle-opacity': 0.8,
       },
       layout: {
         visibility: visible,
@@ -229,8 +199,8 @@ const Map = ({ data }: MapProps) => {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/hhkang/cloliiuhi002p01r779iv0a78',
-      center: [lng, lat],
-      zoom: zoom,
+      center: [126.5311884, 33.4],
+      zoom: 8,
       maxBounds: bounds,
     })
 
@@ -243,18 +213,19 @@ const Map = ({ data }: MapProps) => {
       for (const type of reportTypes) {
         const id = type.id
         const visible = id === 1 ? 'visible' : 'none'
+        const color = type.color
         currentMap.addSource(`reports${id}`, {
           type: 'geojson',
           data: {
             type: 'FeatureCollection',
-            features: data[id],
+            features: data[id] ?? [],
           },
           cluster: true, // cluster를 사용하겠다
           clusterMaxZoom: 14, // 클러스터를 사용할 최대 줌 레벨
           clusterRadius: 50,
         })
 
-        renderClusterOfType(currentMap, id, visible, '#3478F5')
+        renderClusterOfType(currentMap, id, visible, color)
       }
 
       setChecked([true, false, false])
@@ -264,7 +235,7 @@ const Map = ({ data }: MapProps) => {
   const open = Boolean(anchorEl)
 
   return (
-    <div>
+    <React.Fragment>
       <div
         style={{
           position: 'absolute',
@@ -294,7 +265,7 @@ const Map = ({ data }: MapProps) => {
                   checked={checked[index]}
                   onClick={() => handleTypeClick(index, type.id)}
                 />
-                <Image src="/돌고래.svg" alt="logo" width={24} height={24} />
+                <Image src={type.url} alt="logo" width={24} height={24} />
                 <Typography ml={'0.25rem'} variant="subtitle1">
                   {type.label}
                 </Typography>
@@ -315,7 +286,7 @@ const Map = ({ data }: MapProps) => {
         className={`map-container`}
         ref={mapContainer}
       ></div>
-    </div>
+    </React.Fragment>
   )
 }
 
