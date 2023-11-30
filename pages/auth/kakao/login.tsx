@@ -2,6 +2,8 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 
+import { store } from '@/redux/store'
+
 export default function KakaoLoginPREPage() {
   const router = useRouter()
 
@@ -21,6 +23,8 @@ export default function KakaoLoginPREPage() {
         if (response.status !== 200) {
           throw new Error('Network response was not ok')
         }
+
+        store.dispatch({ type: 'SET_LOGINSTATE', payload: response.data })
 
         if (response.data.loginState === 'SIGNUP') {
           router.push('/auth/signup-1')

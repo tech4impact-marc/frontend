@@ -6,19 +6,16 @@ import instance from '@/util/axios_interceptor'
 
 export default function KakaoLoginRedirectPage() {
   const router = useRouter()
+  const state = store.getState()
 
   useEffect(() => {
     instance
-      .post(
-        `/auth/kakao/login/done`,
-        {},
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true,
-        }
-      )
+      .post(`/auth/kakao/login/done`, state.loginState, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      })
       .then((response) => {
         if (response.status !== 200) {
           throw new Error('Network response was not ok')
