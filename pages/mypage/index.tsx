@@ -14,7 +14,7 @@ export default function MyPage() {
 
     if (Object.keys(state.tokens).length !== 0) {
       instance
-        .get(`/auth/users/self/info`)
+        .get(`/users/self/info`)
         .then((response) => {
           store.dispatch({ type: 'SET_USER', payload: response.data })
           setIsLogin(true)

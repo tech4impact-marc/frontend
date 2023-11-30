@@ -12,6 +12,8 @@ import {
   LocationAnswerType,
   Option,
 } from '@/components/form/AnswerChoice'
+import refreshAccessToken from '@/pages/api/refreshAccessToken'
+import { store } from '@/redux/store'
 import instance from '@/util/axios_interceptor'
 
 import {
@@ -56,6 +58,15 @@ const FormOverlay = React.memo(
     const [locationIndex, setLocationIndex] = useState(0)
     const lastStep = useMemo(() => questions?.length - 1, [questions])
     const [postID, setPostID] = useState<number | null>(null)
+    const [loginState, setLoginState] = useState(false)
+
+    useEffect(() => {
+      refreshAccessToken()
+      const state = store.getState()
+      if (Object.keys(state.tokens).length !== 0) {
+        setLoginState(true)
+      }
+    }, [router])
 
     useEffect(() => {
       questions.forEach((question, index) => {
@@ -178,20 +189,33 @@ const FormOverlay = React.memo(
       //   })
       // )
       if (step == lastStep) {
-        console.log(typeof router.query.animal, typeof currentVersion)
-        console.log(
-          JSON.stringify({
-            reportTypeId: router.query.animal,
-            reportTypeVersionId: currentVersion,
-            answers: answers.flat(),
-          })
-        )
+        // console.log(typeof router.query.animal, typeof currentVersion)
+        // console.log(
+        //   JSON.stringify({
+        //     reportTypeId: router.query.animal,
+        //     reportTypeVersionId: currentVersion,
+        //     answers: answers.flat(),
+        //   })
+        // )
         formData.append(
           'data',
           JSON.stringify({
             reportTypeId: parseInt(router.query.animal as string),
             reportTypeVersionId: currentVersion,
-            answers: answers.flat().filter((answer) => answer.modified === true),
+            answers: answers
+              .flat()
+              .map((answer) => {
+                if (imageAnswerType.includes(answer.type)) {
+                  const {
+                    value: { fileUrl, ...valueWithoutUrl },
+                    ...answerWithoutValue
+                  } = answer as ImageAnswerType
+                  return { ...answerWithoutValue, value: valueWithoutUrl }
+                }
+                // For other types, include them in the filtered array
+                return answer
+              })
+              .filter((answer) => answer.modified === true),
           })
         )
         questions.forEach((question, index) => {
@@ -215,7 +239,11 @@ const FormOverlay = React.memo(
             if (response.status == 200) {
               console.log('FormOverlay:', response)
               setPostID(response.data.post.id)
-              setStep(lastStep + 1)
+              if (loginState) {
+                setStep(lastStep + 1) // get PostOverlay
+              } else {
+                setStep(lastStep + 2)
+              }
             } else {
               console.log(response)
             }
@@ -307,6 +335,7 @@ const FormOverlay = React.memo(
 
         <Backdrop open={step == lastStep + 2} sx={{ backgroundColor: 'white', zIndex: '10000' }}>
           <ShareOverlay
+            loginState={loginState}
             animal={animal}
             imgSrc={
               answers[imageIndex].length !== 0 &&
