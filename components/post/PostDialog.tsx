@@ -17,14 +17,14 @@ import TextField from '@mui/material/TextField'
 import Toolbar from '@mui/material/Toolbar'
 import { TransitionProps } from '@mui/material/transitions'
 import Typography from '@mui/material/Typography'
-import axios from 'axios'
 import React, { useEffect } from 'react'
 
+import ConfirmDialog from '@/components/Confirm'
 import Carousel from '@/components/PostCarousel'
 import { store } from '@/redux/store'
 import type { ImageInfo } from '@/types/type'
+import instance from '@/util/axios_interceptor'
 
-import ConfirmDialog from '../confirmDialog'
 import SNSSharingComponent from '../share/SNSSharingComponent'
 import { FlexBox, VFlexBox } from '../styledComponents/StyledBox'
 import LikeButton from './LikeButton'
@@ -121,10 +121,8 @@ export default function PostDialog({
   useEffect(() => {
     if (!open || postId < 0) return
     // 포스트 정보 가져오기
-
-    const requestURL = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}`
-    axios
-      .get(requestURL)
+    instance
+      .get(`/posts/${postId}`)
       .then((res) => {
         const data: PostResponse = res.data
         const likeCount = data.like_count
@@ -163,8 +161,8 @@ export default function PostDialog({
 
   const handleUpload = () => {
     if (newComment == '') return
-    axios
-      .post(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/comments`, {
+    instance
+      .post(`/posts/${postId}/comments`, {
         value: newComment,
       })
       .then((res) => {
@@ -183,13 +181,10 @@ export default function PostDialog({
       const editedComment = comments[isEditMode]
       if (editedComment && editedComment.author.id == state.user.id) {
         const editedCommentId = editedComment.id
-        axios
-          .patch(
-            `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/comments/${editedCommentId}`,
-            {
-              value: editComment,
-            }
-          )
+        instance
+          .patch(`/posts/${postId}/comments/${editedCommentId}`, {
+            value: editComment,
+          })
           .then((res) => {
             const data: Comment = res.data
             const newComments = comments.map((comment) => {

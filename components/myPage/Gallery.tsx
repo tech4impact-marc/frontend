@@ -1,13 +1,14 @@
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
 import Image from 'next/image'
 import React from 'react'
 import { IconFDolphin } from 'react-fluentui-emoji/lib/flat'
 
 import type { ReportContentResponse, UserReport } from '@/types/type'
-import { convertDateToString } from '@/util'
+import { convertDateToString } from '@/util/util'
 
 import PostDialog from '../post/PostDialog'
 

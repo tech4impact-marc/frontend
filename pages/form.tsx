@@ -3,10 +3,9 @@ import axios from 'axios'
 import { GetServerSideProps } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import React, { ReactElement, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 import { FormOverlay, Question } from '@/components/form/FormOverlay'
-import CommonLayout from '@/components/Layout/CommonLayout'
 import {
   StyledContainerHeader,
   StyledContainerOne,
@@ -113,13 +112,11 @@ const Form = ({
 
 export default Form
 
-Form.getLayout = (page: ReactElement) => <CommonLayout>{page}</CommonLayout>
-
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const setOrigin = {
       headers: {
-        Origin: `${process.env.NEXT_PUBLIC_FRONT_URL}`,
+        Origin: `${process.env.NEXT_PUBLIC_WEBURL}`,
       },
     }
     const animalResponse = await axios.get(

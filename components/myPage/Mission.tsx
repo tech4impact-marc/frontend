@@ -6,11 +6,11 @@ import Container from '@mui/material/Container'
 import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
-import axios from 'axios'
 import { useEffect, useState } from 'react'
 
 import { FlexBox, VFlexBox } from '@/components/styledComponents/StyledBox'
 import { store } from '@/redux/store'
+import instance from '@/util/axios_interceptor'
 
 import { StyledContainerFour } from '../styledComponents/StyledContainer'
 
@@ -46,8 +46,9 @@ export default function Mission({ onClose }: MissionProps) {
   }
 
   useEffect(() => {
+    if (!state.tokens.accessToken || Object.keys(user)?.length == 0) return
     async function getMissions() {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/missions/users`)
+      const res = await instance.get(`/missions/users`)
       const data = await res.data
       if (data.isEmpty) {
         setMissions([])
@@ -64,7 +65,7 @@ export default function Mission({ onClose }: MissionProps) {
     }
 
     async function getUnachievedMissions() {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/missions/users/unachieved`)
+      const res = await instance.get(`/missions/users/unachieved`)
       const data: MissionResponse = await res.data
 
       if (data.isEmpty) {
@@ -82,7 +83,7 @@ export default function Mission({ onClose }: MissionProps) {
       console.error(err)
       setMissions([])
     }
-  }, [])
+  }, [open, state.tokens.accessToken, user])
 
   const toggleDrawer = (opening: boolean) => {
     setOpen(opening)

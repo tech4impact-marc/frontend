@@ -4,7 +4,7 @@ interface LayoutProps {
   children: React.ReactNode
 }
 
-export default function CommonLayout({ children }: LayoutProps) {
+export default function BasicLayout({ children }: LayoutProps) {
   return (
     <>
       {children}

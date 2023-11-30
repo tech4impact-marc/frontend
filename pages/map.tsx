@@ -1,10 +1,10 @@
 import Container from '@mui/material/Container'
-import axios from 'axios'
 
 import Map from '@/components/Map'
 import type { reportGeoJson, typeToReportCollectionGeoJson } from '@/types/type'
 import type { ReportContentResponse } from '@/types/type'
-import { convertDateToString } from '@/util'
+import instance from '@/util/axios_interceptor'
+import { convertDateToString } from '@/util/util'
 
 // 추후 데이터 따라서 설정 필요
 interface MapPageProps {
@@ -67,7 +67,11 @@ export async function getServerSideProps() {
   try {
     // 임시 api 호출
     // const jsonData = await axios('http://localhost:3001/api/map')
-    const jsonData = await axios(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/map`)
+    const jsonData = await instance(`/reports/map`, {
+      headers: {
+        Origin: `${process.env.NEXT_PUBLIC_WEBURL}`,
+      },
+    })
     const data = jsonData.data
     console.log(JSON.stringify(data))
 

@@ -2,12 +2,12 @@ import { Avatar } from '@mui/material'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
-import axios from 'axios'
 import { debounce } from 'lodash'
 import { useCallback, useState } from 'react'
 
 import Carousel from '@/components/CardCarousel'
 import type { reportGeoJson } from '@/types/type'
+import instance from '@/util/axios_interceptor'
 
 import { FlexBox } from '../styledComponents/StyledBox'
 import LikeButton from './LikeButton'
@@ -41,16 +41,16 @@ export default function PostCard({ index, data }: PostCardProps) {
 
   const debouncedLikeUpdate = useCallback(
     debounce(async (like: boolean, postId: number) => {
-      const requestUrl = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postId}/likes`
+      const requestUrl = `/posts/${postId}/likes`
       console.log('debounced Like')
       try {
         if (like) {
-          const res = await axios.post(requestUrl)
+          const res = await instance.post(requestUrl)
           if (res.status !== 200) {
             throw new Error('like post error')
           }
         } else {
-          const res = await axios.delete(requestUrl)
+          const res = await instance.delete(requestUrl)
           if (res.status !== 200) {
             throw new Error('like delete error')
           }

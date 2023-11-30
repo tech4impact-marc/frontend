@@ -6,11 +6,11 @@ import Container from '@mui/material/Container'
 import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import axios from 'axios'
 import React from 'react'
 
 import { FlexBox } from '@/components/styledComponents/StyledBox'
 import { store } from '@/redux/store'
+import instance from '@/util/axios_interceptor'
 
 import { StyledContainerFour } from '../styledComponents/StyledContainer'
 
@@ -44,9 +44,7 @@ export default function UserInfo({ onClose }: UserInfoProps) {
   const handleSave = async () => {
     if (!validateEmail(email) || !validateName(name)) return
 
-    const res = await axios({
-      method: 'patch',
-      url: `${process.env.NEXT_PUBLIC_IP_ADDRESS}/users/self/info`,
+    const res = await instance.patch(`/users/self/info`, {
       data: {
         nickname: name,
         email: email,

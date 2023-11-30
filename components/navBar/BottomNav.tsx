@@ -4,7 +4,7 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction'
 import Paper from '@mui/material/Paper'
 import { styled } from '@mui/material/styles'
 import NextLink from 'next/link'
-import { SyntheticEvent, useState } from 'react'
+import { NextRouter, withRouter } from 'next/router'
 
 const CustomBottomNavAction = (props: any) => {
   return (
@@ -22,24 +22,34 @@ const CustomPaper = styled(Paper)`
   right: 0px;
   width: 100%;
 `
-export default function BottomNav() {
+interface WithRouterProps {
+  router: NextRouter
+}
+
+function getPageIndex(pathname: string) {
+  switch (pathname) {
+    case '/map':
+      return 0
+    case '/form':
+      return 1
+    case '/mypage':
+      return 2
+    default:
+      return 0
+  }
+}
+
+function BottomNav({ router }: WithRouterProps) {
+  const value = getPageIndex(router.pathname)
   const navLinks = [
     { name: '지도', icon: <MapOutlined />, path: '/map' },
     { name: '제보하기', icon: <AddOutlined />, path: '/form' },
     { name: '마이페이지', icon: <AccountCircleRounded />, path: '/mypage' },
   ]
 
-  const [value, setValue] = useState(1)
-
   return (
     <CustomPaper elevation={3} sx={{ zIndex: 24 }}>
-      <BottomNavigation
-        showLabels
-        value={value}
-        onChange={(event: SyntheticEvent, newValue: number) => {
-          setValue(newValue)
-        }}
-      >
+      <BottomNavigation showLabels value={value}>
         {navLinks.map((link, index) => (
           <CustomBottomNavAction
             component={NextLink}
@@ -53,3 +63,5 @@ export default function BottomNav() {
     </CustomPaper>
   )
 }
+
+export default withRouter(BottomNav)

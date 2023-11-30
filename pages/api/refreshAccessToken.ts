@@ -1,6 +1,5 @@
-import axios from 'axios'
-
 import { store } from '@/redux/store'
+import instance from '@/util/axios_interceptor'
 
 async function refreshAccessToken() {
   const state = store.getState()
@@ -29,12 +28,10 @@ async function refreshAccessToken() {
       }
     }
 
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/refresh`, null, {
+    const response = await instance.post(`/auth/refresh`, null, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
         Refresh: refreshToken,
       },
-      withCredentials: true,
     })
 
     // 새로운 jwtToken 받기
