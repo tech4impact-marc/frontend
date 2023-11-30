@@ -31,7 +31,7 @@ const Map = ({ data, animals }: MapProps) => {
   const [posts, setPosts] = useState<reportGeoJson[]>([])
   const [checked, setChecked] = useState<boolean[]>([])
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  ]
+
   const [showEventLog, setShowEventLog] = useState<boolean>(false)
 
   const colors = ['#2D9AFF', '#01A459', '#9AA8BF']
