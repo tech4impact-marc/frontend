@@ -8,8 +8,6 @@ import { Map, MapMarker } from 'react-kakao-maps-sdk'
 
 import { LocationAnswerType, UpdateAnswersType } from '../AnswerChoice'
 
-require('dotenv').config()
-
 interface LocationAnswerProps {
   currentAnswer: LocationAnswerType
   updateAnswers: UpdateAnswersType
@@ -31,9 +29,9 @@ export const LocationAnswer: React.FC<LocationAnswerProps> = ({ currentAnswer, u
         ...(currentAnswer.value as LocationAnswerType['value']),
         [name]: value,
       },
+      modified: true,
     }
-    updateAnswers(true, updatedLocation)
-    console.log(updatedLocation)
+    updateAnswers([updatedLocation])
   }
 
   const gatherLocation = () => {
@@ -50,9 +48,9 @@ export const LocationAnswer: React.FC<LocationAnswerProps> = ({ currentAnswer, u
               longitude: longitude,
               address: result[0]?.road_address?.address_name || '', //도로명주소입니다!!!!
             },
+            modified: true,
           }
-          updateAnswers(true, updatedLocation)
-          console.log(updatedLocation)
+          updateAnswers([updatedLocation])
         }
       }
 

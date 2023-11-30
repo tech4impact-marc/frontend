@@ -18,6 +18,7 @@ export interface Option {
 interface CommonAnswerType {
   type: string
   questionId: number
+  modified?: boolean
 }
 
 export interface TextAnswerType extends CommonAnswerType {
@@ -28,8 +29,8 @@ export interface ImageAnswerType extends CommonAnswerType {
   value: {
     fileType: string //example: "IMAGE"
     fileKey: string //example: "image1"
+    fileUrl?: File
   }
-  file?: File
 }
 
 export interface LocationAnswerType extends CommonAnswerType {
@@ -45,12 +46,11 @@ export interface DateTimeAnswerType extends CommonAnswerType {
   value: Date | string | null //fix later :(
 }
 
-export type UpdateAnswersType = (changeType: Boolean, newAnswer: AnswerType | undefined) => void
+export type UpdateAnswersType = (newAnswers: AnswerType[]) => void
 export type UpdateImageAnswersType = (
-  file?: File,
-  newDate?: DateTimeAnswerType['value'],
-  newLocation?: LocationAnswerType['value'] | boolean,
-  deleteIndex?: number
+  newImageAnswers: AnswerType[],
+  newDateAnswer: Date | string | boolean,
+  newLocationAnswer: LocationAnswerType['value'] | boolean
 ) => void
 
 export type currentAnswerType = AnswerType[]
@@ -63,16 +63,16 @@ export interface SingleAnswerProps {
 interface AnswerTypeProps {
   currentAnswer: currentAnswerType
   updateAnswers: UpdateAnswersType
-  currentImageAnswers: File[]
   updateImageAnswers: UpdateImageAnswersType
   options: Option[]
+  questionType: string
 }
 
 const AnswerChoice: React.FC<AnswerTypeProps> = React.memo(
-  ({ currentAnswer, updateAnswers, currentImageAnswers, updateImageAnswers, options }) => {
+  ({ currentAnswer, updateAnswers, updateImageAnswers, options, questionType }) => {
     const firstCurrentAnswer = useMemo(() => currentAnswer[0], [currentAnswer])
 
-    switch (firstCurrentAnswer.type) {
+    switch (questionType) {
       case 'DATETIME':
         return (
           <DateAnswer
@@ -89,12 +89,7 @@ const AnswerChoice: React.FC<AnswerTypeProps> = React.memo(
         )
       case 'IMAGE':
       case 'FILE':
-        return (
-          <ImageAnswer
-            currentImageAnswers={currentImageAnswers}
-            updateImageAnswers={updateImageAnswers}
-          />
-        )
+        return <ImageAnswer currentAnswer={currentAnswer} updateImageAnswers={updateImageAnswers} />
       case 'SHORT_ANSWER':
       case 'LONG_ANSWER':
         return (

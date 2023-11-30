@@ -1,6 +1,5 @@
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded'
 import { Backdrop, Button, Typography } from '@mui/material'
-import axios from 'axios'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import React from 'react'
@@ -9,12 +8,11 @@ import {
   AnswerChoice,
   AnswerType,
   currentAnswerType,
-  DateTimeAnswerType,
   ImageAnswerType,
   LocationAnswerType,
   Option,
-  TextAnswerType,
 } from '@/components/form/AnswerChoice'
+import instance from '@/util/axios_interceptor'
 
 import {
   StyledContainerHeader,
@@ -22,6 +20,7 @@ import {
   StyledContainerThree,
   StyledContainerTwo,
 } from '../styledComponents/StyledContainer'
+import PostOverlay from './PostOverlay'
 import ShareOverlay from './ShareOverlay'
 
 export interface Question {
@@ -34,6 +33,8 @@ export interface Question {
   isMain: boolean
   options: Option[]
 }
+
+const imageAnswerType = ['IMAGE', 'FILE', 'VIDEO']
 
 const FormOverlay = React.memo(
   ({
@@ -49,65 +50,59 @@ const FormOverlay = React.memo(
     const { pathname, query } = router
 
     const [step, setStep] = useState(0)
-    const [answers, setAnswers] = useState<AnswerType[]>([])
     const formData = useMemo(() => new FormData(), [])
-    const [images, setImages] = useState<File[]>([])
+    const [imageIndex, setImageIndex] = useState(0)
     const [dateIndex, setDateIndex] = useState(0)
     const [locationIndex, setLocationIndex] = useState(0)
-    const lastStep = questions?.length - 1
+    const lastStep = useMemo(() => questions?.length - 1, [questions])
+    const [postID, setPostID] = useState<number | null>(null)
 
-    const returnCurrentAnswer = useCallback(() => {
-      const question = questions[step]
-      if (!questions[step]) {
-        return
-      }
-      const targetObjects = answers.filter((answer) => answer.questionId === questions[step].id)
-      if (targetObjects.length !== 0) {
-        return targetObjects
-      }
+    useEffect(() => {
+      questions.forEach((question, index) => {
+        if (imageAnswerType.includes(question.type)) {
+          setImageIndex(index)
+        } else if (question.type === 'LOCATION') {
+          setLocationIndex(index)
+        } else if (question.type === 'DATETIME') {
+          setDateIndex(index)
+        }
+      })
+    }, [questions])
 
-      switch (question.type) {
-        case 'DATETIME':
-          return [
-            {
-              value: null,
-              type: question.type,
-              questionId: question.id,
-            } as DateTimeAnswerType,
-          ]
-        case 'LOCATION':
-          return [
-            {
-              value: { latitude: 33.3846, longitude: 126.5535, address: '', addressDetail: '' },
-              type: question.type,
-              questionId: question.id,
-            } as LocationAnswerType,
-          ]
-        case 'FILE':
-          return [
-            {
-              value: { fileType: 'IMAGE', fileKey: '' },
-              type: question.type,
-              questionId: question.id,
-            } as ImageAnswerType,
-          ]
-        case 'SHORT_ANSWER':
-        case 'LONG_ANSWER':
-        case 'MULTIPLE_CHOICE(SINGLE)':
-        case 'MULTIPLE_CHOICE(MULTI)':
-        default:
-          return [
-            {
-              value: '',
-              type: question.type,
-              questionId: question.id,
-            } as TextAnswerType,
-          ]
+    const returnAnswer = useCallback((id: number, type: string) => {
+      const returnValue = () => {
+        switch (type) {
+          case 'DATETIME':
+            return null
+          case 'LOCATION':
+            return { latitude: 33.3846, longitude: 126.5535, address: '', addressDetail: '' }
+          case 'IMAGE':
+          case 'FILE':
+          case 'VIDEO':
+            return { fileType: 'IMAGE', fileKey: '' }
+          case 'SHORT_ANSWER':
+          case 'LONG_ANSWER':
+          case 'MULTIPLE_CHOICE(SINGLE)':
+          case 'MULTIPLE_CHOICE(MULTI)':
+          default:
+            return ''
+        }
       }
-    }, [questions, answers, step])
+      return [
+        {
+          value: returnValue(),
+          type: type,
+          questionId: id,
+        },
+      ] as AnswerType[]
+    }, [])
+    const [answers, setAnswers] = useState<AnswerType[][]>(
+      questions.map((question, index) => returnAnswer(question.id, question.type))
+    )
+
     const currentAnswer: currentAnswerType = useMemo(
-      () => returnCurrentAnswer(),
-      [returnCurrentAnswer]
+      () => answers[step],
+      [step, answers]
     ) as currentAnswerType
     const currentOptions = useMemo(
       () => questions[step]?.options.sort((a, b) => a.answerNumber - b.answerNumber),
@@ -117,166 +112,110 @@ const FormOverlay = React.memo(
     const currentAnswerAnswered =
       currentAnswer &&
       currentAnswer.length !== 0 &&
-      ((currentAnswer[0].type !== 'FILE' &&
+      ((!imageAnswerType.includes(currentAnswer[0].type) &&
         currentAnswer[0].type !== 'LOCATION' &&
         currentAnswer[0].value) ||
-        (currentAnswer[0].type == 'FILE' && (currentAnswer[0] as ImageAnswerType).value?.fileKey) ||
+        (imageAnswerType.includes(currentAnswer[0].type) && currentAnswer.length > 1) ||
         (currentAnswer[0].type == 'LOCATION' &&
           (currentAnswer[0] as LocationAnswerType).value?.address))
     const disableSkip = questions[step] && currentAnswer.length !== 0 && !!currentAnswerAnswered //only array for image, which is required??
     const disableNext = questions[step] && currentAnswer.length !== 0 && !currentAnswerAnswered //todo
 
-    useEffect(() => {
-      for (const question of questions) {
-        if (question.type === 'LOCATION') {
-          setLocationIndex(question.id)
-        } else if (question.type === 'DATETIME') {
-          setDateIndex(question.id)
-        }
-      }
-    }, [questions])
-
-    const updateAnswers = useCallback(
-      (changeType: Boolean, newAnswer: AnswerType | undefined) => {
-        if (!currentAnswer) {
-          return
-        }
-
-        if (changeType == false) {
-          setAnswers((prevAnswers: AnswerType[]) => {
-            const updatedAnswers = answers.filter(
-              (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
-            )
-            updatedAnswers.push(newAnswer as AnswerType)
-            return updatedAnswers as AnswerType[]
-          })
-        } else {
-          setAnswers((prevAnswers: AnswerType[]) => {
-            const updatedAnswers =
-              currentAnswer[0]?.type === 'MULTIPLE_CHOICE(MULTI)'
-                ? [...answers] // if checkbox don't erase
-                : answers.filter(
-                    (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
-                  )
-            updatedAnswers.push(newAnswer as AnswerType)
-            return updatedAnswers as AnswerType[]
-          })
-        }
-      },
-      [currentAnswer, answers]
-    )
+    const updateAnswers = useCallback((questionIndex: number, newAnswers: AnswerType[]) => {
+      setAnswers((prevAnswers: AnswerType[][]) => {
+        const updatedAnswers = prevAnswers.map((prevAnswer: AnswerType[], index: number) =>
+          index === questionIndex ? (newAnswers as AnswerType[]) : prevAnswer
+        )
+        return updatedAnswers
+      })
+    }, [])
 
     const updateImageAnswers = useCallback(
       (
-        file?: File,
-        newDate?: Date,
-        newLocation?: LocationAnswerType['value'] | boolean,
-        deleteIndex?: number
+        questionIndex: number,
+        newImageAnswers: AnswerType[],
+        newDateAnswer: Date | string | boolean,
+        newLocationAnswer: LocationAnswerType['value'] | boolean
       ) => {
-        if (!currentAnswer) {
-          return
-        }
-
-        if (deleteIndex !== undefined) {
-          console.log('FormOverlay image delete start')
-          const currentImages = images.filter((_, index) => index !== deleteIndex)
-          if (images.length === 1) {
-            setImages([])
-            setAnswers((prevAnswers: AnswerType[]) => {
-              let updatedAnswers = answers.filter(
-                (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
-              )
-              console.log('FormOverlay image delete end', updatedAnswers)
-              return updatedAnswers
-            })
-            console.log(answers)
-          } else {
-            setImages(currentImages)
-            setAnswers((prevAnswers: AnswerType[]) => {
-              let updatedAnswers = answers.filter(
-                (prevAnswers) => prevAnswers.questionId !== currentAnswer[0]?.questionId
-              )
-              for (let i = 0; i < currentImages.length; i++) {
-                // 시간이 많이 걸리면 이거 바꾸기
-                console.log(i)
-                updatedAnswers.push({
-                  ...currentAnswer[0],
-                  value: { fileType: 'IMAGE', fileKey: `image_${i}` },
-                } as ImageAnswerType)
-              }
-              console.log('FormOverlay image delete end', updatedAnswers)
-              return updatedAnswers
-            })
-          }
-        }
-
-        if (file === undefined) {
-          return
-        }
-        const currentImages = [file, ...images]
-        setImages(currentImages)
-
-        setAnswers((prevAnswers: AnswerType[]) => {
-          let updatedAnswers = answers.filter(
-            (prevAnswers) =>
-              prevAnswers.questionId !== dateIndex ||
-              (newLocation && prevAnswers.questionId !== locationIndex)
-          )
-          updatedAnswers.push({
-            ...currentAnswer[0],
-            value: { fileType: 'IMAGE', fileKey: `image_${images.length}` },
-          } as ImageAnswerType)
-          updatedAnswers.push({
-            questionId: dateIndex,
-            type: 'DATETIME',
-            value: newDate,
-          } as DateTimeAnswerType)
-          if (newLocation) {
-            updatedAnswers.push({
-              questionId: locationIndex,
-              type: 'LOCATION',
-              value: newLocation as LocationAnswerType['value'],
-            } as LocationAnswerType)
-          }
-
+        setAnswers((prevAnswers: AnswerType[][]) => {
+          const updatedAnswers = prevAnswers.map((prevAnswer: AnswerType[], index: number) => {
+            if (index === questionIndex) {
+              return newImageAnswers
+            } else if (index === dateIndex && newDateAnswer !== false) {
+              return [
+                {
+                  ...prevAnswer[0],
+                  value: newDateAnswer,
+                  modified: true,
+                },
+              ] as AnswerType[]
+            } else if (index === locationIndex && newLocationAnswer !== false) {
+              return [
+                {
+                  ...prevAnswer[0],
+                  value: newLocationAnswer,
+                  modified: true,
+                },
+              ] as AnswerType[]
+            } else {
+              // Handle other indices as needed
+              return prevAnswer
+            }
+          })
           return updatedAnswers
         })
       },
-      [answers, dateIndex, locationIndex, currentAnswer, images]
+      [dateIndex, locationIndex]
     )
 
     const handleNextButtonClick = () => {
-      console.log(typeof router.query.animal, typeof currentVersion)
-      console.log(
-        JSON.stringify({
-          reportTypeId: router.query.animal,
-          reportTypeVersionId: currentVersion,
-          answers: answers,
-        })
-      )
+      // console.log(typeof router.query.animal, typeof currentVersion)
+      // console.log(
+      //   JSON.stringify({
+      //     reportTypeId: router.query.animal,
+      //     reportTypeVersionId: currentVersion,
+      //     answers: answers,
+      //   })
+      // )
       if (step == lastStep) {
+        console.log(typeof router.query.animal, typeof currentVersion)
+        console.log(
+          JSON.stringify({
+            reportTypeId: router.query.animal,
+            reportTypeVersionId: currentVersion,
+            answers: answers.flat(),
+          })
+        )
         formData.append(
           'data',
           JSON.stringify({
             reportTypeId: parseInt(router.query.animal as string),
             reportTypeVersionId: currentVersion,
-            answers: answers,
+            answers: answers.flat().filter((answer) => answer.modified === true),
           })
         )
-        images.forEach((image, index) => {
-          formData.append(`image_${index}`, image) //data 먼저 추가하는거 짱 중요합니다...
+        questions.forEach((question, index) => {
+          if (imageAnswerType.includes(question.type)) {
+            answers[index].forEach((image: ImageAnswerType) => {
+              if (image.value.fileUrl !== undefined) {
+                formData.append(image.value.fileKey, image.value.fileUrl) //data 먼저 추가하는거 짱 중요합니다...
+              }
+            })
+          }
         })
-        // for (const [key, value] of formData.entries()) {
-        //   console.log(key + ', ' + value)
-        // }
-        axios
-          .post(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports`, formData, {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+
+        instance
+          .post(`/reports`, formData, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
             transformRequest: (formData) => formData,
           })
           .then(function (response) {
             if (response.status == 200) {
-              router.push({ pathname: pathname, query: { ...query, complete: true } })
+              console.log('FormOverlay:', response)
+              setPostID(response.data.post.id)
+              setStep(lastStep + 1)
             } else {
               console.log(response)
             }
@@ -327,9 +266,11 @@ const FormOverlay = React.memo(
               <AnswerChoice
                 options={currentOptions}
                 currentAnswer={currentAnswer}
-                updateAnswers={updateAnswers}
-                currentImageAnswers={images}
-                updateImageAnswers={updateImageAnswers}
+                updateAnswers={(newAnswers) => updateAnswers(step, newAnswers)}
+                updateImageAnswers={(newImageAnswers, newDateAnswer, newLocationAnswer) =>
+                  updateImageAnswers(step, newImageAnswers, newDateAnswer, newLocationAnswer)
+                }
+                questionType={questions[step].type}
               />
             )}
           </StyledContainerTwo>
@@ -358,12 +299,24 @@ const FormOverlay = React.memo(
         </StyledContainerOne>
 
         <Backdrop
-          open={router.query.complete === 'true'}
+          open={postID !== null && step == lastStep + 1}
           sx={{ backgroundColor: 'white', zIndex: '10000' }}
         >
+          <PostOverlay postID={postID as number} setStep={setStep} />
+        </Backdrop>
+
+        <Backdrop open={step == lastStep + 2} sx={{ backgroundColor: 'white', zIndex: '10000' }}>
           <ShareOverlay
             animal={animal}
-            imgSrc={images.length !== 0 ? URL.createObjectURL(images[0]) : ''}
+            imgSrc={
+              answers[imageIndex].length !== 0 &&
+              answers[imageIndex][0].value &&
+              (answers[imageIndex][0].value as ImageAnswerType['value']).fileUrl !== undefined
+                ? URL.createObjectURL(
+                    (answers[imageIndex][0].value as ImageAnswerType['value']).fileUrl as File
+                  )
+                : '/marc_logo.png'
+            }
           />
         </Backdrop>
       </React.Fragment>

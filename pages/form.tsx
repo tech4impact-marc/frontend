@@ -10,7 +10,10 @@ import {
   StyledContainerOne,
   StyledContainerThree,
 } from '@/components/styledComponents/StyledContainer'
+import { store } from '@/redux/store'
 import instance from '@/util/axios_interceptor'
+
+import refreshAccessToken from './api/refreshAccessToken'
 
 export interface Animal {
   id: number
@@ -32,15 +35,14 @@ const Form = ({
   const router = useRouter()
   const { pathname, query } = router
 
-  if (router.query.animal && !animals.some((animal) => String(animal.id) === router.query.animal)) {
-    router.push({ pathname: pathname })
-  }
-
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      console.log('Form:', animals, questions)
+    refreshAccessToken()
+    const state = store.getState()
+    if (Object.keys(state.tokens).length === 0) {
+      alert('로그인을 하고 사용해보세요!')
+      router.push('/auth/login')
     }
-  }, [animals, questions])
+  }, [router])
 
   if (!animals) {
     return (
@@ -54,6 +56,10 @@ const Form = ({
         </StyledContainerOne>
       </Container>
     )
+  }
+
+  if (router.query.animal && !animals.some((animal) => String(animal.id) === router.query.animal)) {
+    router.push({ pathname: pathname })
   }
 
   return (
@@ -108,21 +114,23 @@ export default Form
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const animalResponse = await instance.get(`/reports/types`, {
+    const setOrigin = {
       headers: {
         Origin: `${process.env.NEXT_PUBLIC_WEBURL}`,
       },
-    })
+    }
+    const animalResponse = await instance.get(`/reports/types`, setOrigin)
     const animals: Animal[] = await animalResponse.data.contents
 
     if (
       context.query.animal &&
       animals.some((animal) => String(animal.id) === context.query.animal)
     ) {
-      const response = await instance.get(`/reports/types/${context.query.animal}`)
+      const response = await instance.get(`/reports/types/${context.query.animal}`, setOrigin)
       const currentVersion = response.data.currentVersion.id
       const questionsResponse = await instance.get(
-        `/reports/types/${context.query.animal}/versions/${currentVersion}`
+        `/reports/types/${context.query.animal}/versions/${currentVersion}`,
+        setOrigin
       )
       const questions = await questionsResponse.data.questions.sort(
         (a: Question, b: Question) => a.questionOrder - b.questionOrder

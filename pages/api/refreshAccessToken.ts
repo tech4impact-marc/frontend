@@ -6,9 +6,9 @@ async function refreshAccessToken() {
   const accessToken = state.tokens.accessToken
   const refreshToken = state.tokens.refreshToken
   const accessTokenExpiresAt = state.tokenExpiresAt.accessToken
-  console.log(accessToken)
-  console.log(refreshToken)
-  console.log(accessTokenExpiresAt)
+  // console.log(accessToken)
+  // console.log(refreshToken)
+  // console.log(accessTokenExpiresAt)
   try {
     // 서버에 액세스 토큰과 리프레시 토큰을 담아 POST 요청 보내기
     const currentTime = Date.now()
