@@ -33,7 +33,13 @@ export default function CardCarousel({ imageInfoList, onClick }: CarouselProps) 
               position={'relative'}
               sx={{ aspectRatio: '3 / 4' }}
             >
-              <Image src={image} alt="card-image" onClick={onClick} fill></Image>
+              <Image
+                src={image}
+                alt="card-image"
+                onClick={onClick}
+                fill
+                sizes="(max-width: 730px) 9.75rem, (max-width: 992px) 30vw, 30vw"
+              ></Image>
             </Box>
           ) : (
             <Box

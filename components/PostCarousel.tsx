@@ -35,7 +35,12 @@ export default function EmblaCarousel({ imageInfoList }: CarouselProps) {
               position={'relative'}
               sx={{ aspectRatio: '3 / 4' }}
             >
-              <Image src={image} alt="post-image" fill></Image>
+              <Image
+                src={image}
+                alt="post-image"
+                fill
+                sizes="(max-width: 730px) 22.5rem, (max-width: 992px) 30vw, 30rem"
+              ></Image>
             </Box>
           ) : (
             <Box

@@ -31,15 +31,16 @@ const Map = ({ data, animals }: MapProps) => {
   const [posts, setPosts] = useState<reportGeoJson[]>([])
   const [checked, setChecked] = useState<boolean[]>([])
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
   const [showEventLog, setShowEventLog] = useState<boolean>(false)
 
   const colors = ['#2D9AFF', '#01A459', '#9AA8BF']
   const reportTypes =
     animals.length == 0
       ? [
-          { id: 1, label: '남방큰돌고래', thumbnailUrl: '/돌고래.svg' },
-          { id: 2, label: '바다거북', thumbnailUrl: '/바다거북.svg' },
-          { id: 3, label: '상괭이', thumbnailUrl: '/상괭이.svg' },
+          { id: 1, label: '남방큰돌고래', thumbnailUrl: '/marc_logo.webp' },
+          { id: 2, label: '바다거북', thumbnailUrl: '/marc_logo.webp' },
+          { id: 3, label: '상괭이', thumbnailUrl: '/marc_logo.webp' },
         ]
       : animals
 
