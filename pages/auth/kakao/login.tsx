@@ -12,16 +12,17 @@ export default function KakaoLoginPREPage() {
       const myParam = urlParams.get('code')
       console.log(myParam)
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/login`, {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao/login`, {
           params: { code: myParam },
+          withCredentials:true
         })
         if (response.status !== 200) {
           throw new Error('Network response was not ok')
         }
 
-        if (response.data.loginstate === 'SIGNUP') {
+        if (response.data.loginState === 'SIGNUP') {
           router.push('/auth/signup-1')
-        } else if (response.data.loginstate === 'LOGIN') {
+        } else if (response.data.loginState === 'LOGIN') {
           router.push('/auth/redirect/login')
         }
       } catch (error) {
