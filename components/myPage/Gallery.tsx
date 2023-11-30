@@ -62,7 +62,12 @@ export default function Gallery({ reports }: GalleryProps) {
                       setSelectedPost(userReport)
                     }}
                   >
-                    <Image src={mainImage} alt={'user report thumbnail'} fill />
+                    <Image
+                      src={mainImage}
+                      alt={'user report thumbnail'}
+                      fill
+                      sizes="(max-width: 730px) 1.125rem, (max-width: 992px) 2.25rem, 2.25rem"
+                    />
                   </Box>
                 </Grid>
               )
