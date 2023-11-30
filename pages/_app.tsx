@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 
-import CommonLayout from '@/components/layout/CommonLayout'
+import CommonLayout from '@/components/layout/BottomLayout'
 import theme from '@/styles/theme'
 
 import { persistor, store } from '../redux/store'
