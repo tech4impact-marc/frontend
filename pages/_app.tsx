@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 
-import CommonLayout from '@/components/layout/BottomLayout'
+import BasicLayout from '@/components/layout/BasicLayout'
 import theme from '@/styles/theme'
 
 import { persistor, store } from '../redux/store'
@@ -36,7 +36,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <CommonLayout>{getLayout(<Component {...pageProps} />)}</CommonLayout>
+          <BasicLayout>{getLayout(<Component {...pageProps} />)}</BasicLayout>
         </ThemeProvider>
       </PersistGate>
     </Provider>
