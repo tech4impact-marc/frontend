@@ -50,6 +50,7 @@ export default function Home() {
             alt="logo"
             width={108}
             height={108}
+            priority={true}
           />
         </Container>
         <Container

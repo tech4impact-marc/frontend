@@ -3,6 +3,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined'
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined'
 import { Typography } from '@mui/material'
+import Backdrop from '@mui/material/Backdrop'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import Popover from '@mui/material/Popover'
@@ -11,30 +12,36 @@ import { MapLayerMouseEvent } from 'mapbox-gl'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 
+import EventLog from '@/components/event/EventLog'
 import { FlexBox, VFlexBox } from '@/components/styledComponents/StyledBox'
+import type { Animal } from '@/pages/form'
 import type { reportGeoJson, typeToReportCollectionGeoJson } from '@/types/type'
 
 import PostList from './post/PostList'
 
 interface MapProps {
   data: typeToReportCollectionGeoJson
+  animals: Animal[]
 }
 
-const Map = ({ data }: MapProps) => {
+const Map = ({ data, animals }: MapProps) => {
   const mapContainer = useRef<any>(null)
   const map = useRef<mapboxgl.Map | null>(null)
 
-  // 위도, 경도, 줌 초깃값 설정
   const [posts, setPosts] = useState<reportGeoJson[]>([])
   const [checked, setChecked] = useState<boolean[]>([])
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [showEventLog, setShowEventLog] = useState<boolean>(false)
 
-  // TODO: 타입 정의 dynamic으로 수정
-  const reportTypes = [
-    { id: 1, label: '남방큰돌고래', color: '#2D9AFF', url: '/돌고래.svg' },
-    { id: 2, label: '바다거북', color: '#01A459', url: '/바다거북.svg' },
-    { id: 3, label: '상괭이', color: '#9AA8BF', url: '/상괭이.svg' },
-  ]
+  const colors = ['#2D9AFF', '#01A459', '#9AA8BF']
+  const reportTypes =
+    animals.length == 0
+      ? [
+          { id: 1, label: '남방큰돌고래', thumbnailUrl: '/돌고래.svg' },
+          { id: 2, label: '바다거북', thumbnailUrl: '/바다거북.svg' },
+          { id: 3, label: '상괭이', thumbnailUrl: '/상괭이.svg' },
+        ]
+      : animals
 
   // 지도 범위 제한 좌표 설정 (제주도)
   const bounds = [
@@ -53,6 +60,15 @@ const Map = ({ data }: MapProps) => {
 
   const handleReportTypeClose = () => {
     setAnchorEl(null)
+  }
+
+  const handleEventClick = () => {
+    console.log('event clicked')
+    setShowEventLog(true)
+  }
+
+  const handleEventClose = () => {
+    setShowEventLog(false)
   }
 
   const handleTypeClick = (index: number, dataType: number) => {
@@ -213,7 +229,7 @@ const Map = ({ data }: MapProps) => {
       for (const type of reportTypes) {
         const id = type.id
         const visible = id === 1 ? 'visible' : 'none'
-        const color = type.color
+        const color = colors[id % 3]
         currentMap.addSource(`reports${id}`, {
           type: 'geojson',
           data: {
@@ -259,13 +275,21 @@ const Map = ({ data }: MapProps) => {
           }}
         >
           <VFlexBox width={'12.5rem'} height={'7.5rem'}>
-            {reportTypes.map((type: any, index: number) => (
+            {reportTypes.map((type: Animal, index: number) => (
               <FlexBox key={type.label} alignItems={'center'}>
                 <Checkbox
                   checked={checked[index]}
                   onClick={() => handleTypeClick(index, type.id)}
                 />
-                <Image src={type.url} alt="logo" width={24} height={24} />
+                <Image
+                  src={
+                    type.thumbnailUrl ??
+                    'https://marc-data.s3.ap-northeast-2.amazonaws.com/marc_logo.webp'
+                  }
+                  alt="logo"
+                  width={24}
+                  height={24}
+                />
                 <Typography ml={'0.25rem'} variant="subtitle1">
                   {type.label}
                 </Typography>
@@ -276,7 +300,7 @@ const Map = ({ data }: MapProps) => {
         <IconButton sx={{ zIndex: 1 }} size="large" onClick={handleReportTypeClick}>
           <LayersOutlinedIcon />
         </IconButton>
-        <IconButton sx={{ right: 0, zIndex: 1 }} size="large">
+        <IconButton sx={{ right: 0, zIndex: 1 }} size="large" onClick={handleEventClick}>
           <NotificationsOutlinedIcon />
         </IconButton>
       </div>
@@ -286,6 +310,9 @@ const Map = ({ data }: MapProps) => {
         className={`map-container`}
         ref={mapContainer}
       ></div>
+      <Backdrop open={showEventLog} sx={{ backgroundColor: 'white', zIndex: 10000 }}>
+        <EventLog isOpen={showEventLog} onClose={handleEventClose} />
+      </Backdrop>
     </React.Fragment>
   )
 }

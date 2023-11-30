@@ -44,7 +44,6 @@ export default function ShowLogin() {
             alt="logo"
             width={108}
             height={108}
-            priority={true}
           />
         </Container>
         <Container
