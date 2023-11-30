@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Unstable_Grid2'
@@ -39,7 +40,7 @@ export default function Gallery({ reports }: GalleryProps) {
             }}
           >
             <IconFDolphin size={'3rem'} />
-            제보를 시작해 보세요!
+            <Typography variant="body1">제보를 시작해 보세요!</Typography>
           </Container>
         ) : (
           <Grid container rowSpacing={1} columnSpacing={1}>

@@ -8,13 +8,13 @@ import Container from '@mui/material/Container'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 
 import Gallery from '@/components/myPage/Gallery'
 import Mission from '@/components/myPage/Mission'
 import Setting from '@/components/myPage/Setting'
 import { FlexBox } from '@/components/styledComponents/StyledBox'
+import authorizedAxios from '@/pages/api/authorizedAxios'
 import { store } from '@/redux/store'
 import type { UserReport } from '@/types/type'
 
@@ -73,11 +73,21 @@ export default function MyPage() {
 
   useEffect(() => {
     async function getUserHistory() {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/mypage/history`)
-      const data: UserHistoryResponse = await res.data
-      console.log(data)
-      setReportTypeCounts(data.reportTypeCounts)
-      setReports(data.reports)
+      const res = await authorizedAxios
+        .get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/mypage/history`)
+        .then((response) => {
+          console.log(response)
+          if (response.status === 200) {
+            setReportTypeCounts(response.data.reportTypeCounts)
+            setReports(response.data.reports)
+          } else {
+            alert('오류')
+          }
+        })
+        .catch((error) => {
+          alert('오류')
+          console.log(error)
+        })
     }
 
     getUserHistory()

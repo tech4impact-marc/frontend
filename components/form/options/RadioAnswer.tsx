@@ -32,7 +32,7 @@ export const RadioAnswer: React.FC<MultipleAnswerProps> = ({
   }, [currentAnswer.value])
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateAnswers(true, { ...currentAnswer, value: e?.target?.value })
+    updateAnswers([{ ...currentAnswer, value: e?.target?.value }])
     if (e?.target?.value !== '기타') {
       setOther('')
     }
@@ -40,7 +40,7 @@ export const RadioAnswer: React.FC<MultipleAnswerProps> = ({
 
   const handleOtherTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOther(e?.target?.value)
-    updateAnswers(true, { ...currentAnswer, value: '기타: ' + e?.target?.value })
+    updateAnswers([{ ...currentAnswer, value: '기타: ' + e?.target?.value, modified: true }])
   }
 
   return (

@@ -12,6 +12,9 @@ import {
   StyledContainerOne,
   StyledContainerThree,
 } from '@/components/styledComponents/StyledContainer'
+import { store } from '@/redux/store'
+
+import refreshAccessToken from './api/refreshAccessToken'
 
 export interface Animal {
   id: number
@@ -34,10 +37,13 @@ const Form = ({
   const { pathname, query } = router
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      console.log('Form:', animals, questions)
+    refreshAccessToken()
+    const state = store.getState()
+    if (Object.keys(state.tokens).length === 0) {
+      alert('로그인을 하고 사용해보세요!')
+      router.push('/auth/login')
     }
-  }, [animals, questions])
+  }, [router])
 
   if (!animals) {
     return (

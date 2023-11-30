@@ -24,10 +24,13 @@ const DateAnswer: React.FC<DateAnswerProps> = React.memo(({ currentAnswer, updat
             label="날짜"
             value={currentAnswer ? dayjs(currentAnswer.value) : null}
             onChange={(newValue: dayjs.Dayjs) => {
-              updateAnswers(true, {
-                ...currentAnswer,
-                value: newValue ? newValue.format('YYYY-MM-DD HH:mm') : null,
-              })
+              updateAnswers([
+                {
+                  ...currentAnswer,
+                  value: newValue ? newValue.format('YYYY-MM-DD HH:mm') : null,
+                  modified: true,
+                },
+              ])
               console.log('DateTimePicker:', newValue)
             }}
             // minutesStep={30}

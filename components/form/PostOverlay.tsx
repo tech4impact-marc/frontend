@@ -1,6 +1,7 @@
 import { Button, TextField, Typography } from '@mui/material'
-import axios from 'axios'
 import { memo, useState } from 'react'
+
+import authorizedAxios from '@/pages/api/authorizedAxios'
 
 import {
   StyledContainerOne,
@@ -20,16 +21,18 @@ const PostOverlay = ({
     const postData = {
       value: post,
     }
-    axios
+    authorizedAxios
       .patch(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/posts/${postID}`, postData)
       .then(function (response) {
+        console.log(response)
         if (response.status == 200) {
           setStep((prevStep) => prevStep + 1)
         } else {
-          console.log(response)
+          alert('오류가 있었습니다')
         }
       })
       .catch(function (error) {
+        alert('오류가 있었습니다')
         console.log(error)
       })
   }
@@ -49,9 +52,17 @@ const PostOverlay = ({
           multiline
           minRows={3}
           maxRows={8}
+          InputProps={{
+            endAdornment: (
+              <Typography width={'4rem'} variant="subtitle1">
+                {post.length} / 250
+              </Typography>
+            ),
+          }}
+          inputProps={{ maxLength: 250 }}
         />
         <Typography variant="subtitle1" color={'#AAA'}>
-          최대 000자까지 작성 가능해요
+          최대 250자까지 작성 가능해요
           <br />
           돌고래들의 정확한 위치를 특정할 수 있으면 돌고래를 괴롭게할 수 있어요
         </Typography>

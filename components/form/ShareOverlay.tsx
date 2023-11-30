@@ -4,6 +4,8 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
+import authorizedAxios from '@/pages/api/authorizedAxios'
+import { store } from '@/redux/store'
 import theme from '@/styles/theme'
 
 import SNSSharingComponent from '../share/SNSSharingComponent'
@@ -19,10 +21,21 @@ const ShareOverlay = ({ animal, imgSrc }: { animal: string | undefined; imgSrc?:
 
   const [isSNSShareVisible, setIsSNSShareVisible] = useState(false)
 
-  const userName = '미남강현' //redo using redux
-  const level = '초보 탐험가' //redo using redux
+  const userName = store.getState().user.nickname //redo using redux
+  const [level, setLevel] = useState('')
   useEffect(() => {
-    alert('redux로 userName이랑 level 구현 필요')
+    authorizedAxios
+      .get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/missions/main`)
+      .then(function (response) {
+        console.log(response)
+        if (response.status == 200) {
+          setLevel(response.data ? response.data.mission.name : '')
+        } else {
+        }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
   }, [])
 
   const handleShareOpen = () => {

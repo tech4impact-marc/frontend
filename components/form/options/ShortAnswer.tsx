@@ -10,7 +10,7 @@ interface ShortAnswerProps {
 
 export const ShortAnswer: React.FC<ShortAnswerProps> = ({ currentAnswer, updateAnswers }) => {
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateAnswers(true, { ...currentAnswer, value: e?.target?.value })
+    updateAnswers([{ ...currentAnswer, value: e?.target?.value, modified: true }])
   }
 
   return (

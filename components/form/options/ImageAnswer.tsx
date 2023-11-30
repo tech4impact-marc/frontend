@@ -7,7 +7,7 @@ import Script from 'next/script'
 import React, { memo, useState } from 'react'
 import { Map } from 'react-kakao-maps-sdk'
 
-import { UpdateImageAnswersType } from '../AnswerChoice'
+import { AnswerType, ImageAnswerType, UpdateImageAnswersType } from '../AnswerChoice'
 
 function roundToNearest30Minutes(hour: string, minute: string) {
   if (Number(minute) < 15) {
@@ -48,11 +48,12 @@ function formatDate(inputDate: string) {
 }
 
 interface ImageAnswerProps {
-  currentImageAnswers: File[]
+  currentAnswer: AnswerType[]
   updateImageAnswers: UpdateImageAnswersType
 }
 
-const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateImageAnswers }) => {
+const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentAnswer, updateImageAnswers }) => {
+  const [imageID, setImageID] = useState(0)
   const [showMap, setShowMap] = useState(
     typeof window !== 'undefined'
       ? Array.from(document.scripts).some(
@@ -61,13 +62,24 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
       : null
   )
   if (typeof window === 'undefined') {
-    return <></>
+    return <React.Fragment></React.Fragment>
   }
   const { kakao } = window
   const handleImageChange = (e: React.ChangeEvent<any>) => {
     const file = e.target.files[0]
 
     if (file && file.type.startsWith('image/')) {
+      const newImage: ImageAnswerType = {
+        type: currentAnswer[0].type,
+        questionId: currentAnswer[0].questionId,
+        value: {
+          fileType: 'IMAGE',
+          fileKey: `image_${currentAnswer[0].questionId}_${imageID}`,
+          fileUrl: e.target.files[0],
+        },
+        modified: true,
+      }
+      const newImageArray = [newImage, ...currentAnswer]
       EXIF.getData(file, function () {
         const EXIF_info = EXIF.getAllTags(this)
         const date = formatDate(EXIF_info.DateTime ? EXIF_info.DateTime : file.lastModifiedDate)
@@ -93,18 +105,19 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
                 address: result[0]?.road_address?.address_name || '', //도로명주소입니다!!!!
                 addressDetail: '',
               }
-              updateImageAnswers(file, date, updatedLocation) // 날짜는 가장 최근에 업로드한 이미지의 날짜, GPS는 가장 최근에 업로드한 이미지 중 GPS가 있는 사진의 날짜
+              updateImageAnswers(newImageArray, date, updatedLocation) // 날짜는 가장 최근에 업로드한 이미지의 날짜, GPS는 가장 최근에 업로드한 이미지 중 GPS가 있는 사진의 날짜
             } else {
-              updateImageAnswers(file, date, false)
+              updateImageAnswers(newImageArray, date, false)
             }
           }
           geocoder.coord2Address(longitude, latitude, (result, status) =>
             callback(longitude, latitude, result, status)
           )
         } else {
-          updateImageAnswers(file, date, false)
+          updateImageAnswers(newImageArray, date, false)
         }
       })
+      setImageID((prev) => prev + 1)
     }
   }
 
@@ -115,6 +128,10 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
     width: '120px',
     height: '120px',
     borderRadius: '8px',
+  }
+
+  if (!currentAnswer) {
+    return <React.Fragment></React.Fragment>
   }
 
   return (
@@ -148,37 +165,45 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentImageAnswers, updateIm
             accept="image/*"
             onChange={handleImageChange}
             style={{ display: 'none' }}
-            // enctype="multipart/form-data"
           />
-          {currentImageAnswers && (
-            <div
-              style={{
-                display: 'flex',
-                columnGap: '1rem',
-                overflow: 'scroll',
-                width: '100%',
-              }}
-            >
-              {currentImageAnswers.map((image, index) => (
-                <ImageListItem key={index}>
-                  <IconButton
-                    id={`${index}`}
-                    sx={{ position: 'absolute', right: '0' }}
-                    onClick={() => updateImageAnswers(undefined, undefined, undefined, index)}
-                  >
-                    <CancelRoundedIcon />
-                  </IconButton>
-                  <Image
-                    src={URL.createObjectURL(image)}
-                    alt="Selected Image"
-                    width={parseInt(containerStyle.width)}
-                    height={parseInt(containerStyle.height)}
-                    style={{ ...containerStyle, objectFit: 'contain', backgroundColor: '#fff' }}
-                  />
-                </ImageListItem>
-              ))}
-            </div>
-          )}
+          <div
+            style={{
+              display: 'flex',
+              columnGap: '1rem',
+              overflow: 'scroll',
+              width: '100%',
+            }}
+          >
+            {currentAnswer.map(
+              (image: ImageAnswerType, index) =>
+                image.value.fileUrl && (
+                  <ImageListItem key={index}>
+                    <IconButton
+                      id={`${index}`}
+                      sx={{ position: 'absolute', right: '0' }}
+                      onClick={() =>
+                        updateImageAnswers(
+                          currentAnswer.filter(
+                            (ans: ImageAnswerType) => ans.value.fileKey !== image.value.fileKey
+                          ),
+                          false,
+                          false
+                        )
+                      }
+                    >
+                      <CancelRoundedIcon />
+                    </IconButton>
+                    <Image
+                      src={URL.createObjectURL(image.value.fileUrl)}
+                      alt="Selected Image"
+                      width={parseInt(containerStyle.width)}
+                      height={parseInt(containerStyle.height)}
+                      style={{ ...containerStyle, objectFit: 'contain', backgroundColor: '#fff' }}
+                    />
+                  </ImageListItem>
+                )
+            )}
+          </div>
         </React.Fragment>
       )}
     </React.Fragment>
