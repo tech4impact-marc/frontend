@@ -1,6 +1,6 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded'
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded'
-import { IconButton, ImageListItem } from '@mui/material'
+import { IconButton, ImageListItem, Typography } from '@mui/material'
 import EXIF from 'exif-js'
 import Image from 'next/image'
 import Script from 'next/script'
@@ -152,7 +152,7 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentAnswer, updateImageAns
             style={{
               ...containerStyle,
               border: '1px dashed rgba(34, 48, 71, 0.50)',
-              cursor: 'pointer',
+              cursor: currentAnswer.length > 3 ? 'default' : 'pointer',
             }}
           >
             <AddRoundedIcon sx={{ color: 'rgba(34, 48, 71, 0.50)' }} />
@@ -205,6 +205,7 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentAnswer, updateImageAns
                 )
             )}
           </div>
+          <Typography variant="subtitle1">{currentAnswer.length - 1} / 3</Typography>
         </React.Fragment>
       )}
     </React.Fragment>

@@ -15,27 +15,37 @@ import {
   StyledContainerTwo,
 } from '../styledComponents/StyledContainer'
 
-const ShareOverlay = ({ animal, imgSrc }: { animal: string | undefined; imgSrc?: string }) => {
+const ShareOverlay = ({
+  animal,
+  imgSrc,
+  loginState,
+}: {
+  animal: string | undefined
+  imgSrc?: string
+  loginState: boolean
+}) => {
   const router = useRouter()
   const { pathname, query } = router
 
   const [isSNSShareVisible, setIsSNSShareVisible] = useState(false)
 
-  const userName = store.getState().user.nickname //redo using redux
-  const [level, setLevel] = useState('')
+  const userName = loginState ? store.getState().user.nickname : '재보자' //redo using redux
+  const [level, setLevel] = useState('초보 탐험가')
   useEffect(() => {
-    instance
-      .get(`/missions/main`)
-      .then(function (response) {
-        console.log(response)
-        if (response.status == 200) {
-          setLevel(response.data ? response.data.mission.name : '')
-        } else {
-        }
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
+    if (loginState) {
+      instance
+        .get(`/missions/main`)
+        .then(function (response) {
+          console.log(response)
+          if (response.status == 200) {
+            setLevel(response.data ? response.data.mission.name : '초보 탐험가')
+          } else {
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    }
   }, [])
 
   const handleShareOpen = () => {
