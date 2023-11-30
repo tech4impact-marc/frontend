@@ -12,37 +12,12 @@ export default function KakaoLoginPREPage() {
       const myParam = urlParams.get('code')
       console.log(myParam)
 
-      function setCookie(name: any, value: any, days?: any) {
-        var expires = ''
-        if (days) {
-          var date = new Date()
-          date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
-          expires = '; expires=' + date.toUTCString()
-        }
-        document.cookie = name + '=' + (value || '') + expires + '; path=/'
-      }
-      function getCookie(name: any) {
-        var nameEQ = name + '='
-        var ca = document.cookie.split(';')
-        for (var i = 0; i < ca.length; i++) {
-          var c = ca[i]
-          while (c.charAt(0) == ' ') c = c.substring(1, c.length)
-          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length)
-        }
-        return null
-      }
-
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao/login`, {
           params: { code: myParam },
           withCredentials: true,
         })
-        // const setCookieHeader = response?.headers?.get('Set-Cookie');
-        // console.log(setCookieHeader);
-        const sessionCookie = getCookie('sessioncookie')
-        setCookie('sessioncookie', sessionCookie)
-        // console.log(response.headers.getSetCookie());
-
+        // console.log(response.data);
         if (response.status !== 200) {
           throw new Error('Network response was not ok')
         }
