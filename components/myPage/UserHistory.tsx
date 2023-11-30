@@ -18,8 +18,6 @@ import { store } from '@/redux/store'
 import type { UserReport } from '@/types/type'
 import instance from '@/util/axios_interceptor'
 
-import ShowLogin from './ShowLogin'
-
 interface ReportTypeCount {
   id: number
   numberOfReports: number
@@ -134,7 +132,7 @@ export default function UserDetailPage({ isLogin }: UserDetailPageProps) {
           </Box>
         </SectionContainer>
         <SectionContainer>
-          {!isLogin ? <ShowLogin /> : <Gallery reports={reports} />}
+          <Gallery reports={reports} />
         </SectionContainer>
       </MyPageContainer>
       <Backdrop open={isLogin && openMission} sx={{ backgroundColor: 'white' }}>

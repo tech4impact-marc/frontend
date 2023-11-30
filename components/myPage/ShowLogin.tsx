@@ -11,14 +11,6 @@ export default function ShowLogin() {
     window.location.href = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao`
   }
 
-  const handleSettingClick = () => {
-    setOpenSetting(true)
-  }
-
-  const handleSettingExit = () => {
-    setOpenSetting(false)
-  }
-
   return (
     <>
       <Container
