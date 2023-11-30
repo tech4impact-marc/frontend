@@ -31,9 +31,9 @@ const Map = ({ data }: MapProps) => {
 
   // TODO: 타입 정의 dynamic으로 수정
   const reportTypes = [
-    { id: 1, label: '남방큰돌고래', color: '#2D9AFF', url: '/돌고래.svg' },
-    { id: 2, label: '바다거북', color: '#01A459', url: '/바다거북.svg' },
-    { id: 3, label: '상괭이', color: '#9AA8BF', url: '/상괭이.svg' },
+    { id: 1, label: '남방큰돌고래', color: '#2D9AFF', url: '/marc_logo.webp' },
+    { id: 2, label: '바다거북', color: '#01A459', url: '/marc_logo.webp' },
+    { id: 3, label: '상괭이', color: '#9AA8BF', url: '/marc_logo.webp' },
   ]
 
   // 지도 범위 제한 좌표 설정 (제주도)
