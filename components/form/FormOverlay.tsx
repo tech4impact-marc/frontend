@@ -315,7 +315,7 @@ const FormOverlay = React.memo(
                 ? URL.createObjectURL(
                     (answers[imageIndex][0].value as ImageAnswerType['value']).fileUrl as File
                   )
-                : '/marc_logo.png'
+                : 'https://marc-data.s3.ap-northeast-2.amazonaws.com/marc_logo.webp'
             }
           />
         </Backdrop>

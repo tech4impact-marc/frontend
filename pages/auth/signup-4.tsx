@@ -23,7 +23,7 @@ export default function KakaoSignUpPage4() {
   const isDefault = state.signupUserInfo.userProfile.isDefaultImage
   let profileImage
   if (isDefault) {
-    profileImage = '/defaultprofile.webp'
+    profileImage = 'https://marc-data.s3.ap-northeast-2.amazonaws.com/defaultprofile.webp'
   } else {
     profileImage = state.signupUserInfo.userProfile.profileImageUrl
   }

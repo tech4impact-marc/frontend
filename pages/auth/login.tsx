@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { StyledButtonLarge } from '@/components/styledComponents/StyledButton'
 import { StyledContainerLogin } from '@/components/styledComponents/StyledContainer'
 import { StyledContainerTwo } from '@/components/styledComponents/StyledContainer'
-import kakaoLogo from '@/public/kakao.svg'
 import marc_logo from '@/public/marc_logo.webp'
 
 export default function LoginPage() {
@@ -24,7 +23,7 @@ export default function LoginPage() {
           maxWidth: '100%',
         }}
       >
-        <Image src={marc_logo} alt="logo" width="108" />
+        <Image src={marc_logo} alt="logo" width={108} height={108} />
       </Container>
       <Container
         sx={{
@@ -37,7 +36,14 @@ export default function LoginPage() {
         <StyledContainerTwo>
           <StyledButtonLarge
             onClick={handleLogin}
-            startIcon={<Image src={kakaoLogo} alt="kakao" width={18} height={18} />}
+            startIcon={
+              <Image
+                src="https://marc-data.s3.ap-northeast-2.amazonaws.com/kakao.svg"
+                alt="kakao"
+                width={18}
+                height={18}
+              />
+            }
             sx={{
               background: '#FEE500',
               '&:hover': {
