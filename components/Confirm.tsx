@@ -15,7 +15,7 @@ interface ConfirmDialogProps {
   warning: string
 }
 
-export default function ConfirmDialog({
+export default function Confirm({
   open,
   onClose,
   onClickYes,

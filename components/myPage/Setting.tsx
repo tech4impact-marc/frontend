@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import ConfirmDialog from '@/components/ConfirmDialog'
+import ConfirmDialog from '@/components/Confirm'
 import refreshAccessToken from '@/pages/api/refreshAccessToken'
 import { store } from '@/redux/store'
 import instance from '@/util/axios_interceptor'

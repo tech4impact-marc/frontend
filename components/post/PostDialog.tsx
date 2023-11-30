@@ -19,12 +19,12 @@ import { TransitionProps } from '@mui/material/transitions'
 import Typography from '@mui/material/Typography'
 import React, { useEffect } from 'react'
 
+import ConfirmDialog from '@/components/Confirm'
 import Carousel from '@/components/PostCarousel'
 import { store } from '@/redux/store'
 import type { ImageInfo } from '@/types/type'
 import instance from '@/util/axios_interceptor'
 
-import ConfirmDialog from '../ConfirmDialog'
 import SNSSharingComponent from '../share/SNSSharingComponent'
 import { FlexBox, VFlexBox } from '../styledComponents/StyledBox'
 import LikeButton from './LikeButton'
