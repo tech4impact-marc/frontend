@@ -9,10 +9,10 @@ import { useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 
+import BasicLayout from '@/components/layout/BasicLayout'
+import { persistor, store } from '@/redux/store'
 import theme from '@/styles/theme'
 
-import BasicLayout from '../components/layout/BasicLayout'
-import { persistor, store } from '../redux/store'
 import refreshAccessToken from './api/refreshAccessToken'
 
 export type NextPageWithLayout = NextPage & {
