@@ -1,40 +1,34 @@
 import { Container, Typography } from '@mui/material'
-import Head from 'next/head'
 import Image from 'next/image'
+import React from 'react'
 
 import { StyledButtonLarge } from '@/components/styledComponents/StyledButton'
 import { StyledContainerTwo } from '@/components/styledComponents/StyledContainer'
 import kakaoLogo from '@/public/kakao.svg'
 import marcLogo from '@/public/marc_logo.png'
 
-export default function Home() {
+export default function ShowLogin() {
+  const [openSetting, setOpenSetting] = React.useState(false)
   const handleLogin = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao`
   }
 
-  const handleForm = () => {
-    window.location.href = '/form'
+  const handleSettingClick = () => {
+    setOpenSetting(true)
+  }
+
+  const handleSettingExit = () => {
+    setOpenSetting(false)
   }
 
   return (
-    <Container
-      sx={{
-        position: 'absolute',
-        width: '100vw',
-        height: '100vh',
-        zIndex: (theme) => theme.zIndex.drawer + 1,
-        backgroundColor: 'white',
-      }}
-    >
-      <Head>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
       <Container
         sx={{
           alignItems: 'flex-start',
-          height: 'calc(90vh - 3.5rem)',
+          height: 'calc(60vh - 3.5rem)',
           maxWidth: '100%',
-          padding: '0',
+          padding: '0px',
         }}
       >
         <Container
@@ -51,31 +45,17 @@ export default function Home() {
         </Container>
         <Container
           sx={{
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             alignItems: 'center',
             height: '7.5rem',
             padding: '1rem 1rem 2.5rem 1rem',
-            gap: '1rem',
+            gap: '2rem',
           }}
         >
-          <StyledContainerTwo>
-            <StyledButtonLarge
-              variant="contained"
-              onClick={handleForm}
-              sx={{
-                background: '#F4F5F6',
-                '&:hover': {
-                  background: '#F4F5F6',
-                },
-              }}
-              disableElevation
-              disableRipple
-            >
-              <Typography variant="button" color="#000000D9">
-                비회원으로 시작하기
-              </Typography>
-            </StyledButtonLarge>
-          </StyledContainerTwo>
+          <Typography variant="h5" color="#223047">
+            마이페이지를 사용하려면 로그인이 필요합니다.
+          </Typography>
+
           <StyledContainerTwo>
             <StyledButtonLarge
               onClick={handleLogin}
@@ -95,6 +75,6 @@ export default function Home() {
           </StyledContainerTwo>
         </Container>
       </Container>
-    </Container>
+    </>
   )
 }

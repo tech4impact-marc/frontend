@@ -1,17 +1,16 @@
 import { Backdrop, Container, Typography } from '@mui/material'
-import axios from 'axios'
 import { GetServerSideProps } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import React, { ReactElement, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 import { FormOverlay, Question } from '@/components/form/FormOverlay'
-import CommonLayout from '@/components/Layout/CommonLayout'
 import {
   StyledContainerHeader,
   StyledContainerOne,
   StyledContainerThree,
 } from '@/components/styledComponents/StyledContainer'
+import instance from '@/util/axios_interceptor'
 
 export interface Animal {
   id: number
@@ -107,23 +106,23 @@ const Form = ({
 
 export default Form
 
-Form.getLayout = (page: ReactElement) => <CommonLayout>{page}</CommonLayout>
-
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const animalResponse = await axios.get(`${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types`)
+    const animalResponse = await instance.get(`/reports/types`, {
+      headers: {
+        Origin: `${process.env.NEXT_PUBLIC_WEBURL}`,
+      },
+    })
     const animals: Animal[] = await animalResponse.data.contents
 
     if (
       context.query.animal &&
       animals.some((animal) => String(animal.id) === context.query.animal)
     ) {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${context.query.animal}`
-      )
+      const response = await instance.get(`/reports/types/${context.query.animal}`)
       const currentVersion = response.data.currentVersion.id
-      const questionsResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/reports/types/${context.query.animal}/versions/${currentVersion}`
+      const questionsResponse = await instance.get(
+        `/reports/types/${context.query.animal}/versions/${currentVersion}`
       )
       const questions = await questionsResponse.data.questions.sort(
         (a: Question, b: Question) => a.questionOrder - b.questionOrder

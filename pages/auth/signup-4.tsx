@@ -2,7 +2,6 @@ import 'react-image-crop/dist/ReactCrop.css'
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import { Avatar, Button, Container, IconButton, Typography } from '@mui/material'
-import axios from 'axios'
 import { useRouter } from 'next/router'
 import React from 'react'
 
@@ -14,6 +13,7 @@ import {
   StyledContainerTwo,
 } from '@/components/styledComponents/StyledContainer'
 import { store } from '@/redux/store'
+import instance from '@/util/axios_interceptor'
 
 export default function KakaoSignUpPage4() {
   const router = useRouter()
@@ -33,9 +33,9 @@ export default function KakaoSignUpPage4() {
   }
 
   const handleSignup = () => {
-    axios
+    instance
       .post(
-        `${process.env.NEXT_PUBLIC_IP_ADDRESS}/auth/kakao/signup`,
+        `/auth/kakao/signup`,
         { nickname: userName, email: userEmail, profileIsDefaultImage: isDefault },
         {
           headers: {

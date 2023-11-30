@@ -1,12 +1,13 @@
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Unstable_Grid2'
 import Image from 'next/image'
 import React from 'react'
 import { IconFDolphin } from 'react-fluentui-emoji/lib/flat'
 
 import type { ReportContentResponse, UserReport } from '@/types/type'
-import { convertDateToString } from '@/util'
+import { convertDateToString } from '@/util/util'
 
 import PostDialog from '../post/PostDialog'
 
@@ -39,7 +40,7 @@ export default function Gallery({ reports }: GalleryProps) {
             }}
           >
             <IconFDolphin size={'3rem'} />
-            제보를 시작해 보세요!
+            <Typography variant="body1">제보를 시작해 보세요!</Typography>
           </Container>
         ) : (
           <Grid container rowSpacing={1} columnSpacing={1}>
