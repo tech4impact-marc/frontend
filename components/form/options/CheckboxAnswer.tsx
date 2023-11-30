@@ -3,7 +3,7 @@ import 'dayjs/locale/ko'
 import { Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material'
 import React, { useState } from 'react'
 
-import { Option, TextAnswerType, UpdateAnswersType } from '../AnswerChoice'
+import { AnswerType, Option, TextAnswerType, UpdateAnswersType } from '../AnswerChoice'
 
 interface MultipleAnswerProps {
   currentAnswer: TextAnswerType[]
@@ -16,26 +16,35 @@ export const CheckboxAnswer: React.FC<MultipleAnswerProps> = ({
   updateAnswers,
   options,
 }) => {
-  const [selectedOptions, setSelectedOptions] = useState<boolean[]>(
+  const [selectedOptions, setSelectedOptions] = useState<(AnswerType | null)[]>(
     options.map((option) =>
       currentAnswer.some((currentAnswer) => currentAnswer.value === option.value)
+        ? {
+            type: currentAnswer[0].type,
+            questionId: currentAnswer[0].questionId,
+            value: option.value,
+            modified: true,
+          }
+        : null
     )
   )
 
   const handleTextChange = (index: number) => {
-    let newSelectedOptions: boolean[] = []
+    let newSelectedOptions: (AnswerType | null)[] = []
     setSelectedOptions((prevSelectedOptions) => {
       newSelectedOptions = [...prevSelectedOptions]
-      newSelectedOptions[index] = !newSelectedOptions[index]
+      if (newSelectedOptions[index] === null) {
+        newSelectedOptions[index] = {
+          type: currentAnswer[0].type,
+          questionId: currentAnswer[0].questionId,
+          value: options[index].value,
+        }
+      } else {
+        newSelectedOptions[index] = null
+      }
       return newSelectedOptions
     })
-
-    updateAnswers(newSelectedOptions[index], {
-      // add if newSelectedOptions[index] is true, else remove
-      type: currentAnswer[0].type,
-      questionId: currentAnswer[0].questionId,
-      value: options[index].value,
-    })
+    updateAnswers(newSelectedOptions.filter((option) => option !== null) as AnswerType[])
   }
 
   return (
@@ -48,7 +57,7 @@ export const CheckboxAnswer: React.FC<MultipleAnswerProps> = ({
               <Checkbox
                 value={option.value}
                 onChange={() => handleTextChange(index)}
-                checked={selectedOptions[index]}
+                checked={selectedOptions[index] !== null}
               />
             }
             label={option.value}
