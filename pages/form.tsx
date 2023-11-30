@@ -2,7 +2,7 @@ import { Backdrop, Container, Typography } from '@mui/material'
 import { GetServerSideProps } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { FormOverlay, Question } from '@/components/form/FormOverlay'
 import {
@@ -10,10 +10,7 @@ import {
   StyledContainerOne,
   StyledContainerThree,
 } from '@/components/styledComponents/StyledContainer'
-import { store } from '@/redux/store'
 import instance from '@/util/axios_interceptor'
-
-import refreshAccessToken from './api/refreshAccessToken'
 
 export interface Animal {
   id: number
@@ -34,15 +31,16 @@ const Form = ({
 }) => {
   const router = useRouter()
   const { pathname, query } = router
+  console.log(animals, questions, currentVersion)
 
-  useEffect(() => {
-    refreshAccessToken()
-    const state = store.getState()
-    if (Object.keys(state.tokens).length === 0) {
-      alert('로그인을 하고 사용해보세요!')
-      router.push('/auth/login')
-    }
-  }, [router])
+  // useEffect(() => {
+  //   refreshAccessToken()
+  //   const state = store.getState()
+  //   if (Object.keys(state.tokens).length === 0) {
+  //     alert('로그인을 하고 사용해보세요!')
+  //     router.push('/auth/login')
+  //   }
+  // }, [router])
 
   if (!animals) {
     return (
