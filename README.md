@@ -24,6 +24,12 @@
 <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
 <img src="https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white">
 
+## Demo
+- 웹 어플리케이션: https://marc-dolphin.netlify.app
+<img width="277" alt="스크린샷 2023-12-01 오전 11 45 42" src="https://github.com/tech4impact-marc/backend/assets/77828537/3371a283-9b12-408c-aca9-c10ee80fc31b">
+
+<img width="278" alt="스크린샷 2023-12-01 오전 11 52 30" src="https://github.com/tech4impact-marc/backend/assets/77828537/62db80ce-ba28-4de6-a8c8-9883647d2b73">
+
 ## Build and Run
 
 ```
