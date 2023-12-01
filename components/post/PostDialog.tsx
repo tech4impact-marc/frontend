@@ -384,7 +384,7 @@ export default function PostDialog({
         isOpen={isSNSShareVisible}
         onClose={handleShareClose}
         imageUrl={imageInfoList[0]?.fileUrl ?? '/test.jpeg'} //TODO: fallback url
-        title={author + '님이 찾은 해양 생물이에요!'}
+        title={author?.nickname + '님이 찾은 해양 생물이에요!'}
         value="다른 해양 생물도 보러 가실래요?"
       />
       <ConfirmDialog
