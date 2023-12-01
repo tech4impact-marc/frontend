@@ -30,6 +30,8 @@
 
 <img width="278" alt="스크린샷 2023-12-01 오전 11 52 30" src="https://github.com/tech4impact-marc/backend/assets/77828537/62db80ce-ba28-4de6-a8c8-9883647d2b73">
 
+* 모바일 환경에 맞춰 제작되었습니다.
+
 ## Build and Run
 
 ```
