@@ -52,15 +52,15 @@ export default function UnachievedMission({ onClose }: MissionProps) {
 
   const toggleDrawer = (opening: boolean, index: number) => {
     setOpen(opening)
-    currentIndex != -1 ? setCurrentIndex(index) : null
+    setCurrentIndex(index)
   }
 
   const DrawerContent = () => {
     let missionTitle = ''
     let missionDescription = ''
-    if (currentIndex == -1 || !unachievedMissions || unachievedMissions.length == 0) {
-      missionTitle = '축하합니다!'
-      missionDescription = '모든 업적을 달성하셨습니다!'
+    if (currentIndex == -1 || unachievedMissions.length == 0) {
+      missionTitle = '나머지'
+      missionDescription = '아직 달성하지 못한 업적이 없으시네요!'
     } else {
       const currentMission = unachievedMissions[currentIndex]
       missionTitle = currentMission.mission.name
