@@ -16,8 +16,13 @@ export const CheckboxAnswer: React.FC<MultipleAnswerProps> = ({
   updateAnswers,
   options,
 }) => {
-  const [selectedOptions, setSelectedOptions] = useState<(AnswerType | null)[]>(
-    options.map((option) =>
+  const initData: AnswerType = {
+    value: '',
+    type: currentAnswer[0].type,
+    questionId: currentAnswer[0].questionId,
+  }
+  const [selectedOptions, setSelectedOptions] = useState<(AnswerType | null)[]>([
+    ...options.map((option) =>
       currentAnswer.some((currentAnswer) => currentAnswer.value === option.value)
         ? {
             type: currentAnswer[0].type,
@@ -26,8 +31,9 @@ export const CheckboxAnswer: React.FC<MultipleAnswerProps> = ({
             modified: true,
           }
         : null
-    )
-  )
+    ),
+    initData,
+  ])
 
   const handleTextChange = (index: number) => {
     let newSelectedOptions: (AnswerType | null)[] = []
