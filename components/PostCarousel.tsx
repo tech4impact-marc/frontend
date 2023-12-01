@@ -40,6 +40,7 @@ export default function EmblaCarousel({ imageInfoList }: CarouselProps) {
                 alt="post-image"
                 fill
                 sizes="(max-width: 730px) 22.5rem, (max-width: 992px) 30vw, 30rem"
+                priority={true}
               ></Image>
             </Box>
           ) : (

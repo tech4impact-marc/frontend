@@ -18,7 +18,7 @@ interface PostProps {
 
 const ListContainer = styled('div')(() => ({
   overflow: 'auto',
-  maxHeight: '100vh',
+  maxHeight: '90vh',
   marginTop: 8,
 }))
 
