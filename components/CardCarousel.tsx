@@ -33,6 +33,7 @@ export default function CardCarousel({ imageInfoList, onClick }: CarouselProps) 
                 onClick={onClick}
                 fill
                 sizes="(max-width: 730px) 9.75rem, (max-width: 992px) 30vw, 30vw"
+                priority={true}
               ></Image>
             </Box>
           ) : (

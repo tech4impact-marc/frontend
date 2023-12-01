@@ -67,6 +67,7 @@ export default function Gallery({ reports }: GalleryProps) {
                       alt={'user report thumbnail'}
                       fill
                       sizes="(max-width: 730px) 1.125rem, (max-width: 992px) 2.25rem, 2.25rem"
+                      priority={true}
                     />
                   </Box>
                 </Grid>
