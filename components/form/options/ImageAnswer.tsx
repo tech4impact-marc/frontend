@@ -161,7 +161,7 @@ const ImageAnswer: React.FC<ImageAnswerProps> = ({ currentAnswer, updateImageAns
             id="imageUpload"
             type="file"
             multiple
-            capture="environment"
+            // capture="environment"
             accept="image/*"
             disabled={currentAnswer.length > 3}
             onChange={handleImageChange}
