@@ -179,6 +179,14 @@ const FormOverlay = React.memo(
       [dateIndex, locationIndex]
     )
 
+    const handlePrevButtonClick = () => {
+      if (step === 0) {
+        router.push({ pathname: pathname })
+      } else {
+        setStep((prevStep) => prevStep - 1)
+      }
+    }
+
     const handleNextButtonClick = () => {
       // console.log(typeof router.query.animal, typeof currentVersion)
       // console.log(
@@ -275,9 +283,7 @@ const FormOverlay = React.memo(
         <StyledContainerOne>
           <StyledContainerHeader>
             <ArrowBackIosRoundedIcon
-              onClick={() => {
-                router.push({ pathname: pathname })
-              }}
+              onClick={handlePrevButtonClick}
               sx={{ cursor: 'pointer', fontSize: (theme) => theme.typography.h2.fontSize }}
             />
           </StyledContainerHeader>
