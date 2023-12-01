@@ -86,6 +86,7 @@ const Form = ({
                 alt="animal"
                 width={10}
                 height={10}
+                priority={true}
               />
               {/* {animal.thumbnailUrl?  : <IconFFish size={'1.5rem'} />} */}
               <Typography variant="h4">{animal.label} 제보하기</Typography>
