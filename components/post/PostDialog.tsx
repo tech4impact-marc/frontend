@@ -64,7 +64,7 @@ interface PostResponse {
     numberOfElements: number
     contents: Comment[]
   }
-  like_count: number
+  likeCount: number
   liked: boolean
 }
 
@@ -128,11 +128,12 @@ export default function PostDialog({
       .get(`/posts/${postId}`)
       .then((res) => {
         const data: PostResponse = res.data
-        const likeCount = data.like_count
+        const likeCount = data.likeCount
         console.log(data)
         setAuthor(data.author)
         setComments(data.comments.contents ?? [])
         setValue(data.value)
+        console.log('Like Count: ', likeCount)
         if (likeCount === 0 && userLike) {
           setLikeCount(likeCount + 1)
         } else {

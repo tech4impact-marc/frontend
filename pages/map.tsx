@@ -40,7 +40,7 @@ export function convertDataToGeoJson(content: ReportContentResponse[]) {
         date: convertDateToString(dateValue),
         post_id: element.post.id,
         liked: element.post.liked,
-        author_name: element.author.nickname ?? '익명의 돌고래',
+        author_name: element.author?.nickname ?? '익명의 돌고래',
       },
       geometry: {
         type: 'Point',
