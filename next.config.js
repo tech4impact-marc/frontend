@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: ['drive.google.com'],
+    domains: ['drive.google.com', 'multerimagelocationurl1.com'],
     remotePatterns: [
       {
         protocol: 'https',
