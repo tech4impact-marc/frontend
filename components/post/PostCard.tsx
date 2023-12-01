@@ -6,6 +6,7 @@ import { debounce } from 'lodash'
 import { useCallback, useState } from 'react'
 
 import Carousel from '@/components/CardCarousel'
+import { store } from '@/redux/store'
 import type { reportGeoJson } from '@/types/type'
 import instance from '@/util/axios_interceptor'
 
@@ -21,6 +22,8 @@ interface PostCardProps {
 export default function PostCard({ index, data }: PostCardProps) {
   const [showDialog, setShowDialog] = useState(false)
   const [liked, setLiked] = useState(data.properties?.liked)
+  const state = store.getState()
+  const isLoggedin = state.tokens.accessToken
 
   const handleCardClick = () => {
     setShowDialog(true)
@@ -81,7 +84,7 @@ export default function PostCard({ index, data }: PostCardProps) {
               data.properties?.date ?? '2023년 11월 18일'
             }`}</Typography>
           </Box>
-          <LikeButton liked={liked} onClick={handleLikeClick} />
+          <LikeButton liked={liked} onClick={handleLikeClick} disable={!isLoggedin} />
         </FlexBox>
         <Carousel imageInfoList={data.properties?.image_list} onClick={handleCardImageClick} />
       </Card>

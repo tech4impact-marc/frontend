@@ -120,8 +120,7 @@ export default function PostDialog({
   const [editComment, setEditComment] = React.useState<string>('')
   const [isEditMode, setIsEditMode] = React.useState<number>(-1)
   const state = store.getState()
-  const isLoggedin = state.user == null
-
+  const isLoggedin = state.tokens.accessToken
   useEffect(() => {
     if (!open || postId < 0) return
     // 포스트 정보 가져오기
@@ -372,7 +371,7 @@ export default function PostDialog({
             </IconButton>
             <Box flexGrow={1} />
             <FlexBox alignItems={'center'}>
-              <LikeButton liked={userLike} onClick={handleLike} />
+              <LikeButton liked={userLike} onClick={handleLike} disable={!isLoggedin} />
               <Typography variant="subtitle2" color={'#223047'}>
                 {like_count}
               </Typography>

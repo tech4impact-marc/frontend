@@ -15,6 +15,8 @@ interface MapPageProps {
 }
 
 export default function MapPage({ data, animals }: MapPageProps) {
+  console.log('Map data: ', data)
+  console.log('Animals: ', animals)
   return (
     <Container disableGutters maxWidth={false}>
       <Map data={data} animals={animals} />
@@ -78,7 +80,6 @@ export async function getServerSideProps() {
 
     const jsonData = await instance(`/reports/map`, setOrigin)
     const data = jsonData.data
-    console.log(JSON.stringify(data))
 
     const animalResponse = await instance.get(`/reports/types`, setOrigin)
     const animals: Animal[] = await animalResponse.data.contents
