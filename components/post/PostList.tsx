@@ -18,13 +18,14 @@ interface PostProps {
 
 const ListContainer = styled('div')(() => ({
   overflow: 'auto',
-  maxHeight: '5.25rem',
+  maxHeight: '100vh',
+  marginTop: 8,
 }))
 
 const CustomSwipeableDrawer = styled(SwipeableDrawer)({
   '& .MuiDrawer-paper': {
     overflowY: 'visible',
-    height: `calc(100% - ${drawerBleeding + 8}px)`,
+    height: `calc(100% - ${drawerBleeding}px)`,
   },
   '& .MuiBackdrop-root': {
     background: 'white',
@@ -80,7 +81,7 @@ export default function Post(props: PostProps) {
               backgroundColor: 'gray',
               borderRadius: 2,
               position: 'absolute',
-              top: 14,
+              top: 8,
               left: 'calc(50% - 1.25rem)',
             }}
           />
