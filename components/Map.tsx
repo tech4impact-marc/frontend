@@ -287,7 +287,6 @@ const Map = ({ data, animals }: MapProps) => {
                   alt="logo"
                   width={24}
                   height={24}
-                  priority={true}
                 />
                 <Typography ml={'0.25rem'} variant="subtitle1">
                   {type.label}
