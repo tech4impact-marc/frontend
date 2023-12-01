@@ -40,6 +40,7 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl, title, value }: any) =
   const handleCopyToClipboard = () => {
     const img = new Image()
     img.src = imageUrl
+    img.crossOrigin = 'Anonymous'
 
     img.onload = () => {
       const canvas = document.createElement('canvas')
