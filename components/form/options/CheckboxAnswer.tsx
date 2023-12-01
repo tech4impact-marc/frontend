@@ -38,6 +38,7 @@ export const CheckboxAnswer: React.FC<MultipleAnswerProps> = ({
           type: currentAnswer[0].type,
           questionId: currentAnswer[0].questionId,
           value: options[index].value,
+          modified: true,
         }
       } else {
         newSelectedOptions[index] = null
