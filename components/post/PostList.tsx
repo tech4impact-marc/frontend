@@ -1,5 +1,3 @@
-import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded'
-import { IconButton } from '@mui/material'
 import Backdrop from '@mui/material/Backdrop'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
@@ -87,10 +85,6 @@ export default function Post(props: PostProps) {
               left: 'calc(50% - 1.25rem)',
             }}
           />
-
-          <IconButton sx={{ mt: '1rem' }} onClick={props.onClickBack}>
-            {open ? <ArrowBackIosRoundedIcon /> : null}
-          </IconButton>
 
           <ListContainer>
             <Stack spacing={2}>

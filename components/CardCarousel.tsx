@@ -14,12 +14,6 @@ export default function CardCarousel({ imageInfoList, onClick }: CarouselProps) 
   const slides = imageInfoList.map((imageInfo) => imageInfo.fileUrl ?? '/test.jpeg') //TODO: fallback image
   const [emblaRef] = useEmblaCarousel({ containScroll: 'trimSnaps' })
 
-  if (slides?.length < 3) {
-    for (let i = 0; i < 3 - slides.length; i++) {
-      slides.push('')
-    }
-  }
-
   return (
     <Box overflow={'hidden'} ref={emblaRef} marginLeft={'20px'}>
       <Box display={'flex'} sx={{ backfaceVisibility: 'hidden' }}>
