@@ -20,7 +20,7 @@ const loadKakaoLinkScript = () => {
   document.head.appendChild(script)
 }
 
-const SNSSharingComponent = ({ isOpen, onClose, imageUrl }: any) => {
+const SNSSharingComponent = ({ isOpen, onClose, imageUrl, title, value }: any) => {
   React.useEffect(() => {
     loadKakaoLinkScript()
   }, [])
@@ -69,15 +69,14 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl }: any) => {
       window.Kakao.init(process.env.NEXT_PUBLIC_JAVASCRIPT_KEY) // JS Key
       setKakaoInitialized(true)
     }
-    const staticWebUrl = process.env.NEXT_PUBLIC_WEBURL // 본인 URL
+    const staticWebUrl = process.env.NEXT_PUBLIC_WEBURL
 
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
-        title: '제가 찾은 해양 생물이에요!', // 제목
-        description: '저희와 함께 해양 생물을 찾아보아요!', // 설명
-        // imageUrl: imgUrl, // 공유할 이미지 URL
-        imageUrl: 'https://ifh.cc/g/xBq9oj.webp',
+        title: title, // 제목
+        description: value, // 설명
+        imageUrl: imageUrl, // 이미지
         link: {
           mobileWebUrl: staticWebUrl, // 이동시킬 페이지
           webUrl: staticWebUrl,
@@ -85,10 +84,10 @@ const SNSSharingComponent = ({ isOpen, onClose, imageUrl }: any) => {
       },
       buttons: [
         {
-          title: 'MARC로 이동', // 버튼 텍스트
+          title: '해양 생물 지도 보러 가기', // 버튼 텍스트
           link: {
-            mobileWebUrl: staticWebUrl, // 버튼이 이동시킬 페이지
-            webUrl: staticWebUrl,
+            mobileWebUrl: staticWebUrl + '/map', // 버튼이 이동시킬 페이지
+            webUrl: staticWebUrl + '/map',
           },
         },
       ],

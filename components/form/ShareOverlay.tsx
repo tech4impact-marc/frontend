@@ -121,6 +121,8 @@ const ShareOverlay = ({
           isOpen={isSNSShareVisible}
           onClose={handleShareClose}
           imageUrl={imgSrc}
+          title="제가 찾은 해양 생물이에요!"
+          value="저희와 함께 해양 생물을 찾아보아요!"
         />
       )}
     </React.Fragment>
